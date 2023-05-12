@@ -1,0 +1,5 @@
+rootProject.name = 'ecom-product-catalog-admin'
+include 'domain'
+include 'application'
+include 'infrastructure'
+
