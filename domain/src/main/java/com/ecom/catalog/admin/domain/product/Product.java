@@ -1,7 +1,10 @@
 package com.ecom.catalog.admin.domain.product;
 
 import com.ecom.catalog.admin.domain.AggregateRoot;
+import com.ecom.catalog.admin.domain.exceptions.NotificationException;
 import com.ecom.catalog.admin.domain.utils.InstantUtils;
+import com.ecom.catalog.admin.domain.validation.ValidationHandler;
+import com.ecom.catalog.admin.domain.validation.handler.Notification;
 
 import java.time.Instant;
 import java.util.Objects;
@@ -33,6 +36,7 @@ public class Product extends AggregateRoot<ProductID> {
         this.status = aStatus;
         this.createdAt = Objects.requireNonNull(aCreationDate, "'createdAt' should not be null");
         this.updatedAt = Objects.requireNonNull(aUpdateDate, "'updatedAt' should not be null");
+        selfvalidate();
     }
 
     public static Product newProduct(
@@ -80,6 +84,19 @@ public class Product extends AggregateRoot<ProductID> {
         );
     }
 
+    @Override
+    public void validate(ValidationHandler handler) {
+        new ProductValidator(this, handler).validate();
+    }
+
+    private void selfvalidate() {
+        final var notification = Notification.create();
+        validate(notification);
+        if(notification.hasError()) {
+            throw new NotificationException("Failed to create an Aggregate Product", notification);
+        }
+    }
+
     public String getName() {
         return name;
     }
@@ -107,5 +124,4 @@ public class Product extends AggregateRoot<ProductID> {
     public Instant getUpdatedAt() {
         return updatedAt;
     }
-
 }
