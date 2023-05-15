@@ -50,6 +50,17 @@ public class Product extends AggregateRoot<ProductID> {
         return new Product(id, aName, aDescription, aPrice, aStock, DEFAULT_STATUS, now, now);
     }
 
+    public static Product newProduct(
+            final String aName,
+            final String aDescription,
+            final Money aPrice,
+            final int aStock,
+            final ProductStatus aStatus) {
+        final var id = ProductID.unique();
+        final var now = InstantUtils.now();
+        return new Product(id, aName, aDescription, aPrice, aStock, aStatus, now, now);
+    }
+
     private static Product with(
             final ProductID anId,
             final String aName,
@@ -87,6 +98,20 @@ public class Product extends AggregateRoot<ProductID> {
     @Override
     public void validate(ValidationHandler handler) {
         new ProductValidator(this, handler).validate();
+    }
+
+    public Product deactivate() {
+        return updateStatus(ProductStatus.INACTIVE);
+    }
+
+    public Product activate() {
+        return updateStatus(ProductStatus.ACTIVE);
+    }
+
+    private Product updateStatus(ProductStatus active) {
+        this.status = active;
+        this.updatedAt = InstantUtils.now();
+        return this;
     }
 
     private void selfvalidate() {

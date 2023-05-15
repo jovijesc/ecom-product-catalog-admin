@@ -111,7 +111,7 @@ class ProductTest {
     }
 
     @Test
-    public void givenInvalidNameWithLengthGreaterThan255_whenCallNewProduct_thenShouldReceiveAnError() {
+    public void givenAnInvalidNameWithLengthGreaterThan255_whenCallNewProduct_thenShouldReceiveAnError() {
         // given
         final String expectedName = """
                 Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries,
@@ -213,6 +213,70 @@ class ProductTest {
         // then
         Assertions.assertEquals(expectedErrorCount, actualException.getErrors().size());
         Assertions.assertEquals(expectedErrorMessage, actualException.getErrors().get(0).message());
+    }
+
+    @Test
+    public void givenAValidActiveProduct_whenCallDeactivate_thenReturnProductInactivated() {
+        // given
+        final String expectedName = "Celular";
+        final var expectedDescription = "Celular do tipo ABC";
+        final var expectedPrice = Money.with(1800.03);
+        final var expectedStock = 10;
+        final var expectedStatus = ProductStatus.INACTIVE;
+
+        final var aProduct =
+                Product.newProduct(expectedName, expectedDescription, expectedPrice, expectedStock);
+
+        final var createdAt = aProduct.getCreatedAt();
+        final var updatedAt = aProduct.getUpdatedAt();
+
+        // when
+        final var actualProduct = aProduct.deactivate();
+
+        // then
+        Assertions.assertNotNull(actualProduct);;
+        Assertions.assertNotNull(actualProduct.getId());
+        Assertions.assertEquals(expectedName, actualProduct.getName());
+        Assertions.assertEquals(expectedDescription, actualProduct.getDescription());
+        Assertions.assertEquals(expectedPrice, actualProduct.getPrice());
+        Assertions.assertEquals(expectedStock, actualProduct.getStock());
+        Assertions.assertEquals(expectedStatus, actualProduct.getStatus());
+        Assertions.assertEquals(createdAt, actualProduct.getCreatedAt());
+        Assertions.assertTrue(actualProduct.getUpdatedAt().isAfter(updatedAt));
+
+    }
+
+    @Test
+    public void givenAValidInactiveProduct_whenCallActivate_thenReturnProductActivated() {
+        // given
+        final String expectedName = "Celular";
+        final var expectedDescription = "Celular do tipo ABC";
+        final var expectedPrice = Money.with(1800.03);
+        final var expectedStock = 10;
+        final var expectedStatus = ProductStatus.ACTIVE;
+
+        final var aProduct =
+                Product.newProduct(expectedName, expectedDescription, expectedPrice, expectedStock, ProductStatus.INACTIVE);
+
+        final var createdAt = aProduct.getCreatedAt();
+        final var updatedAt = aProduct.getUpdatedAt();
+
+        Assertions.assertEquals(aProduct.getStatus(), ProductStatus.INACTIVE);
+
+        // when
+        final var actualProduct = aProduct.activate();
+
+        // then
+        Assertions.assertNotNull(actualProduct);;
+        Assertions.assertNotNull(actualProduct.getId());
+        Assertions.assertEquals(expectedName, actualProduct.getName());
+        Assertions.assertEquals(expectedDescription, actualProduct.getDescription());
+        Assertions.assertEquals(expectedPrice, actualProduct.getPrice());
+        Assertions.assertEquals(expectedStock, actualProduct.getStock());
+        Assertions.assertEquals(expectedStatus, actualProduct.getStatus());
+        Assertions.assertEquals(createdAt, actualProduct.getCreatedAt());
+        Assertions.assertTrue(actualProduct.getUpdatedAt().isAfter(updatedAt));
+
     }
 
 }
