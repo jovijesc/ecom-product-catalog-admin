@@ -4,8 +4,6 @@ import com.ecom.catalog.admin.domain.exceptions.NotificationException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 class ProductTest {
 
     @Test
@@ -256,7 +254,7 @@ class ProductTest {
         final var expectedStatus = ProductStatus.ACTIVE;
 
         final var aProduct =
-                Product.newProduct(expectedName, expectedDescription, expectedPrice, expectedStock, ProductStatus.INACTIVE);
+                Product.newProduct(expectedName, expectedDescription, ProductStatus.INACTIVE, expectedPrice, expectedStock);
 
         final var createdAt = aProduct.getCreatedAt();
         final var updatedAt = aProduct.getUpdatedAt();
@@ -289,7 +287,7 @@ class ProductTest {
         final var expectedStatus = ProductStatus.ACTIVE;
 
         final var actualProduct =
-                Product.newProduct("Celular Novo", "Celular com outra descrição", expectedPrice, expectedStock, ProductStatus.INACTIVE);
+                Product.newProduct("Celular Novo", "Celular com outra descrição", ProductStatus.INACTIVE, expectedPrice, expectedStock);
 
         final var createdAt = actualProduct.getCreatedAt();
         final var updatedAt = actualProduct.getUpdatedAt();
@@ -297,7 +295,7 @@ class ProductTest {
         Assertions.assertEquals(actualProduct.getStatus(), ProductStatus.INACTIVE);
 
         // when
-        actualProduct.update(expectedName, expectedDescription, expectedPrice, expectedStock, expectedStatus);
+        actualProduct.update(expectedName, expectedDescription, expectedStatus, expectedPrice, expectedStock);
 
         // then
         Assertions.assertNotNull(actualProduct);;
@@ -321,7 +319,7 @@ class ProductTest {
         final var expectedStatus = ProductStatus.INACTIVE;
 
         final var actualProduct =
-                Product.newProduct("Celular Novo", "Celular com outra descrição", expectedPrice, expectedStock, ProductStatus.ACTIVE);
+                Product.newProduct("Celular Novo", "Celular com outra descrição", ProductStatus.ACTIVE, expectedPrice, expectedStock);
 
         final var createdAt = actualProduct.getCreatedAt();
         final var updatedAt = actualProduct.getUpdatedAt();
@@ -329,7 +327,7 @@ class ProductTest {
         Assertions.assertEquals(actualProduct.getStatus(), ProductStatus.ACTIVE);
 
         // when
-        actualProduct.update(expectedName, expectedDescription, expectedPrice, expectedStock, expectedStatus);
+        actualProduct.update(expectedName, expectedDescription, expectedStatus, expectedPrice, expectedStock);
 
         // then
         Assertions.assertNotNull(actualProduct);;
@@ -355,7 +353,7 @@ class ProductTest {
         final var expectedErrorMessage = "'name' should not be null";
 
         final var actualProduct =
-                Product.newProduct("Celular Novo", "Celular com outra descrição", expectedPrice, expectedStock, ProductStatus.ACTIVE);
+                Product.newProduct("Celular Novo", "Celular com outra descrição", ProductStatus.ACTIVE, expectedPrice, expectedStock);
 
         final var createdAt = actualProduct.getCreatedAt();
         final var updatedAt = actualProduct.getUpdatedAt();
@@ -365,7 +363,7 @@ class ProductTest {
 
         // when
         final var actualException = Assertions.assertThrows(NotificationException.class, () ->
-                actualProduct.update(expectedName, expectedDescription, expectedPrice, expectedStock, expectedStatus));
+                actualProduct.update(expectedName, expectedDescription, expectedStatus, expectedPrice, expectedStock));
 
         // then
         Assertions.assertEquals(expectedErrorCount, actualException.getErrors().size());

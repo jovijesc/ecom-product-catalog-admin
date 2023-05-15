@@ -53,9 +53,9 @@ public class Product extends AggregateRoot<ProductID> {
     public static Product newProduct(
             final String aName,
             final String aDescription,
+            final ProductStatus aStatus,
             final Money aPrice,
-            final int aStock,
-            final ProductStatus aStatus) {
+            final int aStock) {
         final var id = ProductID.unique();
         final var now = InstantUtils.now();
         return new Product(id, aName, aDescription, aPrice, aStock, aStatus, now, now);
@@ -109,10 +109,10 @@ public class Product extends AggregateRoot<ProductID> {
     }
 
     public Product update(final String aName,
-                       final String aDescription,
-                       final Money aPrice,
-                       final int aStock,
-                       final ProductStatus aStatus) {
+                          final String aDescription,
+                          final ProductStatus aStatus,
+                          final Money aPrice,
+                          final int aStock) {
         if(ProductStatus.ACTIVE.equals(aStatus)) {
             activate();
         } else {

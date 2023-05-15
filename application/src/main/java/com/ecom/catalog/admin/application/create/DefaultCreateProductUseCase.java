@@ -19,11 +19,12 @@ public class DefaultCreateProductUseCase extends CreateProductUseCase {
     public CreateProductOutput execute(final CreateProductCommand aCommand) {
         final var aName = aCommand.name();
         final var aDescription = aCommand.description();
+        final var aStatus = aCommand.status();
         final var aPrice = aCommand.price();
         final var aStock = aCommand.stock();
 
         final var notification = Notification.create();
-        final var aProduct = notification.validate(() -> Product.newProduct(aName, aDescription, aPrice, aStock));
+        final var aProduct = notification.validate(() -> Product.newProduct(aName, aDescription, aStatus, aPrice, aStock));
 
         if(notification.hasError()) {
             throw new NotificationException("Could not create Aggregate Product,", notification);
