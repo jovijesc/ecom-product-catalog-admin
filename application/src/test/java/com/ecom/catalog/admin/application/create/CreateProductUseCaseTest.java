@@ -6,6 +6,7 @@ import com.ecom.catalog.admin.domain.product.ProductStatus;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -19,6 +20,9 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class CreateProductUseCaseTest {
+
+    @InjectMocks
+    private DefaultCreateProductUseCase useCase;
 
     @Mock
     private ProductGateway productGateway;
@@ -35,17 +39,8 @@ class CreateProductUseCaseTest {
         final var aCommand =
                 CreateProductCommand.with(expectedName, expectedDescription, expectedPrice, expectedStock);
 
-
         when(productGateway.create(any()))
                 .thenAnswer(returnsFirstArg());
-
-        // when
-        var useCase = new CreateProductUseCase() {
-            @Override
-            public CreateProductOutput execute(CreateProductCommand anIn) {
-                return null;
-            }
-        } ;
 
         final var actualOutput = useCase.execute(aCommand);
 
