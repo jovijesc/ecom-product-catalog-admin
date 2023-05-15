@@ -108,6 +108,25 @@ public class Product extends AggregateRoot<ProductID> {
         return updateStatus(ProductStatus.ACTIVE);
     }
 
+    public Product update(final String aName,
+                       final String aDescription,
+                       final Money aPrice,
+                       final int aStock,
+                       final ProductStatus aStatus) {
+        if(ProductStatus.ACTIVE.equals(aStatus)) {
+            activate();
+        } else {
+            deactivate();
+        }
+        this.name = aName;
+        this.description = aDescription;
+        this.price = aPrice;
+        this.stock = aStock;
+        this.updatedAt = InstantUtils.now();
+        selfvalidate();
+        return this;
+    }
+
     private Product updateStatus(ProductStatus active) {
         this.status = active;
         this.updatedAt = InstantUtils.now();

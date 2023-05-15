@@ -279,4 +279,97 @@ class ProductTest {
 
     }
 
+    @Test
+    public void givenAValidProduct_whenCallUpdate_thenReturnProductUpdated() {
+        // given
+        final String expectedName = "Celular";
+        final var expectedDescription = "Celular do tipo ABC";
+        final var expectedPrice = Money.with(1800.03);
+        final var expectedStock = 10;
+        final var expectedStatus = ProductStatus.ACTIVE;
+
+        final var actualProduct =
+                Product.newProduct("Celular Novo", "Celular com outra descrição", expectedPrice, expectedStock, ProductStatus.INACTIVE);
+
+        final var createdAt = actualProduct.getCreatedAt();
+        final var updatedAt = actualProduct.getUpdatedAt();
+
+        Assertions.assertEquals(actualProduct.getStatus(), ProductStatus.INACTIVE);
+
+        // when
+        actualProduct.update(expectedName, expectedDescription, expectedPrice, expectedStock, expectedStatus);
+
+        // then
+        Assertions.assertNotNull(actualProduct);;
+        Assertions.assertNotNull(actualProduct.getId());
+        Assertions.assertEquals(expectedName, actualProduct.getName());
+        Assertions.assertEquals(expectedDescription, actualProduct.getDescription());
+        Assertions.assertEquals(expectedPrice, actualProduct.getPrice());
+        Assertions.assertEquals(expectedStock, actualProduct.getStock());
+        Assertions.assertEquals(expectedStatus, actualProduct.getStatus());
+        Assertions.assertEquals(createdAt, actualProduct.getCreatedAt());
+        Assertions.assertTrue(actualProduct.getUpdatedAt().isAfter(updatedAt));
+    }
+
+    @Test
+    public void givenAValidProduct_whenCallUpdateToInactive_thenReturnProductUpdated() {
+        // given
+        final String expectedName = "Celular";
+        final var expectedDescription = "Celular do tipo ABC";
+        final var expectedPrice = Money.with(1800.03);
+        final var expectedStock = 10;
+        final var expectedStatus = ProductStatus.INACTIVE;
+
+        final var actualProduct =
+                Product.newProduct("Celular Novo", "Celular com outra descrição", expectedPrice, expectedStock, ProductStatus.ACTIVE);
+
+        final var createdAt = actualProduct.getCreatedAt();
+        final var updatedAt = actualProduct.getUpdatedAt();
+
+        Assertions.assertEquals(actualProduct.getStatus(), ProductStatus.ACTIVE);
+
+        // when
+        actualProduct.update(expectedName, expectedDescription, expectedPrice, expectedStock, expectedStatus);
+
+        // then
+        Assertions.assertNotNull(actualProduct);;
+        Assertions.assertNotNull(actualProduct.getId());
+        Assertions.assertEquals(expectedName, actualProduct.getName());
+        Assertions.assertEquals(expectedDescription, actualProduct.getDescription());
+        Assertions.assertEquals(expectedPrice, actualProduct.getPrice());
+        Assertions.assertEquals(expectedStock, actualProduct.getStock());
+        Assertions.assertEquals(expectedStatus, actualProduct.getStatus());
+        Assertions.assertEquals(createdAt, actualProduct.getCreatedAt());
+        Assertions.assertTrue(actualProduct.getUpdatedAt().isAfter(updatedAt));
+    }
+
+    @Test
+    public void givenAnInvalidNullName_whenCallUpdate_thenShouldReceiverError() {
+        // given
+        final String expectedName = null;
+        final var expectedDescription = "Celular do tipo ABC";
+        final var expectedPrice = Money.with(1800.03);
+        final var expectedStock = 10;
+        final var expectedStatus = ProductStatus.INACTIVE;
+        final var expectedErrorCount = 1;
+        final var expectedErrorMessage = "'name' should not be null";
+
+        final var actualProduct =
+                Product.newProduct("Celular Novo", "Celular com outra descrição", expectedPrice, expectedStock, ProductStatus.ACTIVE);
+
+        final var createdAt = actualProduct.getCreatedAt();
+        final var updatedAt = actualProduct.getUpdatedAt();
+
+        Assertions.assertEquals(actualProduct.getStatus(), ProductStatus.ACTIVE);
+        Assertions.assertNotNull(actualProduct.getName());
+
+        // when
+        final var actualException = Assertions.assertThrows(NotificationException.class, () ->
+                actualProduct.update(expectedName, expectedDescription, expectedPrice, expectedStock, expectedStatus));
+
+        // then
+        Assertions.assertEquals(expectedErrorCount, actualException.getErrors().size());
+        Assertions.assertEquals(expectedErrorMessage, actualException.getErrors().get(0).message());
+    }
+
 }
