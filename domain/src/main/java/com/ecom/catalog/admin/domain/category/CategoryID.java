@@ -1,26 +1,24 @@
-package com.ecom.catalog.admin.domain.product;
+package com.ecom.catalog.admin.domain.category;
 
 import com.ecom.catalog.admin.domain.Identifier;
 import com.ecom.catalog.admin.domain.utils.IdUtils;
-import jdk.jfr.Category;
 
 import java.util.Objects;
-import java.util.UUID;
 
-public class ProductID extends Identifier {
+public class CategoryID extends Identifier {
 
     private final String value;
 
-    public ProductID(final String value) {
+    private CategoryID(String value) {
         this.value = Objects.requireNonNull(value);
     }
 
-    public static ProductID unique() {
-        return new ProductID(IdUtils.uuid());
+    public static CategoryID unique() {
+        return CategoryID.from(IdUtils.uuid());
     }
 
-    public static ProductID from(final String anId) {
-        return new ProductID(anId);
+    public static CategoryID from(final String anId) {
+        return new CategoryID(anId);
     }
 
     @Override
@@ -32,8 +30,8 @@ public class ProductID extends Identifier {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        ProductID productID = (ProductID) o;
-        return getValue().equals(productID.getValue());
+        CategoryID that = (CategoryID) o;
+        return getValue().equals(that.getValue());
     }
 
     @Override

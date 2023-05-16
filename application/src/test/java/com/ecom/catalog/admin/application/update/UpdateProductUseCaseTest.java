@@ -1,5 +1,7 @@
 package com.ecom.catalog.admin.application.update;
 
+import com.ecom.catalog.admin.application.create.CreateProductCommand;
+import com.ecom.catalog.admin.domain.exceptions.NotificationException;
 import com.ecom.catalog.admin.domain.product.Money;
 import com.ecom.catalog.admin.domain.product.Product;
 import com.ecom.catalog.admin.domain.product.ProductGateway;
@@ -18,6 +20,7 @@ import java.util.Optional;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -76,4 +79,132 @@ class UpdateProductUseCaseTest {
         ));
     }
 
+    @Test
+    public void givenAnInvalidNullName_whenCallsUpdateProduct_shouldReturnNotificationException() {
+        // given
+        final var aProduct = Product.newProduct("Celular A", "Celular do tipo BBB", Money.with(1700.0), 10);
+
+        final var expectedId = aProduct.getId();
+        final String expectedName = null;
+        final var expectedDescription = "Celular do tipo ABC";
+        final var expectedPrice = Money.with(1800.03);
+        final var expectedStock = 10;
+        final var expectedStatus = ProductStatus.ACTIVE;
+
+        final var expectedErrorCount = 1;
+        final var expectedErrorMessage = "'name' should not be null";
+
+        final var aCommand = UpdateProductCommand.with(
+                expectedId.getValue(),
+                expectedName,
+                expectedDescription,
+                expectedStatus,
+                expectedPrice,
+                expectedStock
+        );
+
+        when(productGateway.findById(eq(expectedId)))
+                .thenReturn(Optional.of(Product.with(aProduct)));
+
+        // when
+        final var actualException = Assertions.assertThrows(NotificationException.class, () -> useCase.execute(aCommand));
+
+        // then
+        Assertions.assertNotNull(actualException);
+        Assertions.assertEquals(expectedErrorCount, actualException.getErrors().size());
+        Assertions.assertEquals(expectedErrorMessage, actualException.getErrors().get(0).message());
+
+        Mockito.verify(productGateway, times(1)).findById(eq(expectedId));
+        Mockito.verify(productGateway, times(0)).update(any());
+
+    }
+
+    @Test
+    public void givenAnInvalidStock_whenCallsUpdateProduct_shouldReturnNotificationException() {
+        // given
+        final var aProduct = Product.newProduct("Celular A", "Celular do tipo BBB", Money.with(1700.0), 10);
+
+        final var expectedId = aProduct.getId();
+        final var expectedName = "Celular";
+        final var expectedDescription = "Celular do tipo ABC";
+        final var expectedPrice = Money.with(1800.03);
+        final var expectedStock = -1;
+        final var expectedStatus = ProductStatus.ACTIVE;
+
+        final var expectedErrorCount = 1;
+        final var expectedErrorMessage = "'stock' cannot have invalid values";
+
+        final var aCommand = UpdateProductCommand.with(
+                expectedId.getValue(),
+                expectedName,
+                expectedDescription,
+                expectedStatus,
+                expectedPrice,
+                expectedStock
+        );
+
+        when(productGateway.findById(eq(expectedId)))
+                .thenReturn(Optional.of(Product.with(aProduct)));
+
+        // when
+        final var actualException = Assertions.assertThrows(NotificationException.class, () -> useCase.execute(aCommand));
+
+        // then
+        Assertions.assertNotNull(actualException);
+        Assertions.assertEquals(expectedErrorCount, actualException.getErrors().size());
+        Assertions.assertEquals(expectedErrorMessage, actualException.getErrors().get(0).message());
+
+        Mockito.verify(productGateway, times(1)).findById(eq(expectedId));
+        Mockito.verify(productGateway, times(0)).update(any());
+
+    }
+
+    @Test
+    public void givenAValidCommandWithInactiveProduct_whenCallsUpdateProduct_shouldReturnProductId() {
+        // given
+        final var aProduct = Product.newProduct("Celular A", "Celular do tipo BBB", Money.with(1700.0), 10);
+
+        final var expectedId = aProduct.getId();
+        final String expectedName = "Celular";
+        final var expectedDescription = "Celular do tipo ABC";
+        final var expectedPrice = Money.with(1800.03);
+        final var expectedStock = 10;
+        final var expectedStatus = ProductStatus.INACTIVE;
+
+        final var aCommand = UpdateProductCommand.with(
+                expectedId.getValue(),
+                expectedName,
+                expectedDescription,
+                expectedStatus,
+                expectedPrice,
+                expectedStock
+        );
+
+        when(productGateway.findById(eq(expectedId)))
+                .thenReturn(Optional.of(Product.with(aProduct)));
+
+        when(productGateway.update(any()))
+                .thenAnswer(returnsFirstArg());
+
+        Assertions.assertEquals(aProduct.getStatus(), ProductStatus.ACTIVE);
+
+        // when
+        final var actualOutput = useCase.execute(aCommand);
+
+        // then
+        Assertions.assertNotNull(actualOutput);
+
+        Mockito.verify(productGateway, times(1)).findById(eq(expectedId));
+        Mockito.verify(productGateway, times(1)).update(Mockito.argThat(aUpdatedProduct ->
+                Objects.equals(expectedId, aUpdatedProduct.getId())
+                        && Objects.equals(expectedName, aUpdatedProduct.getName())
+                        && Objects.equals(expectedDescription, aUpdatedProduct.getDescription())
+                        && Objects.equals(expectedPrice, aUpdatedProduct.getPrice())
+                        && Objects.equals(expectedStock, aUpdatedProduct.getStock())
+                        && Objects.equals(expectedStatus, aUpdatedProduct.getStatus())
+                        && Objects.equals(aProduct.getCreatedAt(), aUpdatedProduct.getCreatedAt())
+                        && aProduct.getUpdatedAt().isBefore(aUpdatedProduct.getUpdatedAt())
+        ));
+
+    }
 }

@@ -36,7 +36,7 @@ public class Product extends AggregateRoot<ProductID> {
         this.status = aStatus;
         this.createdAt = Objects.requireNonNull(aCreationDate, "'createdAt' should not be null");
         this.updatedAt = Objects.requireNonNull(aUpdateDate, "'updatedAt' should not be null");
-        selfvalidate();
+        selfValidate();
     }
 
     public static Product newProduct(
@@ -123,7 +123,7 @@ public class Product extends AggregateRoot<ProductID> {
         this.price = aPrice;
         this.stock = aStock;
         this.updatedAt = InstantUtils.now();
-        selfvalidate();
+        selfValidate();
         return this;
     }
 
@@ -133,7 +133,7 @@ public class Product extends AggregateRoot<ProductID> {
         return this;
     }
 
-    private void selfvalidate() {
+    private void selfValidate() {
         final var notification = Notification.create();
         validate(notification);
         if(notification.hasError()) {
