@@ -1,4 +1,4 @@
-package com.ecom.catalog.admin.application.update;
+package com.ecom.catalog.admin.application.product.update;
 
 import com.ecom.catalog.admin.application.UseCase;
 

@@ -1,5 +1,7 @@
-package com.ecom.catalog.admin.application.retrieve.list;
+package com.ecom.catalog.admin.application.product.retrieve.list;
 
+import com.ecom.catalog.admin.application.product.retrieve.list.DefaultListProductUseCase;
+import com.ecom.catalog.admin.application.product.retrieve.list.ProductListOutput;
 import com.ecom.catalog.admin.domain.category.CategoryID;
 import com.ecom.catalog.admin.domain.pagination.Pagination;
 import com.ecom.catalog.admin.domain.pagination.SearchQuery;
@@ -17,7 +19,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
@@ -116,5 +117,34 @@ class ListProductUseCaseTest {
         Mockito.verify(productGateway, times(1)).findAll(eq(aQuery));
 
     }
+
+    @Test
+    public void givenAValidQuery_whenCallsListProductAndGatewayThrowsRandomError_shouldReturnException() {
+        // given
+        final var expectedPage = 0;
+        final var expectedPerPage = 10;
+        final var expectedTerms = "A";
+        final var expectedSort = "createAt";
+        final var expectedDirection = "asc";
+
+        final var expectedErrorMessage = "Gateway error";
+
+        when(productGateway.findAll(any()))
+                .thenThrow(new IllegalStateException(expectedErrorMessage));
+
+        final var aQuery =
+                new SearchQuery(expectedPage, expectedPerPage, expectedTerms, expectedSort, expectedDirection);
+
+        // when
+        final var actualOutput = Assertions.assertThrows(
+                IllegalStateException.class, () -> useCase.execute(aQuery)
+        );
+
+        // then
+        Assertions.assertEquals(expectedErrorMessage, actualOutput.getMessage());
+
+        Mockito.verify(productGateway, times(1)).findAll(eq(aQuery));
+    }
+
 
 }

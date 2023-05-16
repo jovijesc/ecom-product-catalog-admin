@@ -1,4 +1,4 @@
-package com.ecom.catalog.admin.application.retrieve.list;
+package com.ecom.catalog.admin.application.product.retrieve.list;
 
 import com.ecom.catalog.admin.domain.product.Money;
 import com.ecom.catalog.admin.domain.product.Product;

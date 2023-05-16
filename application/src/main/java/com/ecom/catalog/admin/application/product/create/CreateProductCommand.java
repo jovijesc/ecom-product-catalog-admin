@@ -1,11 +1,9 @@
-package com.ecom.catalog.admin.application.update;
+package com.ecom.catalog.admin.application.product.create;
 
-import com.ecom.catalog.admin.application.create.CreateProductCommand;
 import com.ecom.catalog.admin.domain.product.Money;
 import com.ecom.catalog.admin.domain.product.ProductStatus;
 
-public record UpdateProductCommand(
-        String id,
+public record CreateProductCommand(
         String name,
         String description,
         ProductStatus status,
@@ -14,19 +12,17 @@ public record UpdateProductCommand(
         String category
 ) {
 
-    public static UpdateProductCommand with(
-            final String anId,
+    public static CreateProductCommand with(
             final String aName,
             final String aDescription,
             final Money aPrice,
             final int aStock,
             final String aCategory
     ) {
-        return new UpdateProductCommand(anId, aName, aDescription, ProductStatus.ACTIVE, aPrice, aStock, aCategory);
+        return new CreateProductCommand(aName, aDescription, ProductStatus.ACTIVE, aPrice, aStock, aCategory);
     }
 
-    public static UpdateProductCommand with(
-            final String anId,
+    public static CreateProductCommand with(
             final String aName,
             final String aDescription,
             final ProductStatus aStatus,
@@ -34,7 +30,6 @@ public record UpdateProductCommand(
             final int aStock,
             final String aCategory
     ) {
-        return new UpdateProductCommand(anId, aName, aDescription, aStatus, aPrice, aStock, aCategory);
+        return new CreateProductCommand(aName, aDescription, aStatus, aPrice, aStock, aCategory);
     }
 }
-

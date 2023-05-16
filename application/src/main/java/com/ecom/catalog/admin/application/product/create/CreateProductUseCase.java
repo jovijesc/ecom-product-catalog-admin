@@ -1,4 +1,4 @@
-package com.ecom.catalog.admin.application.create;
+package com.ecom.catalog.admin.application.product.create;
 
 import com.ecom.catalog.admin.application.UseCase;
 

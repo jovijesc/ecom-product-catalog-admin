@@ -1,6 +1,7 @@
-package com.ecom.catalog.admin.application.update;
+package com.ecom.catalog.admin.application.product.update;
 
-import com.ecom.catalog.admin.application.create.CreateProductCommand;
+import com.ecom.catalog.admin.application.product.update.DefaultUpdateProductUseCase;
+import com.ecom.catalog.admin.application.product.update.UpdateProductCommand;
 import com.ecom.catalog.admin.domain.category.CategoryGateway;
 import com.ecom.catalog.admin.domain.category.CategoryID;
 import com.ecom.catalog.admin.domain.exceptions.NotificationException;

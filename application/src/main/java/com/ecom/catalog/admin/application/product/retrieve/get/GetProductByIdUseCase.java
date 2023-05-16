@@ -1,4 +1,4 @@
-package com.ecom.catalog.admin.application.retrieve.get;
+package com.ecom.catalog.admin.application.product.retrieve.get;
 
 import com.ecom.catalog.admin.application.UseCase;
 

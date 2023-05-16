@@ -1,6 +1,5 @@
-package com.ecom.catalog.admin.application.update;
+package com.ecom.catalog.admin.application.product.update;
 
-import com.ecom.catalog.admin.application.create.CreateProductOutput;
 import com.ecom.catalog.admin.domain.product.Product;
 
 public record UpdateProductOutput(String id) {
