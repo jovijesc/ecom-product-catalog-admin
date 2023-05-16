@@ -30,6 +30,7 @@ public class Notification implements ValidationHandler {
 
     @Override
     public Notification append(Error anError) {
+        if(anError == null) return this;
         this.errors.add(anError);
         return this;
     }

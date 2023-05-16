@@ -20,4 +20,6 @@ public interface CategoryGateway {
 
     List<CategoryID> existsByIds(Iterable<CategoryID> ids);
 
+    boolean existsById(CategoryID id);
+
 }
