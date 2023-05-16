@@ -1,5 +1,6 @@
 package com.ecom.catalog.admin.domain.product;
 
+import com.ecom.catalog.admin.domain.category.CategoryID;
 import com.ecom.catalog.admin.domain.exceptions.NotificationException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -14,10 +15,11 @@ class ProductTest {
         final var expectedPrice = Money.with(1800.03);
         final var expectedStock = 10;
         final var expectedStatus = ProductStatus.ACTIVE;
+        final var expectedCategoryId = CategoryID.from("123");
 
         // when
         final var actualProduct =
-                Product.newProduct(expectedName, expectedDescription, expectedPrice, expectedStock);
+                Product.newProduct(expectedName, expectedDescription, expectedPrice, expectedStock, expectedCategoryId);
 
         // then
         Assertions.assertNotNull(actualProduct);;
@@ -27,6 +29,7 @@ class ProductTest {
         Assertions.assertEquals(expectedPrice, actualProduct.getPrice());
         Assertions.assertEquals(expectedStock, actualProduct.getStock());
         Assertions.assertEquals(expectedStatus, actualProduct.getStatus());
+        Assertions.assertEquals(expectedCategoryId, actualProduct.getCategoryId());
         Assertions.assertNotNull(actualProduct.getCreatedAt());
         Assertions.assertNotNull(actualProduct.getUpdatedAt());
 
@@ -39,12 +42,13 @@ class ProductTest {
         final var expectedDescription = "Celular do tipo ABC";
         final var expectedPrice = Money.with(1800.03);
         final var expectedStock = 10;
+        final var expectedCategoryId = CategoryID.from("123");
         final var expectedErrorCount = 1;
         final var expectedErrorMessage = "'name' should not be null";
 
         // when
         final var actualException = Assertions.assertThrows(NotificationException.class, () ->
-                Product.newProduct(expectedName, expectedDescription, expectedPrice, expectedStock));
+                Product.newProduct(expectedName, expectedDescription, expectedPrice, expectedStock, expectedCategoryId));
 
         // then
         Assertions.assertEquals(expectedErrorCount, actualException.getErrors().size());
@@ -58,12 +62,13 @@ class ProductTest {
         final var expectedDescription = "Celular do tipo ABC";
         final var expectedPrice = Money.with(1800.03);
         final var expectedStock = 10;
+        final var expectedCategoryId = CategoryID.from("123");
         final var expectedErrorCount = 1;
         final var expectedErrorMessage = "'name' should not be empty";
 
         // when
         final var actualException = Assertions.assertThrows(NotificationException.class, () ->
-                Product.newProduct(expectedName, expectedDescription, expectedPrice, expectedStock));
+                Product.newProduct(expectedName, expectedDescription, expectedPrice, expectedStock, expectedCategoryId));
 
         // then
         Assertions.assertEquals(expectedErrorCount, actualException.getErrors().size());
@@ -77,12 +82,13 @@ class ProductTest {
         final String expectedDescription = null;
         final var expectedPrice = Money.with(1800.03);
         final var expectedStock = 10;
+        final var expectedCategoryId = CategoryID.from("123");
         final var expectedErrorCount = 1;
         final var expectedErrorMessage = "'description' should not be null";
 
         // when
         final var actualException = Assertions.assertThrows(NotificationException.class, () ->
-                Product.newProduct(expectedName, expectedDescription, expectedPrice, expectedStock));
+                Product.newProduct(expectedName, expectedDescription, expectedPrice, expectedStock, expectedCategoryId));
 
         // then
         Assertions.assertEquals(expectedErrorCount, actualException.getErrors().size());
@@ -96,12 +102,13 @@ class ProductTest {
         final String expectedDescription = " ";
         final var expectedPrice = Money.with(1800.03);
         final var expectedStock = 10;
+        final var expectedCategoryId = CategoryID.from("123");
         final var expectedErrorCount = 1;
         final var expectedErrorMessage = "'description' should not be empty";
 
         // when
         final var actualException = Assertions.assertThrows(NotificationException.class, () ->
-                Product.newProduct(expectedName, expectedDescription, expectedPrice, expectedStock));
+                Product.newProduct(expectedName, expectedDescription, expectedPrice, expectedStock, expectedCategoryId));
 
         // then
         Assertions.assertEquals(expectedErrorCount, actualException.getErrors().size());
@@ -117,12 +124,13 @@ class ProductTest {
         final var expectedDescription = "Celular do tipo ABC";
         final var expectedPrice = Money.with(1800.03);
         final var expectedStock = 10;
+        final var expectedCategoryId = CategoryID.from("123");
         final var expectedErrorCount = 1;
         final var expectedErrorMessage = "'name' must be between 3 and 255 characters";
 
         // when
         final var actualException = Assertions.assertThrows(NotificationException.class, () ->
-                Product.newProduct(expectedName, expectedDescription, expectedPrice, expectedStock));
+                Product.newProduct(expectedName, expectedDescription, expectedPrice, expectedStock, expectedCategoryId));
 
         // then
         Assertions.assertEquals(expectedErrorCount, actualException.getErrors().size());
@@ -144,12 +152,13 @@ class ProductTest {
                 """;
         final var expectedPrice = Money.with(1800.03);
         final var expectedStock = 10;
+        final var expectedCategoryId = CategoryID.from("123");
         final var expectedErrorCount = 1;
         final var expectedErrorMessage = "'description' must be between 1 and 4000 characters";
 
         // when
         final var actualException = Assertions.assertThrows(NotificationException.class, () ->
-                Product.newProduct(expectedName, expectedDescription, expectedPrice, expectedStock));
+                Product.newProduct(expectedName, expectedDescription, expectedPrice, expectedStock, expectedCategoryId));
 
         // then
         Assertions.assertEquals(expectedErrorCount, actualException.getErrors().size());
@@ -163,12 +172,13 @@ class ProductTest {
         final var expectedDescription = "Celular do tipo ABC";
         final var expectedPrice = Money.with(1800.03);
         final var expectedStock = -1;
+        final var expectedCategoryId = CategoryID.from("123");
         final var expectedErrorCount = 1;
         final var expectedErrorMessage = "'stock' cannot have invalid values";
 
         // when
         final var actualException = Assertions.assertThrows(NotificationException.class, () ->
-                Product.newProduct(expectedName, expectedDescription, expectedPrice, expectedStock));
+                Product.newProduct(expectedName, expectedDescription, expectedPrice, expectedStock, expectedCategoryId));
 
         // then
         Assertions.assertEquals(expectedErrorCount, actualException.getErrors().size());
@@ -182,12 +192,13 @@ class ProductTest {
         final var expectedDescription = "Celular do tipo ABC";
         final Money expectedPrice = null;
         final var expectedStock = 10;
+        final var expectedCategoryId = CategoryID.from("123");
         final var expectedErrorCount = 1;
         final var expectedErrorMessage = "'price' should not be null";
 
         // when
         final var actualException = Assertions.assertThrows(NotificationException.class, () ->
-                Product.newProduct(expectedName, expectedDescription, expectedPrice, expectedStock));
+                Product.newProduct(expectedName, expectedDescription, expectedPrice, expectedStock, expectedCategoryId));
 
         // then
         Assertions.assertEquals(expectedErrorCount, actualException.getErrors().size());
@@ -201,12 +212,33 @@ class ProductTest {
         final var expectedDescription = "Celular do tipo ABC";
         final Money expectedPrice = Money.with(0);
         final var expectedStock = 10;
+        final var expectedCategoryId = CategoryID.from("123");
         final var expectedErrorCount = 1;
         final var expectedErrorMessage = "'price' must be greater than zero";
 
         // when
         final var actualException = Assertions.assertThrows(NotificationException.class, () ->
-                Product.newProduct(expectedName, expectedDescription, expectedPrice, expectedStock));
+                Product.newProduct(expectedName, expectedDescription, expectedPrice, expectedStock, expectedCategoryId));
+
+        // then
+        Assertions.assertEquals(expectedErrorCount, actualException.getErrors().size());
+        Assertions.assertEquals(expectedErrorMessage, actualException.getErrors().get(0).message());
+    }
+
+    @Test
+    public void givenAnInvalidNullCategory_whenCallNewProduct_thenShouldReceiverError() {
+        // given
+        final String expectedName = "Celular";
+        final var expectedDescription = "Celular do tipo ABC";
+        final Money expectedPrice = Money.with(1600.0);
+        final var expectedStock = 10;
+        final CategoryID categoryID = null;
+        final var expectedErrorCount = 1;
+        final var expectedErrorMessage = "'category' should not be null";
+
+        // when
+        final var actualException = Assertions.assertThrows(NotificationException.class, () ->
+                Product.newProduct(expectedName, expectedDescription, expectedPrice, expectedStock, categoryID));
 
         // then
         Assertions.assertEquals(expectedErrorCount, actualException.getErrors().size());
@@ -221,9 +253,10 @@ class ProductTest {
         final var expectedPrice = Money.with(1800.03);
         final var expectedStock = 10;
         final var expectedStatus = ProductStatus.INACTIVE;
+        final var expectedCategoryId = CategoryID.from("123");
 
         final var aProduct =
-                Product.newProduct(expectedName, expectedDescription, expectedPrice, expectedStock);
+                Product.newProduct(expectedName, expectedDescription, expectedPrice, expectedStock, expectedCategoryId);
 
         final var createdAt = aProduct.getCreatedAt();
         final var updatedAt = aProduct.getUpdatedAt();
@@ -239,6 +272,7 @@ class ProductTest {
         Assertions.assertEquals(expectedPrice, actualProduct.getPrice());
         Assertions.assertEquals(expectedStock, actualProduct.getStock());
         Assertions.assertEquals(expectedStatus, actualProduct.getStatus());
+        Assertions.assertEquals(expectedCategoryId, actualProduct.getCategoryId());
         Assertions.assertEquals(createdAt, actualProduct.getCreatedAt());
         Assertions.assertTrue(actualProduct.getUpdatedAt().isAfter(updatedAt));
 
@@ -252,9 +286,10 @@ class ProductTest {
         final var expectedPrice = Money.with(1800.03);
         final var expectedStock = 10;
         final var expectedStatus = ProductStatus.ACTIVE;
+        final var expectedCategoryId = CategoryID.from("123");
 
         final var aProduct =
-                Product.newProduct(expectedName, expectedDescription, ProductStatus.INACTIVE, expectedPrice, expectedStock);
+                Product.newProduct(expectedName, expectedDescription, ProductStatus.INACTIVE, expectedPrice, expectedStock, expectedCategoryId);
 
         final var createdAt = aProduct.getCreatedAt();
         final var updatedAt = aProduct.getUpdatedAt();
@@ -272,6 +307,7 @@ class ProductTest {
         Assertions.assertEquals(expectedPrice, actualProduct.getPrice());
         Assertions.assertEquals(expectedStock, actualProduct.getStock());
         Assertions.assertEquals(expectedStatus, actualProduct.getStatus());
+        Assertions.assertEquals(expectedCategoryId, actualProduct.getCategoryId());
         Assertions.assertEquals(createdAt, actualProduct.getCreatedAt());
         Assertions.assertTrue(actualProduct.getUpdatedAt().isAfter(updatedAt));
 
@@ -285,9 +321,10 @@ class ProductTest {
         final var expectedPrice = Money.with(1800.03);
         final var expectedStock = 10;
         final var expectedStatus = ProductStatus.ACTIVE;
+        final var expectedCategoryId = CategoryID.from("123");
 
         final var actualProduct =
-                Product.newProduct("Celular Novo", "Celular com outra descrição", ProductStatus.INACTIVE, expectedPrice, expectedStock);
+                Product.newProduct("Celular Novo", "Celular com outra descrição", ProductStatus.INACTIVE, expectedPrice, expectedStock, expectedCategoryId);
 
         final var createdAt = actualProduct.getCreatedAt();
         final var updatedAt = actualProduct.getUpdatedAt();
@@ -295,7 +332,7 @@ class ProductTest {
         Assertions.assertEquals(actualProduct.getStatus(), ProductStatus.INACTIVE);
 
         // when
-        actualProduct.update(expectedName, expectedDescription, expectedStatus, expectedPrice, expectedStock);
+        actualProduct.update(expectedName, expectedDescription, expectedStatus, expectedPrice, expectedStock, expectedCategoryId);
 
         // then
         Assertions.assertNotNull(actualProduct);;
@@ -305,6 +342,7 @@ class ProductTest {
         Assertions.assertEquals(expectedPrice, actualProduct.getPrice());
         Assertions.assertEquals(expectedStock, actualProduct.getStock());
         Assertions.assertEquals(expectedStatus, actualProduct.getStatus());
+        Assertions.assertEquals(expectedCategoryId, actualProduct.getCategoryId());
         Assertions.assertEquals(createdAt, actualProduct.getCreatedAt());
         Assertions.assertTrue(actualProduct.getUpdatedAt().isAfter(updatedAt));
     }
@@ -317,9 +355,10 @@ class ProductTest {
         final var expectedPrice = Money.with(1800.03);
         final var expectedStock = 10;
         final var expectedStatus = ProductStatus.INACTIVE;
+        final var expectedCategoryId = CategoryID.from("123");
 
         final var actualProduct =
-                Product.newProduct("Celular Novo", "Celular com outra descrição", ProductStatus.ACTIVE, expectedPrice, expectedStock);
+                Product.newProduct("Celular Novo", "Celular com outra descrição", ProductStatus.ACTIVE, expectedPrice, expectedStock, expectedCategoryId);
 
         final var createdAt = actualProduct.getCreatedAt();
         final var updatedAt = actualProduct.getUpdatedAt();
@@ -327,7 +366,7 @@ class ProductTest {
         Assertions.assertEquals(actualProduct.getStatus(), ProductStatus.ACTIVE);
 
         // when
-        actualProduct.update(expectedName, expectedDescription, expectedStatus, expectedPrice, expectedStock);
+        actualProduct.update(expectedName, expectedDescription, expectedStatus, expectedPrice, expectedStock, expectedCategoryId);
 
         // then
         Assertions.assertNotNull(actualProduct);;
@@ -337,6 +376,7 @@ class ProductTest {
         Assertions.assertEquals(expectedPrice, actualProduct.getPrice());
         Assertions.assertEquals(expectedStock, actualProduct.getStock());
         Assertions.assertEquals(expectedStatus, actualProduct.getStatus());
+        Assertions.assertEquals(expectedCategoryId, actualProduct.getCategoryId());
         Assertions.assertEquals(createdAt, actualProduct.getCreatedAt());
         Assertions.assertTrue(actualProduct.getUpdatedAt().isAfter(updatedAt));
     }
@@ -349,11 +389,12 @@ class ProductTest {
         final var expectedPrice = Money.with(1800.03);
         final var expectedStock = 10;
         final var expectedStatus = ProductStatus.INACTIVE;
+        final var expectedCategoryId = CategoryID.from("123");
         final var expectedErrorCount = 1;
         final var expectedErrorMessage = "'name' should not be null";
 
         final var actualProduct =
-                Product.newProduct("Celular Novo", "Celular com outra descrição", ProductStatus.ACTIVE, expectedPrice, expectedStock);
+                Product.newProduct("Celular Novo", "Celular com outra descrição", ProductStatus.ACTIVE, expectedPrice, expectedStock, expectedCategoryId);
 
         final var createdAt = actualProduct.getCreatedAt();
         final var updatedAt = actualProduct.getUpdatedAt();
@@ -363,7 +404,7 @@ class ProductTest {
 
         // when
         final var actualException = Assertions.assertThrows(NotificationException.class, () ->
-                actualProduct.update(expectedName, expectedDescription, expectedStatus, expectedPrice, expectedStock));
+                actualProduct.update(expectedName, expectedDescription, expectedStatus, expectedPrice, expectedStock, expectedCategoryId));
 
         // then
         Assertions.assertEquals(expectedErrorCount, actualException.getErrors().size());

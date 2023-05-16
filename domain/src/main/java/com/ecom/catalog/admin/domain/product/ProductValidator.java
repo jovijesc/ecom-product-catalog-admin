@@ -30,6 +30,7 @@ public class ProductValidator extends Validator {
         checkDescriptionConstraints();
         checkStockConstraints();
         checkPriceConstraints();
+        checkCategoryConstraints();
     }
 
     private void checkNameConstraints() {
@@ -84,6 +85,13 @@ public class ProductValidator extends Validator {
 
         if(price.getAmount().compareTo(PRICE_MIN_VALUE) < 0) {
             this.validationHandler().append(new Error("'price' must be greater than zero"));
+        }
+    }
+
+    private void checkCategoryConstraints() {
+        final var categoryId = this.product.getCategoryId();
+        if(categoryId == null) {
+            this.validationHandler().append(new Error("'category' should not be null"));
         }
     }
 }

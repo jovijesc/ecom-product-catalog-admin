@@ -1,12 +1,16 @@
 package com.ecom.catalog.admin.domain.product;
 
 import com.ecom.catalog.admin.domain.AggregateRoot;
+import com.ecom.catalog.admin.domain.category.CategoryID;
 import com.ecom.catalog.admin.domain.exceptions.NotificationException;
 import com.ecom.catalog.admin.domain.utils.InstantUtils;
 import com.ecom.catalog.admin.domain.validation.ValidationHandler;
 import com.ecom.catalog.admin.domain.validation.handler.Notification;
 
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
 
 public class Product extends AggregateRoot<ProductID> {
@@ -16,6 +20,8 @@ public class Product extends AggregateRoot<ProductID> {
     private Money price;
     private int stock;
     private ProductStatus status;
+
+    private CategoryID categoryId;
     private Instant createdAt;
     private Instant updatedAt;
 
@@ -26,6 +32,7 @@ public class Product extends AggregateRoot<ProductID> {
             final Money aPrice,
             final int aStock,
             final ProductStatus aStatus,
+            final CategoryID aCategory,
             final Instant aCreationDate,
             final Instant aUpdateDate) {
         super(anId);
@@ -34,6 +41,7 @@ public class Product extends AggregateRoot<ProductID> {
         this.price = aPrice;
         this.stock = aStock;
         this.status = aStatus;
+        this.categoryId = aCategory;
         this.createdAt = Objects.requireNonNull(aCreationDate, "'createdAt' should not be null");
         this.updatedAt = Objects.requireNonNull(aUpdateDate, "'updatedAt' should not be null");
         selfValidate();
@@ -43,11 +51,12 @@ public class Product extends AggregateRoot<ProductID> {
             final String aName,
             final String aDescription,
             final Money aPrice,
-            final int aStock) {
+            final int aStock,
+            final CategoryID aCategoryId) {
         final var id = ProductID.unique();
         final var now = InstantUtils.now();
         final var DEFAULT_STATUS = ProductStatus.ACTIVE;
-        return new Product(id, aName, aDescription, aPrice, aStock, DEFAULT_STATUS, now, now);
+        return new Product(id, aName, aDescription, aPrice, aStock, DEFAULT_STATUS, aCategoryId, now, now);
     }
 
     public static Product newProduct(
@@ -55,10 +64,11 @@ public class Product extends AggregateRoot<ProductID> {
             final String aDescription,
             final ProductStatus aStatus,
             final Money aPrice,
-            final int aStock) {
+            final int aStock,
+            final CategoryID aCategoryId) {
         final var id = ProductID.unique();
         final var now = InstantUtils.now();
-        return new Product(id, aName, aDescription, aPrice, aStock, aStatus, now, now);
+        return new Product(id, aName, aDescription, aPrice, aStock, aStatus, aCategoryId, now, now);
     }
 
     private static Product with(
@@ -68,6 +78,7 @@ public class Product extends AggregateRoot<ProductID> {
             final Money aPrice,
             final int aStock,
             final ProductStatus aStatus,
+            final CategoryID aCategoryId,
             final Instant aCreationDate,
             final Instant aUpdateDate) {
         return new Product(
@@ -77,6 +88,7 @@ public class Product extends AggregateRoot<ProductID> {
                 aPrice,
                 aStock,
                 aStatus,
+                aCategoryId,
                 aCreationDate,
                 aUpdateDate
         );
@@ -90,6 +102,7 @@ public class Product extends AggregateRoot<ProductID> {
                 aProduct.price,
                 aProduct.stock,
                 aProduct.status,
+                aProduct.categoryId,
                 aProduct.createdAt,
                 aProduct.updatedAt
         );
@@ -112,7 +125,8 @@ public class Product extends AggregateRoot<ProductID> {
                           final String aDescription,
                           final ProductStatus aStatus,
                           final Money aPrice,
-                          final int aStock) {
+                          final int aStock,
+                          final CategoryID aCategoryId) {
         if(ProductStatus.ACTIVE.equals(aStatus)) {
             activate();
         } else {
@@ -122,6 +136,7 @@ public class Product extends AggregateRoot<ProductID> {
         this.description = aDescription;
         this.price = aPrice;
         this.stock = aStock;
+        this.categoryId = aCategoryId;
         this.updatedAt = InstantUtils.now();
         selfValidate();
         return this;
@@ -159,6 +174,10 @@ public class Product extends AggregateRoot<ProductID> {
 
     public ProductStatus getStatus() {
         return status;
+    }
+
+    public CategoryID getCategoryId() {
+        return categoryId;
     }
 
     public Instant getCreatedAt() {
