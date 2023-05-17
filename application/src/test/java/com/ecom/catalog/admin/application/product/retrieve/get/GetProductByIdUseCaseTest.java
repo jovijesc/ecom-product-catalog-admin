@@ -1,5 +1,6 @@
 package com.ecom.catalog.admin.application.product.retrieve.get;
 
+import com.ecom.catalog.admin.application.product.UseCaseTest;
 import com.ecom.catalog.admin.application.product.retrieve.get.DefaultGetProductByIdUseCase;
 import com.ecom.catalog.admin.domain.category.CategoryID;
 import com.ecom.catalog.admin.domain.exceptions.NotFoundException;
@@ -12,6 +13,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -19,14 +21,19 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.when;
 
-@ExtendWith(MockitoExtension.class)
-class GetProductByIdUseCaseTest {
+
+class GetProductByIdUseCaseTest extends UseCaseTest {
 
     @InjectMocks
     private DefaultGetProductByIdUseCase useCase;
 
     @Mock
     private ProductGateway productGateway;
+
+    @Override
+    protected List<Object> getMocks() {
+        return List.of(productGateway);
+    }
 
     @Test
     public void givenAValidId_whenCallsGetProduct_shouldReturnProduct() {

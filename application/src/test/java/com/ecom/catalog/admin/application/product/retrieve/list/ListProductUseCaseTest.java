@@ -1,5 +1,6 @@
 package com.ecom.catalog.admin.application.product.retrieve.list;
 
+import com.ecom.catalog.admin.application.product.UseCaseTest;
 import com.ecom.catalog.admin.application.product.retrieve.list.DefaultListProductUseCase;
 import com.ecom.catalog.admin.application.product.retrieve.list.ProductListOutput;
 import com.ecom.catalog.admin.domain.category.CategoryID;
@@ -24,14 +25,19 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.when;
 
-@ExtendWith(MockitoExtension.class)
-class ListProductUseCaseTest {
+
+class ListProductUseCaseTest extends UseCaseTest {
 
     @InjectMocks
     private DefaultListProductUseCase useCase;
 
     @Mock
     private ProductGateway productGateway;
+
+    @Override
+    protected List<Object> getMocks() {
+        return List.of(productGateway);
+    }
 
     @Test
     public void givenAValidQuery_whenCallsListProduct_shouldReturnProducts() {

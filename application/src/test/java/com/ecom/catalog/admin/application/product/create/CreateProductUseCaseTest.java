@@ -1,5 +1,6 @@
 package com.ecom.catalog.admin.application.product.create;
 
+import com.ecom.catalog.admin.application.product.UseCaseTest;
 import com.ecom.catalog.admin.application.product.create.CreateProductCommand;
 import com.ecom.catalog.admin.application.product.create.DefaultCreateProductUseCase;
 import com.ecom.catalog.admin.domain.category.CategoryGateway;
@@ -17,6 +18,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.List;
 import java.util.Objects;
 
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
@@ -25,8 +27,8 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.when;
 
-@ExtendWith(MockitoExtension.class)
-class CreateProductUseCaseTest {
+
+class CreateProductUseCaseTest extends UseCaseTest {
 
     @InjectMocks
     private DefaultCreateProductUseCase useCase;
@@ -36,6 +38,11 @@ class CreateProductUseCaseTest {
 
     @Mock
     private CategoryGateway categoryGateway;
+
+    @Override
+    protected List<Object> getMocks() {
+        return List.of(productGateway, categoryGateway);
+    }
 
     @Test
     public void givenAValidCommand_whenCallsCreateProduct_shouldReturnProductId() {
@@ -251,6 +258,5 @@ class CreateProductUseCaseTest {
         Mockito.verify(categoryGateway, times(1)).existsById(eq(expectedCategoryId));
         Mockito.verify(productGateway, times(1)).create(any());
     }
-
 
 }

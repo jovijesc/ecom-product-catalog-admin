@@ -1,5 +1,6 @@
 package com.ecom.catalog.admin.application.product.update;
 
+import com.ecom.catalog.admin.application.product.UseCaseTest;
 import com.ecom.catalog.admin.application.product.update.DefaultUpdateProductUseCase;
 import com.ecom.catalog.admin.application.product.update.UpdateProductCommand;
 import com.ecom.catalog.admin.domain.category.CategoryGateway;
@@ -17,6 +18,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -26,8 +28,8 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.when;
 
-@ExtendWith(MockitoExtension.class)
-class UpdateProductUseCaseTest {
+
+class UpdateProductUseCaseTest extends UseCaseTest {
 
     @InjectMocks
     private DefaultUpdateProductUseCase useCase;
@@ -36,6 +38,11 @@ class UpdateProductUseCaseTest {
 
     @Mock
     private CategoryGateway categoryGateway;
+
+    @Override
+    protected List<Object> getMocks() {
+        return List.of(productGateway, categoryGateway);
+    }
 
     @Test
     public void givenAValidCommand_whenCallsUpdateProduct_shouldReturnProductId() {

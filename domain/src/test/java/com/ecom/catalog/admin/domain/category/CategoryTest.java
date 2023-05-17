@@ -1,11 +1,12 @@
 package com.ecom.catalog.admin.domain.category;
 
+import com.ecom.catalog.admin.domain.UnitTest;
 import com.ecom.catalog.admin.domain.exceptions.DomainException;
 import com.ecom.catalog.admin.domain.validation.handler.ThrowsValidationHandler;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-class CategoryTest {
+class CategoryTest extends UnitTest {
     @Test
     public void givenAValidParams_whenCallNewCategory_thenInstantiateACategory() {
         final var expectedName = "Celular";

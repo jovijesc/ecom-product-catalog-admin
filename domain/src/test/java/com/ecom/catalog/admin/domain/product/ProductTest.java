@@ -1,11 +1,12 @@
 package com.ecom.catalog.admin.domain.product;
 
+import com.ecom.catalog.admin.domain.UnitTest;
 import com.ecom.catalog.admin.domain.category.CategoryID;
 import com.ecom.catalog.admin.domain.exceptions.NotificationException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-class ProductTest {
+class ProductTest extends UnitTest {
 
     @Test
     public void givenAValidParams_whenCallNewProduct_thenInstantiateProduct() {
