@@ -8,7 +8,11 @@ import com.ecom.catalog.admin.infrastructure.category.persistence.CategoryJpaEnt
 import com.ecom.catalog.admin.infrastructure.category.persistence.CategoryRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.List;
 
 @MySQLGatewayTest
 public class CategoryMySQLGatewayTest {
@@ -237,5 +241,108 @@ public class CategoryMySQLGatewayTest {
         Assertions.assertEquals(expectedPerPage, actualPage.perPage());
         Assertions.assertEquals(expectedTotal, actualPage.total());
         Assertions.assertEquals(expectedTotal, actualPage.items().size());
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+            "elet,0,10,1,1,Eletrônicos",
+            "art,0,10,1,1,Artesanato",
+            "aut,0,10,1,1,Automotivo",
+            "bele,0,10,1,1,Beleza e Perfumaria",
+            "deco,0,10,1,1,Decoração",
+    })
+    public void givenAValidTerm_whenCallFindAll_shouldReturnFiltered(
+            final String expectedTerms,
+            final int expectedPage,
+            final int expectedPerPage,
+            final int expectedItemsCount,
+            final long expectedTotal,
+            final String expectedCategoryName
+    ) {
+        // given
+        mockCategories();
+        final var expectedSort = "name";
+        final var expectedDirection = "asc";
+
+        final var aQuery =
+                new SearchQuery(expectedPage, expectedPerPage, expectedTerms, expectedSort, expectedDirection);
+
+        // when
+        final var actualPage = categoryGateway.findAll(aQuery);
+
+        // then
+        Assertions.assertEquals(expectedPage, actualPage.currentPage());
+        Assertions.assertEquals(expectedPerPage, actualPage.perPage());
+        Assertions.assertEquals(expectedTotal, actualPage.total());
+        Assertions.assertEquals(expectedItemsCount, actualPage.items().size());
+        Assertions.assertEquals(expectedCategoryName, actualPage.items().get(0).getName());
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+            "name,asc,0,10,5,5,Artesanato",
+            "name,desc,0,10,5,5,Eletrônicos",
+            "createdAt,asc,0,10,5,5,Automotivo",
+            "createdAt,desc,0,10,5,5,Decoração",
+    })
+    public void givenAValidSortAndDirection_whenCallFindAll_shouldReturnFiltered(
+            final String expectedSort,
+            final String expectedDirection,
+            final int expectedPage,
+            final int expectedPerPage,
+            final int expectedItemsCount,
+            final long expectedTotal,
+            final String expectedCategoryName
+    ) {
+        // given
+        mockCategories();
+        final var expectedTerms = "";
+
+        final var aQuery =
+                new SearchQuery(expectedPage, expectedPerPage, expectedTerms, expectedSort, expectedDirection);
+
+        // when
+        final var actualPage = categoryGateway.findAll(aQuery);
+
+        // then
+        Assertions.assertEquals(expectedPage, actualPage.currentPage());
+        Assertions.assertEquals(expectedPerPage, actualPage.perPage());
+        Assertions.assertEquals(expectedTotal, actualPage.total());
+        Assertions.assertEquals(expectedItemsCount, actualPage.items().size());
+        Assertions.assertEquals(expectedCategoryName, actualPage.items().get(0).getName());
+    }
+
+    @Test
+    public void givenTwoCategoriesAndOnePersisted_whenCallsExistsByIds_shouldReturnPersistedID() {
+        // given
+        final var aCategory = Category.newCategory("Category 1", "Category description", true);
+
+        final var expectedItems = 1;
+        final var expectedId = aCategory.getId();
+
+        Assertions.assertEquals(0, categoryRepository.count());
+
+        categoryRepository.saveAndFlush(CategoryJpaEntity.from(aCategory));
+
+        // when
+        final var actualCategory = categoryGateway.existsByIds(List.of(CategoryID.from("123"), expectedId));
+
+        // then
+        Assertions.assertEquals(expectedItems, actualCategory.size());
+        Assertions.assertEquals(expectedId.getValue(), actualCategory.get(0).getValue());
+
+    }
+
+
+
+
+    private void mockCategories() {
+        categoryRepository.saveAllAndFlush(List.of(
+                CategoryJpaEntity.from(Category.newCategory("Automotivo", "Automotivo do tipo C",true)),
+                CategoryJpaEntity.from(Category.newCategory("Eletrônicos", "Eletrônicos do tipo A",true)),
+                CategoryJpaEntity.from(Category.newCategory("Artesanato", "Artesanato do tipo B",true)),
+                CategoryJpaEntity.from(Category.newCategory("Beleza e Perfumaria", "Beleza e Perfumaria do tipo D", true)),
+                CategoryJpaEntity.from(Category.newCategory("Decoração", "Decoração do tipo D",true))
+        ));
     }
 }

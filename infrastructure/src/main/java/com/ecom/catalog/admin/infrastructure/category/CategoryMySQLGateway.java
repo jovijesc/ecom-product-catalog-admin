@@ -7,10 +7,16 @@ import com.ecom.catalog.admin.domain.pagination.Pagination;
 import com.ecom.catalog.admin.domain.pagination.SearchQuery;
 import com.ecom.catalog.admin.infrastructure.category.persistence.CategoryJpaEntity;
 import com.ecom.catalog.admin.infrastructure.category.persistence.CategoryRepository;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.StreamSupport;
+
+import static com.ecom.catalog.admin.infrastructure.utils.SpecificationUtils.like;
 
 @Component
 public class CategoryMySQLGateway implements CategoryGateway {
@@ -47,12 +53,38 @@ public class CategoryMySQLGateway implements CategoryGateway {
 
     @Override
     public Pagination<Category> findAll(SearchQuery aQuery) {
-        return null;
+        // Pagination
+        final var page = PageRequest.of(
+                aQuery.page(),
+                aQuery.perPage(),
+                Sort.by(Sort.Direction.fromString(aQuery.direction()), aQuery.sort())
+        );
+
+        // Dynamic Search by the terms(name or description)
+        final var specifications = Optional.ofNullable(aQuery.terms())
+                .filter(str -> !str.isBlank())
+                .map(this::assembleSpecification)
+                .orElse(null);
+
+
+        final var pageResult = this.repository.findAll(Specification.where(specifications), page);
+
+        return new Pagination<>(
+                pageResult.getNumber(),
+                pageResult.getSize(),
+                pageResult.getTotalElements(),
+                pageResult.map(CategoryJpaEntity::toAggregate).toList()
+        );
     }
 
     @Override
-    public List<CategoryID> existsByIds(Iterable<CategoryID> ids) {
-        return null;
+    public List<CategoryID> existsByIds(Iterable<CategoryID> categoryIDs) {
+        final var ids = StreamSupport.stream(categoryIDs.spliterator(), false)
+                .map(CategoryID::getValue)
+                .toList();
+        return this.repository.existsById(ids).stream()
+                .map(CategoryID::from)
+                .toList();
     }
 
     @Override
@@ -62,5 +94,11 @@ public class CategoryMySQLGateway implements CategoryGateway {
 
     private Category save(final Category aCategory) {
         return this.repository.save(CategoryJpaEntity.from(aCategory)).toAggregate();
+    }
+
+    private Specification<CategoryJpaEntity> assembleSpecification(final String str) {
+        final Specification<CategoryJpaEntity> nameLike = like("name", str);
+        final Specification<CategoryJpaEntity> descriptionLike = like("description", str);
+        return nameLike.or(descriptionLike);
     }
 }
