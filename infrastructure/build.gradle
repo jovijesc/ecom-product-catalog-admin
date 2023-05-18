@@ -43,17 +43,21 @@ dependencies {
 
     implementation('mysql:mysql-connector-java:8.0.32')
 
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.9.2'
+    testImplementation 'org.mockito:mockito-junit-jupiter:5.2.0'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.9.2'
+
 
     testImplementation('org.flywaydb:flyway-core')
     testImplementation('org.flywaydb:flyway-mysql')
+
+    testImplementation('org.springframework.boot:spring-boot-starter-test')
 
     testRuntimeOnly('com.h2database:h2')
 }
 
 flyway {
-    url = System.getenv('FLYWAY_DB') ?: 'jdbc:mysql://localhost:3306/adm_videos'
+    url = System.getenv('FLYWAY_DB') ?: 'jdbc:mysql://localhost:3306/adm_products'
     user = System.getenv('FLYWAY_USER') ?: 'root'
     password = System.getenv('FLYWAY_PASS') ?: '123456'
 }
