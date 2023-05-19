@@ -22,6 +22,10 @@ public class Money extends ValueObject implements Comparable<Money> {
         return new Money(amount, currency);
     }
 
+    public static Money from(BigDecimal amount, String currencyCode) {
+        return new Money(amount, Currency.getInstance(currencyCode));
+    }
+
     public static Money with(BigDecimal amount) {
         return new Money(amount, DEFAULT_CURRENCY);
     }

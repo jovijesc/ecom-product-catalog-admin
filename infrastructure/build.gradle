@@ -43,6 +43,9 @@ dependencies {
 
     implementation('mysql:mysql-connector-java:8.0.32')
 
+    implementation('org.javamoney:moneta:1.4.2')
+    implementation("io.hypersistence:hypersistence-utils-hibernate-55:3.3.2")
+
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.9.2'
     testImplementation 'org.mockito:mockito-junit-jupiter:5.2.0'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.9.2'

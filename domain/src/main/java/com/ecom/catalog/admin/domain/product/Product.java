@@ -71,7 +71,7 @@ public class Product extends AggregateRoot<ProductID> {
         return new Product(id, aName, aDescription, aPrice, aStock, aStatus, aCategoryId, now, now);
     }
 
-    private static Product with(
+    public static Product with(
             final ProductID anId,
             final String aName,
             final String aDescription,

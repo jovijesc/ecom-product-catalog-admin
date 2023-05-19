@@ -38,6 +38,10 @@ public class CategoryJpaEntity {
 
     public CategoryJpaEntity(){}
 
+    private CategoryJpaEntity(final String id) {
+        this.id = id;
+    }
+
     private CategoryJpaEntity(
             final String id,
             final String name,
@@ -64,6 +68,12 @@ public class CategoryJpaEntity {
                 aCategory.getCreatedAt(),
                 aCategory.getUpdatedAt(),
                 aCategory.getDeletedAt()
+        );
+    }
+
+    public static CategoryJpaEntity from(final CategoryID aCategoryId) {
+        return new CategoryJpaEntity(
+                aCategoryId.getValue()
         );
     }
 
