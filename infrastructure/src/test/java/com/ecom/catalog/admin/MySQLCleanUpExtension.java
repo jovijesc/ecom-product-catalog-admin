@@ -1,6 +1,7 @@
 package com.ecom.catalog.admin;
 
 import com.ecom.catalog.admin.infrastructure.category.persistence.CategoryRepository;
+import com.ecom.catalog.admin.infrastructure.product.persistence.ProductRepository;
 import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -15,6 +16,7 @@ public class MySQLCleanUpExtension implements BeforeEachCallback {
     public void beforeEach(final ExtensionContext context) throws Exception {
         final var appContext = SpringExtension.getApplicationContext(context);
         cleanUp(List.of(
+                appContext.getBean(ProductRepository.class),
                 appContext.getBean(CategoryRepository.class)
         ));
 

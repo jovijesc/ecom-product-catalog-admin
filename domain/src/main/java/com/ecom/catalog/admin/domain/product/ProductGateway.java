@@ -10,10 +10,6 @@ public interface ProductGateway {
 
     Product create(Product aProduct);
 
-    Product activate(ProductID anId);
-
-    Product inactivate(ProductID anId);
-
     Optional<Product> findById(ProductID anId);
 
     Product update(Product aProduct);

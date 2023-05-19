@@ -117,11 +117,11 @@ public class ProductJpaEntity {
         );
     }
 
-    private static MonetaryAmount fromMoney(final com.ecom.catalog.admin.domain.product.Money aPrice) {
+    public static MonetaryAmount fromMoney(final com.ecom.catalog.admin.domain.product.Money aPrice) {
         return org.javamoney.moneta.Money.of(aPrice.getAmount(), aPrice.getCurrency().getCurrencyCode());
     }
 
-    private static com.ecom.catalog.admin.domain.product.Money fromMonetaryAmount(final MonetaryAmount aPrice) {
+    public static com.ecom.catalog.admin.domain.product.Money fromMonetaryAmount(final MonetaryAmount aPrice) {
         return com.ecom.catalog.admin.domain.product.Money.from(
                 aPrice.getNumber().numberValue(BigDecimal.class),
                 aPrice.getCurrency().getCurrencyCode()
