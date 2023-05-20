@@ -16,7 +16,7 @@ import com.ecom.catalog.admin.domain.validation.handler.Notification;
 import java.util.Objects;
 import java.util.function.Supplier;
 
-public class DefaultUpdateProductUseCase extends UseCase<UpdateProductCommand, UpdateProductOutput> {
+public class DefaultUpdateProductUseCase extends UpdateProductUseCase {
 
     private final ProductGateway productGateway;
     private final CategoryGateway categoryGateway;
