@@ -11,7 +11,7 @@ import java.lang.annotation.*;
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
-@ActiveProfiles("test-integration")
+@ActiveProfiles("test")
 @SpringBootTest(classes = WebServerConfig.class)
 @ExtendWith(MySQLCleanUpExtension.class)
 @Tag("integrationTest")
