@@ -3,22 +3,20 @@ package com.ecom.catalog.admin.application.category.retrieve.list;
 import com.ecom.catalog.admin.IntegrationTest;
 import com.ecom.catalog.admin.domain.category.Category;
 import com.ecom.catalog.admin.domain.category.CategoryGateway;
-import com.ecom.catalog.admin.domain.pagination.Pagination;
 import com.ecom.catalog.admin.domain.pagination.SearchQuery;
 import com.ecom.catalog.admin.infrastructure.category.persistence.CategoryJpaEntity;
 import com.ecom.catalog.admin.infrastructure.category.persistence.CategoryRepository;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 
 import java.util.List;
-import java.util.stream.Stream;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.verify;
 
 @IntegrationTest
 public class ListCategoryUseCaseIT {
@@ -88,7 +86,7 @@ public class ListCategoryUseCaseIT {
 
         doThrow(new IllegalStateException(expectedErrorMessage))
                 .when(categoryGateway).findAll(any());
-        
+
         final var aQuery =
                 new SearchQuery(expectedPage, expectedPerPage, expectedTerms, expectedSort, expectedDirection);
 
