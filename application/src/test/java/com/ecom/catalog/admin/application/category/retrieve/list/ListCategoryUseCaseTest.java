@@ -123,18 +123,8 @@ class ListCategoryUseCaseTest extends UseCaseTest {
         final var expectedTerms = "Elet";
         final var expectedSort = "createdAt";
         final var expectedDirection = "asc";
-        final var expectedTotal = 0;
-
-        final var expectedItems = List.<CategoryListOutput>of();
 
         final var expectedErrorMessage = "Gateway error";
-
-        final var expectedPagination = new Pagination<>(
-                expectedPage,
-                expectedPerPage,
-                expectedTotal,
-                expectedItems
-        );
 
         when(categoryGateway.findAll(any()))
                 .thenThrow(new IllegalStateException(expectedErrorMessage));
