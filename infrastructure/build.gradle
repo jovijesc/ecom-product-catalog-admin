@@ -46,6 +46,15 @@ dependencies {
     implementation('org.javamoney:moneta:1.4.2')
     implementation("io.hypersistence:hypersistence-utils-hibernate-55:3.3.2")
 
+    implementation('com.fasterxml.jackson.module:jackson-module-afterburner')
+
+    implementation('org.yaml:snakeyaml:1.33') {
+        version {
+            strictly("1.33")
+        }
+    }
+
+
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.9.2'
     testImplementation 'org.mockito:mockito-junit-jupiter:5.2.0'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.9.2'
