@@ -1,5 +1,6 @@
 package com.ecom.catalog.admin;
 
+import com.ecom.catalog.admin.infrastructure.configuration.ObjectMapperConfig;
 import org.junit.jupiter.api.Tag;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.Import;
@@ -13,7 +14,7 @@ import java.lang.annotation.*;
 @Inherited
 @ActiveProfiles("test")
 @WebMvcTest
-//@Import(ObjectMapperConfig.class)
+@Import(ObjectMapperConfig.class)
 @Tag("integrationTest")
 public @interface ControllerTest {
 

@@ -3,9 +3,11 @@ package com.ecom.catalog.admin.infrastructure.api.controllers;
 import com.ecom.catalog.admin.application.category.create.CreateCategoryCommand;
 import com.ecom.catalog.admin.application.category.create.CreateCategoryUseCase;
 import com.ecom.catalog.admin.application.category.retrieve.get.GetCategoryByIdUseCase;
+import com.ecom.catalog.admin.application.category.retrieve.list.ListCategoryUseCase;
 import com.ecom.catalog.admin.application.category.update.UpdateCategoryCommand;
 import com.ecom.catalog.admin.application.category.update.UpdateCategoryUseCase;
 import com.ecom.catalog.admin.domain.pagination.Pagination;
+import com.ecom.catalog.admin.domain.pagination.SearchQuery;
 import com.ecom.catalog.admin.infrastructure.api.CategoryAPI;
 import com.ecom.catalog.admin.infrastructure.category.models.CategoryListResponse;
 import com.ecom.catalog.admin.infrastructure.category.models.CategoryResponse;
@@ -26,13 +28,17 @@ public class CategoryController implements CategoryAPI {
 
     private final GetCategoryByIdUseCase getCategoryByIdUseCase;
 
+    private final ListCategoryUseCase listCategoryUseCase;
+
     public CategoryController(
             final CreateCategoryUseCase createCategoryUseCase,
             final UpdateCategoryUseCase updateCategoryUseCase,
-            final GetCategoryByIdUseCase getCategoryByIdUseCase) {
+            final GetCategoryByIdUseCase getCategoryByIdUseCase,
+            final ListCategoryUseCase listCategoryUseCase) {
         this.createCategoryUseCase = Objects.requireNonNull(createCategoryUseCase);
         this.updateCategoryUseCase = Objects.requireNonNull(updateCategoryUseCase);
         this.getCategoryByIdUseCase = Objects.requireNonNull(getCategoryByIdUseCase);
+        this.listCategoryUseCase = Objects.requireNonNull(listCategoryUseCase);
     }
 
     @Override
@@ -48,7 +54,8 @@ public class CategoryController implements CategoryAPI {
 
     @Override
     public Pagination<CategoryListResponse> list(final String search, final int page, final int perPage, final String sort, final String direction) {
-        return null;
+        return this.listCategoryUseCase.execute(new SearchQuery(page, perPage, search, sort, direction))
+                .map(CategoryApiPresenter::present);
     }
 
     @Override
