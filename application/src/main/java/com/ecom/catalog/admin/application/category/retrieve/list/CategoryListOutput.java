@@ -10,7 +10,8 @@ public record CategoryListOutput(CategoryID id,
                                  String name,
                                  String description,
                                  boolean isActive,
-                                 Instant createdAt
+                                 Instant createdAt,
+                                 Instant deletedAt
 ) {
 
     public static CategoryListOutput from(final Category aCategory) {
@@ -19,7 +20,8 @@ public record CategoryListOutput(CategoryID id,
                 aCategory.getName(),
                 aCategory.getDescription(),
                 aCategory.isActive(),
-                aCategory.getCreatedAt()
+                aCategory.getCreatedAt(),
+                aCategory.getDeletedAt()
         );
     }
 }
