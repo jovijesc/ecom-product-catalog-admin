@@ -3,6 +3,7 @@ package com.ecom.catalog.admin.infrastructure.product.models;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.money.MonetaryAmount;
+import java.math.BigDecimal;
 import java.time.Instant;
 
 public record ProductResponse(
@@ -10,7 +11,7 @@ public record ProductResponse(
         @JsonProperty("name") String name,
         @JsonProperty("description") String description,
         @JsonProperty("status") String status,
-        MonetaryAmount price,
+        @JsonProperty("price") MonetaryAmount price,
         @JsonProperty("stock") int stock,
         @JsonProperty("category") String category,
         @JsonProperty("created_at") Instant createdAt,
