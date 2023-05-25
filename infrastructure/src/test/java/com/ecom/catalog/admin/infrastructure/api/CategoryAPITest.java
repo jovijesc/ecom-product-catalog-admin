@@ -1,14 +1,12 @@
 package com.ecom.catalog.admin.infrastructure.api;
 
 import com.ecom.catalog.admin.ControllerTest;
-import com.ecom.catalog.admin.application.category.create.CreateCategoryCommand;
 import com.ecom.catalog.admin.application.category.create.CreateCategoryOutput;
 import com.ecom.catalog.admin.application.category.create.CreateCategoryUseCase;
 import com.ecom.catalog.admin.application.category.retrieve.get.CategoryOutput;
 import com.ecom.catalog.admin.application.category.retrieve.get.GetCategoryByIdUseCase;
 import com.ecom.catalog.admin.application.category.retrieve.list.CategoryListOutput;
 import com.ecom.catalog.admin.application.category.retrieve.list.ListCategoryUseCase;
-import com.ecom.catalog.admin.application.category.update.UpdateCategoryCommand;
 import com.ecom.catalog.admin.application.category.update.UpdateCategoryOutput;
 import com.ecom.catalog.admin.application.category.update.UpdateCategoryUseCase;
 import com.ecom.catalog.admin.domain.category.Category;
@@ -16,28 +14,23 @@ import com.ecom.catalog.admin.domain.category.CategoryID;
 import com.ecom.catalog.admin.domain.exceptions.NotFoundException;
 import com.ecom.catalog.admin.domain.exceptions.NotificationException;
 import com.ecom.catalog.admin.domain.pagination.Pagination;
-import com.ecom.catalog.admin.domain.pagination.SearchQuery;
 import com.ecom.catalog.admin.domain.validation.Error;
 import com.ecom.catalog.admin.domain.validation.handler.Notification;
 import com.ecom.catalog.admin.infrastructure.category.models.CreateCategoryRequest;
 import com.ecom.catalog.admin.infrastructure.category.models.UpdateCategoryRequest;
-import com.ecom.catalog.admin.infrastructure.category.persistence.CategoryJpaEntity;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.util.List;
 import java.util.Objects;
 
 import static org.hamcrest.Matchers.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
