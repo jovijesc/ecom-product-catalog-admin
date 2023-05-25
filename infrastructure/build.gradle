@@ -47,6 +47,7 @@ dependencies {
     implementation("io.hypersistence:hypersistence-utils-hibernate-55:3.3.2")
 
     implementation('com.fasterxml.jackson.module:jackson-module-afterburner')
+    implementation('org.zalando:jackson-datatype-money:1.3.0')
 
     implementation('org.yaml:snakeyaml:1.33') {
         version {

@@ -5,6 +5,7 @@ import com.ecom.catalog.admin.domain.product.Product;
 import com.ecom.catalog.admin.domain.product.ProductID;
 import com.ecom.catalog.admin.domain.product.ProductStatus;
 import com.ecom.catalog.admin.infrastructure.category.persistence.CategoryJpaEntity;
+import com.ecom.catalog.admin.infrastructure.utils.MoneyUtils;
 import io.hypersistence.utils.hibernate.type.money.MonetaryAmountType;
 import org.hibernate.annotations.Columns;
 import org.hibernate.annotations.TypeDef;
@@ -94,7 +95,7 @@ public class ProductJpaEntity {
                 aProduct.getId().getValue(),
                 aProduct.getName(),
                 aProduct.getDescription(),
-                fromMoney(aProduct.getPrice()),
+                MoneyUtils.fromMoney(aProduct.getPrice()),
                 aProduct.getStock(),
                 aProduct.getStatus(),
                 CategoryJpaEntity.from(aProduct.getCategoryId()),
@@ -108,7 +109,7 @@ public class ProductJpaEntity {
                 ProductID.from(getId()),
                 getName(),
                 getDescription(),
-                fromMonetaryAmount(getPrice()),
+                MoneyUtils.fromMonetaryAmount(getPrice()),
                 getStock(),
                 getStatus(),
                 CategoryID.from(getCategory().getId()),
@@ -117,16 +118,6 @@ public class ProductJpaEntity {
         );
     }
 
-    public static MonetaryAmount fromMoney(final com.ecom.catalog.admin.domain.product.Money aPrice) {
-        return org.javamoney.moneta.Money.of(aPrice.getAmount(), aPrice.getCurrency().getCurrencyCode());
-    }
-
-    public static com.ecom.catalog.admin.domain.product.Money fromMonetaryAmount(final MonetaryAmount aPrice) {
-        return com.ecom.catalog.admin.domain.product.Money.from(
-                aPrice.getNumber().numberValue(BigDecimal.class),
-                aPrice.getCurrency().getCurrencyCode()
-        );
-    }
 
     public String getId() {
         return id;

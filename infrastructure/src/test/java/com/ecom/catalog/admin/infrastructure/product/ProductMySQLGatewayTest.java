@@ -13,6 +13,7 @@ import com.ecom.catalog.admin.infrastructure.category.persistence.CategoryJpaEnt
 import com.ecom.catalog.admin.infrastructure.category.persistence.CategoryRepository;
 import com.ecom.catalog.admin.infrastructure.product.persistence.ProductJpaEntity;
 import com.ecom.catalog.admin.infrastructure.product.persistence.ProductRepository;
+import com.ecom.catalog.admin.infrastructure.utils.MoneyUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -75,7 +76,7 @@ public class ProductMySQLGatewayTest {
 
         Assertions.assertEquals(expectedName, persistedProduct.getName());
         Assertions.assertEquals(expectedDescription, persistedProduct.getDescription());
-        Assertions.assertEquals(expectedPrice, ProductJpaEntity.fromMonetaryAmount(persistedProduct.getPrice()));
+        Assertions.assertEquals(expectedPrice, MoneyUtils.fromMonetaryAmount(persistedProduct.getPrice()));
         Assertions.assertEquals(expectedStock, persistedProduct.getStock());
         Assertions.assertEquals(aProduct.getStatus(), persistedProduct.getStatus());
         Assertions.assertEquals(expectedCategory.getId(), persistedProduct.getCategory().toAggregate().getId());
@@ -130,7 +131,7 @@ public class ProductMySQLGatewayTest {
 
         Assertions.assertEquals(expectedName, persistedProduct.getName());
         Assertions.assertEquals(expectedDescription, persistedProduct.getDescription());
-        Assertions.assertEquals(expectedPrice, ProductJpaEntity.fromMonetaryAmount(persistedProduct.getPrice()));
+        Assertions.assertEquals(expectedPrice, MoneyUtils.fromMonetaryAmount(persistedProduct.getPrice()));
         Assertions.assertEquals(expectedStock, persistedProduct.getStock());
         Assertions.assertEquals(expectedStatus, persistedProduct.getStatus());
         Assertions.assertEquals(expectedCategory.getId(), persistedProduct.getCategory().toAggregate().getId());
@@ -185,7 +186,7 @@ public class ProductMySQLGatewayTest {
 
         Assertions.assertEquals(expectedName, persistedProduct.getName());
         Assertions.assertEquals(expectedDescription, persistedProduct.getDescription());
-        Assertions.assertEquals(expectedPrice, ProductJpaEntity.fromMonetaryAmount(persistedProduct.getPrice()));
+        Assertions.assertEquals(expectedPrice, MoneyUtils.fromMonetaryAmount(persistedProduct.getPrice()));
         Assertions.assertEquals(expectedStock, persistedProduct.getStock());
         Assertions.assertEquals(expectedStatus, persistedProduct.getStatus());
         Assertions.assertEquals(expectedCategory.getId(), persistedProduct.getCategory().toAggregate().getId());

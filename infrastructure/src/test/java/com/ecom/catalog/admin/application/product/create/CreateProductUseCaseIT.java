@@ -12,6 +12,7 @@ import com.ecom.catalog.admin.domain.product.ProductGateway;
 import com.ecom.catalog.admin.domain.product.ProductStatus;
 import com.ecom.catalog.admin.infrastructure.product.persistence.ProductJpaEntity;
 import com.ecom.catalog.admin.infrastructure.product.persistence.ProductRepository;
+import com.ecom.catalog.admin.infrastructure.utils.MoneyUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -66,7 +67,7 @@ public class CreateProductUseCaseIT {
 
         Assertions.assertEquals(expectedName, actualProduct.getName());
         Assertions.assertEquals(expectedDescription, actualProduct.getDescription());
-        Assertions.assertEquals(expectedPrice, ProductJpaEntity.fromMonetaryAmount(actualProduct.getPrice()));
+        Assertions.assertEquals(expectedPrice, MoneyUtils.fromMonetaryAmount(actualProduct.getPrice()));
         Assertions.assertEquals(expectedStock, actualProduct.getStock());
         Assertions.assertEquals(expectedStatus, actualProduct.getStatus());
         Assertions.assertEquals(expectedCategory.getId(), actualProduct.getCategory().toAggregate().getId());

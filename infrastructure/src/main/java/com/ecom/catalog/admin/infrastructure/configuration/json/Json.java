@@ -9,6 +9,8 @@ import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.module.afterburner.AfterburnerModule;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
+import org.zalando.jackson.datatype.money.MonetaryAmountFactory;
+import org.zalando.jackson.datatype.money.MoneyModule;
 
 import java.util.concurrent.Callable;
 
@@ -35,7 +37,7 @@ public enum Json {
                     DeserializationFeature.FAIL_ON_NULL_CREATOR_PROPERTIES,
                     SerializationFeature.WRITE_DATES_AS_TIMESTAMPS
             )
-            .modules(new JavaTimeModule(), new Jdk8Module(), afterburnerModule())
+            .modules(new JavaTimeModule(), new Jdk8Module(), afterburnerModule(), moneyModule())
             .propertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE)
             .build();
 
@@ -45,6 +47,10 @@ public enum Json {
         // without this, Java 9+ complains of "Illegal reflective access"
         module.setUseValueClassLoader(false);
         return module;
+    }
+
+    private MoneyModule moneyModule() {
+        return new MoneyModule().withQuotedDecimalNumbers();
     }
 
     private static <T> T invoke(final Callable<T> callable) {
