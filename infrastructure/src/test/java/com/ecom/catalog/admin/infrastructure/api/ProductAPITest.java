@@ -5,11 +5,15 @@ import com.ecom.catalog.admin.application.product.create.CreateProductOutput;
 import com.ecom.catalog.admin.application.product.create.CreateProductUseCase;
 import com.ecom.catalog.admin.application.product.retrieve.get.GetProductByIdUseCase;
 import com.ecom.catalog.admin.application.product.retrieve.get.ProductOutput;
+import com.ecom.catalog.admin.application.product.retrieve.list.ListProductUseCase;
+import com.ecom.catalog.admin.application.product.retrieve.list.ProductListOutput;
 import com.ecom.catalog.admin.application.product.update.UpdateProductOutput;
 import com.ecom.catalog.admin.application.product.update.UpdateProductUseCase;
 import com.ecom.catalog.admin.domain.category.CategoryID;
 import com.ecom.catalog.admin.domain.exceptions.NotFoundException;
 import com.ecom.catalog.admin.domain.exceptions.NotificationException;
+import com.ecom.catalog.admin.domain.pagination.Pagination;
+import com.ecom.catalog.admin.domain.pagination.SearchQuery;
 import com.ecom.catalog.admin.domain.product.Product;
 import com.ecom.catalog.admin.domain.product.ProductID;
 import com.ecom.catalog.admin.domain.product.ProductStatus;
@@ -19,14 +23,18 @@ import com.ecom.catalog.admin.infrastructure.product.models.CreateProductRequest
 import com.ecom.catalog.admin.infrastructure.product.models.UpdateProductRequest;
 import com.ecom.catalog.admin.infrastructure.utils.MoneyUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.hamcrest.Matchers;
 import org.javamoney.moneta.Money;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.List;
 import java.util.Objects;
 
 import static org.hamcrest.Matchers.*;
@@ -54,6 +62,9 @@ public class ProductAPITest {
 
     @MockBean
     private GetProductByIdUseCase getProductByIdUseCase;
+
+    @MockBean
+    private ListProductUseCase listProductUseCase;
 
     @Test
     public void givenAValidCommand_whenCallsCreateProduct_shouldReturnProductId() throws Exception {
@@ -295,6 +306,116 @@ public class ProductAPITest {
                 .andExpect(jsonPath("$.message", equalTo(expectedErrorMessage)));
 
         verify(getProductByIdUseCase).execute(eq(expectedId.getValue()));
+    }
+
+    @Test
+    public void givenAValidQuery_whenCallsListProduct_shouldReturnProducts() throws Exception {
+        // given
+        final var expectedName = "Celular";
+        final var expectedDescription = "Celular do tipo ABC";
+        final var expectedPrice = com.ecom.catalog.admin.domain.product.Money.with(1800.03);
+        final var expectedStock = 10;
+        final var expectedCategoryId = "123";
+        final var aProduct =
+                Product.newProduct(expectedName, expectedDescription, expectedPrice, expectedStock, CategoryID.from(expectedCategoryId));
+
+        final var expectedItems = List.of(ProductListOutput.from(aProduct));
+
+        final var expectedPage = 0;
+        final var expectedPerPage = 10;
+        final var expectedTerms = "e";
+        final var expectedSort = "createdAt";
+        final var expectedDirection = "asc";
+
+        final var expectedItemsCount = 1;
+        final var expectedTotal = 1;
+
+        when(listProductUseCase.execute(any()))
+                .thenReturn(new Pagination<>(expectedPage, expectedPerPage, expectedTotal, expectedItems));
+
+        // when
+        final var aRequest = get("/products")
+                .queryParam("page", String.valueOf(expectedPage))
+                .queryParam("perPage", String.valueOf(expectedPerPage))
+                .queryParam("sort", expectedSort)
+                .queryParam("dir", expectedDirection)
+                .queryParam("search", expectedTerms)
+                .accept(MediaType.APPLICATION_JSON);
+
+        final var response = this.mvc.perform(aRequest);
+
+        // then
+        response.andExpect(status().isOk())
+                .andExpect(jsonPath("$.current_page", equalTo(expectedPage)))
+                .andExpect(jsonPath("$.per_page", equalTo(expectedPerPage)))
+                .andExpect(jsonPath("$.total", equalTo(expectedTotal)))
+                .andExpect(jsonPath("$.items", hasSize(expectedItemsCount)))
+                .andExpect(jsonPath("$.items[0].id", equalTo(aProduct.getId().getValue())))
+                .andExpect(jsonPath("$.items[0].name", equalTo(aProduct.getName())))
+                .andExpect(jsonPath("$.items[0].status", equalTo(aProduct.getStatus().name())))
+                .andExpect(jsonPath("$.items[0].stock", equalTo(aProduct.getStock())))
+                .andExpect(jsonPath("$.items[0].price.amount", equalTo(aProduct.getPrice().getAmount().toString())))
+                .andExpect(jsonPath("$.items[0].price.currency", equalTo(aProduct.getPrice().getCurrency().getCurrencyCode())))
+                .andExpect(jsonPath("$.items[0].created_at", equalTo(aProduct.getCreatedAt().toString())));
+
+        final var captor = ArgumentCaptor.forClass(SearchQuery.class);
+
+        verify(listProductUseCase).execute(captor.capture());
+
+        final var actualQuery = captor.getValue();
+        Assertions.assertEquals(expectedPage, actualQuery.page());
+        Assertions.assertEquals(expectedPerPage, actualQuery.perPage());
+        Assertions.assertEquals(expectedDirection, actualQuery.direction());
+        Assertions.assertEquals(expectedSort, actualQuery.sort());
+        Assertions.assertEquals(expectedTerms, actualQuery.terms());
+    }
+
+    @Test
+    public void givenAValidQuery_whenCallsListProductAndResultIsEmpty_shouldReturnProducts() throws Exception {
+        // given
+        final var expectedItems = List.<ProductListOutput>of();
+
+        final var expectedPage = 0;
+        final var expectedPerPage = 10;
+        final var expectedTerms = "e";
+        final var expectedSort = "createdAt";
+        final var expectedDirection = "asc";
+
+        final var expectedItemsCount = 0;
+        final var expectedTotal = 0;
+
+        when(listProductUseCase.execute(any()))
+                .thenReturn(new Pagination<>(expectedPage, expectedPerPage, expectedTotal, expectedItems));
+
+        // when
+        final var aRequest = get("/products")
+                .queryParam("page", String.valueOf(expectedPage))
+                .queryParam("perPage", String.valueOf(expectedPerPage))
+                .queryParam("sort", expectedSort)
+                .queryParam("dir", expectedDirection)
+                .queryParam("search", expectedTerms)
+                .accept(MediaType.APPLICATION_JSON);
+
+        final var response = this.mvc.perform(aRequest);
+
+        // then
+        response.andExpect(status().isOk())
+                .andExpect(jsonPath("$.current_page", equalTo(expectedPage)))
+                .andExpect(jsonPath("$.per_page", equalTo(expectedPerPage)))
+                .andExpect(jsonPath("$.total", equalTo(expectedTotal)))
+                .andExpect(jsonPath("$.items", hasSize(expectedItemsCount)));
+
+        final var captor = ArgumentCaptor.forClass(SearchQuery.class);
+
+        verify(listProductUseCase).execute(captor.capture());
+
+        final var actualQuery = captor.getValue();
+        Assertions.assertEquals(expectedPage, actualQuery.page());
+        Assertions.assertEquals(expectedPerPage, actualQuery.perPage());
+        Assertions.assertEquals(expectedDirection, actualQuery.direction());
+        Assertions.assertEquals(expectedSort, actualQuery.sort());
+        Assertions.assertEquals(expectedTerms, actualQuery.terms());
+
     }
 
 }

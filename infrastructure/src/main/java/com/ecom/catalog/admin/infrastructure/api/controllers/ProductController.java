@@ -3,9 +3,11 @@ package com.ecom.catalog.admin.infrastructure.api.controllers;
 import com.ecom.catalog.admin.application.product.create.CreateProductCommand;
 import com.ecom.catalog.admin.application.product.create.CreateProductUseCase;
 import com.ecom.catalog.admin.application.product.retrieve.get.GetProductByIdUseCase;
+import com.ecom.catalog.admin.application.product.retrieve.list.ListProductUseCase;
 import com.ecom.catalog.admin.application.product.update.UpdateProductCommand;
 import com.ecom.catalog.admin.application.product.update.UpdateProductUseCase;
 import com.ecom.catalog.admin.domain.pagination.Pagination;
+import com.ecom.catalog.admin.domain.pagination.SearchQuery;
 import com.ecom.catalog.admin.domain.product.ProductStatus;
 import com.ecom.catalog.admin.infrastructure.api.ProductAPI;
 import com.ecom.catalog.admin.infrastructure.product.models.CreateProductRequest;
@@ -29,13 +31,17 @@ public class ProductController implements ProductAPI {
 
     private final GetProductByIdUseCase getProductByIdUseCase;
 
+    private final ListProductUseCase listProductUseCase;
+
     public ProductController(
             final CreateProductUseCase createProductUseCase,
             final UpdateProductUseCase updateProductUseCase,
-            final GetProductByIdUseCase getProductByIdUseCase) {
+            final GetProductByIdUseCase getProductByIdUseCase,
+            final ListProductUseCase listProductUseCase) {
         this.createProductUseCase = Objects.requireNonNull(createProductUseCase);
         this.updateProductUseCase = Objects.requireNonNull(updateProductUseCase);
         this.getProductByIdUseCase = Objects.requireNonNull(getProductByIdUseCase);
+        this.listProductUseCase = Objects.requireNonNull(listProductUseCase);
     }
 
     @Override
@@ -55,8 +61,14 @@ public class ProductController implements ProductAPI {
     }
 
     @Override
-    public Pagination<ProductListResponse> list(String search, int page, int perPage, String sort, String direction) {
-        return null;
+    public Pagination<ProductListResponse> list(
+        final String search,
+        final int page,
+        final int perPage,
+        final String sort,
+        final String direction) {
+            return this.listProductUseCase.execute(new SearchQuery(page, perPage, search, sort, direction))
+                    .map(ProductApiPresenter::present);
     }
 
     @Override
