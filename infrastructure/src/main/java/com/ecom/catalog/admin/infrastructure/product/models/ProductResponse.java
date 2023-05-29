@@ -3,7 +3,6 @@ package com.ecom.catalog.admin.infrastructure.product.models;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.money.MonetaryAmount;
-import java.math.BigDecimal;
 import java.time.Instant;
 
 public record ProductResponse(
