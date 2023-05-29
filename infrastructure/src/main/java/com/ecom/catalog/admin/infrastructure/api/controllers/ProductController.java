@@ -2,6 +2,8 @@ package com.ecom.catalog.admin.infrastructure.api.controllers;
 
 import com.ecom.catalog.admin.application.product.create.CreateProductCommand;
 import com.ecom.catalog.admin.application.product.create.CreateProductUseCase;
+import com.ecom.catalog.admin.application.product.update.UpdateProductCommand;
+import com.ecom.catalog.admin.application.product.update.UpdateProductUseCase;
 import com.ecom.catalog.admin.domain.pagination.Pagination;
 import com.ecom.catalog.admin.domain.product.ProductStatus;
 import com.ecom.catalog.admin.infrastructure.api.ProductAPI;
@@ -21,8 +23,13 @@ public class ProductController implements ProductAPI {
 
     private final CreateProductUseCase createProductUseCase;
 
-    public ProductController(final CreateProductUseCase createProductUseCase) {
+    private final UpdateProductUseCase updateProductUseCase;
+
+    public ProductController(
+            final CreateProductUseCase createProductUseCase,
+            final UpdateProductUseCase updateProductUseCase) {
         this.createProductUseCase = Objects.requireNonNull(createProductUseCase);
+        this.updateProductUseCase = Objects.requireNonNull(updateProductUseCase);
     }
 
     @Override
@@ -53,6 +60,16 @@ public class ProductController implements ProductAPI {
 
     @Override
     public ResponseEntity<?> updateById(String id, UpdateProductRequest input) {
-        return null;
+        final var aCommand = UpdateProductCommand.with(
+                id,
+                input.name(),
+                input.description(),
+                ProductStatus.of(input.status()).orElse(null),
+                MoneyUtils.fromMonetaryAmount(input.price()),
+                input.stock(),
+                input.category()
+        );
+        final var output = this.updateProductUseCase.execute(aCommand);
+        return ResponseEntity.ok(output);
     }
 }
