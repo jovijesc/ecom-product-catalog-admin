@@ -2,14 +2,19 @@ package com.ecom.catalog.admin.e2e;
 
 import com.ecom.catalog.admin.domain.Identifier;
 import com.ecom.catalog.admin.domain.category.CategoryID;
+import com.ecom.catalog.admin.domain.product.ProductID;
 import com.ecom.catalog.admin.infrastructure.category.models.CategoryResponse;
 import com.ecom.catalog.admin.infrastructure.category.models.CreateCategoryRequest;
 import com.ecom.catalog.admin.infrastructure.category.models.UpdateCategoryRequest;
 import com.ecom.catalog.admin.infrastructure.configuration.json.Json;
+import com.ecom.catalog.admin.infrastructure.product.models.CreateProductRequest;
+import com.ecom.catalog.admin.infrastructure.product.models.ProductResponse;
+import com.ecom.catalog.admin.infrastructure.product.models.UpdateProductRequest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+
+import javax.money.MonetaryAmount;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -53,6 +58,48 @@ public interface MockDsl {
             final String directions) throws Exception {
 
         return this.list("/categories", page, perPage, search, sort, directions);
+    }
+
+    /**
+     * Product
+     */
+    default ProductID givenAProduct(
+            final String aName,
+            final String aDescription,
+            final String aStatus,
+            final MonetaryAmount aPrice,
+            final int aStock,
+            final String aCategory
+    ) throws Exception {
+        final var aRequestBody = new CreateProductRequest(aName, aDescription, aStatus, aPrice, aStock, aCategory);
+        final var actualId = this.given("/products", aRequestBody);
+        return ProductID.from(actualId);
+    }
+
+    default ProductResponse retrieveAProduct(final ProductID anId) throws Exception {
+        return this.retrieve("/products/", anId, ProductResponse.class);
+    }
+
+    default ResultActions listProducts(final int page, final int perPage) throws Exception {
+        return listProducts(page, perPage, "", "", "");
+    }
+
+    default ResultActions listProducts(final int page, final int perPage, final String search) throws Exception {
+        return listProducts(page, perPage, search, "", "");
+    }
+
+    default ResultActions updateAProduct(final ProductID anId, final UpdateProductRequest aRequest) throws Exception {
+        return this.update("/products/", anId, aRequest);
+    }
+
+    default ResultActions listProducts(
+            final int page,
+            final int perPage,
+            final String search,
+            final String sort,
+            final String directions) throws Exception {
+
+        return this.list("/products", page, perPage, search, sort, directions);
     }
 
     private String given(final String url, final Object body) throws Exception {
