@@ -9,7 +9,8 @@ public record CreateProductCommand(
         ProductStatus status,
         Money price,
         int stock,
-        String category
+        String category,
+        String store
 ) {
 
     public static CreateProductCommand with(
@@ -17,9 +18,10 @@ public record CreateProductCommand(
             final String aDescription,
             final Money aPrice,
             final int aStock,
-            final String aCategory
+            final String aCategory,
+            final String aStore
     ) {
-        return new CreateProductCommand(aName, aDescription, ProductStatus.ACTIVE, aPrice, aStock, aCategory);
+        return new CreateProductCommand(aName, aDescription, ProductStatus.ACTIVE, aPrice, aStock, aCategory, aStore);
     }
 
     public static CreateProductCommand with(
@@ -28,8 +30,9 @@ public record CreateProductCommand(
             final ProductStatus aStatus,
             final Money aPrice,
             final int aStock,
-            final String aCategory
+            final String aCategory,
+            final String aStore
     ) {
-        return new CreateProductCommand(aName, aDescription, aStatus, aPrice, aStock, aCategory);
+        return new CreateProductCommand(aName, aDescription, aStatus, aPrice, aStock, aCategory, aStore);
     }
 }

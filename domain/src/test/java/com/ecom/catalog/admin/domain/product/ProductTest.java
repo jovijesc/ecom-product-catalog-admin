@@ -4,6 +4,7 @@ import com.ecom.catalog.admin.domain.UnitTest;
 import com.ecom.catalog.admin.domain.category.CategoryID;
 import com.ecom.catalog.admin.domain.exceptions.NotificationException;
 import com.ecom.catalog.admin.domain.utils.IdUtils;
+import com.ecom.catalog.admin.domain.validation.Error;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -250,6 +251,27 @@ class ProductTest extends UnitTest {
         final CategoryID categoryID = null;
         final var expectedErrorCount = 1;
         final var expectedErrorMessage = "'category' should not be null";
+
+        // when
+        final var actualException = Assertions.assertThrows(NotificationException.class, () ->
+                Product.newProduct(expectedName, expectedDescription, expectedPrice, expectedStock, categoryID, expectedStore));
+
+        // then
+        Assertions.assertEquals(expectedErrorCount, actualException.getErrors().size());
+        Assertions.assertEquals(expectedErrorMessage, actualException.getErrors().get(0).message());
+    }
+
+    @Test
+    public void givenAnInvalidNullStore_whenCallNewProduct_thenShouldReceiverError() {
+        // given
+        final String expectedName = "Celular";
+        final Store expectedStore = null;
+        final var expectedDescription = "Celular do tipo ABC";
+        final Money expectedPrice = Money.with(1600.0);
+        final var expectedStock = 10;
+        final CategoryID categoryID = CategoryID.from("123");;
+        final var expectedErrorCount = 1;
+        final var expectedErrorMessage = "'store' should not be null";
 
         // when
         final var actualException = Assertions.assertThrows(NotificationException.class, () ->

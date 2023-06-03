@@ -9,12 +9,16 @@ public class Store extends ValueObject {
     private final String name;
 
     private Store(final String id, final String name) {
-        this.id = Objects.requireNonNull(id);
-        this.name = Objects.requireNonNull(name);
+        this.id = Objects.requireNonNull(id, "'id' should not be null");
+        this.name = name;
     }
 
     public static Store with(final String id, final String name) {
         return new Store(id, name);
+    }
+
+    public static Store from(final String id) {
+        return with(id, null);
     }
 
     public String getId() {

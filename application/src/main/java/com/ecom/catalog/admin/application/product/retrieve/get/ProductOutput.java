@@ -15,7 +15,8 @@ public record ProductOutput(
         int stock,
         String category,
         Instant createdAt,
-        Instant updatedAt
+        Instant updatedAt,
+        String store
 ) {
 
     public static ProductOutput from(final Product aProduct) {
@@ -28,7 +29,8 @@ public record ProductOutput(
                 aProduct.getStock(),
                 aProduct.getCategoryId().getValue(),
                 aProduct.getCreatedAt(),
-                aProduct.getUpdatedAt()
+                aProduct.getUpdatedAt(),
+                aProduct.getStore().getId()
         );
     }
 }

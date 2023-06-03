@@ -5,6 +5,7 @@ import com.ecom.catalog.admin.application.product.retrieve.get.DefaultGetProduct
 import com.ecom.catalog.admin.domain.category.CategoryID;
 import com.ecom.catalog.admin.domain.exceptions.NotFoundException;
 import com.ecom.catalog.admin.domain.product.*;
+import com.ecom.catalog.admin.domain.utils.IdUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -39,6 +40,7 @@ class GetProductByIdUseCaseTest extends UseCaseTest {
     public void givenAValidId_whenCallsGetProduct_shouldReturnProduct() {
         // given
         final var expectedName = "Celular";
+        final var expectedStore = Store.with(IdUtils.uuid(), "Minha Loja");
         final var expectedDescription = "Celular do tipo ABC";
         final var expectedPrice = Money.with(1800.03);
         final var expectedStock = 10;
@@ -46,7 +48,7 @@ class GetProductByIdUseCaseTest extends UseCaseTest {
         final var expectedCategoryId = CategoryID.from("123");
 
         final var aProduct =
-                Product.newProduct(expectedName, expectedDescription, expectedStatus, expectedPrice, expectedStock, expectedCategoryId);
+                Product.newProduct(expectedName, expectedDescription, expectedStatus, expectedPrice, expectedStock, expectedCategoryId, expectedStore);
 
         final var expectedId = aProduct.getId();
 
@@ -65,6 +67,7 @@ class GetProductByIdUseCaseTest extends UseCaseTest {
         Assertions.assertEquals(expectedStock, actualProduct.stock());
         Assertions.assertEquals(expectedStatus, actualProduct.status());
         Assertions.assertEquals(expectedCategoryId.getValue(), actualProduct.category());
+        Assertions.assertEquals(expectedStore.getId(), actualProduct.store());
         Assertions.assertEquals(aProduct.getCreatedAt(), actualProduct.createdAt());
         Assertions.assertEquals(aProduct.getUpdatedAt(), actualProduct.updatedAt());
 

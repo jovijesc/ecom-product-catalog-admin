@@ -100,11 +100,6 @@ public class ProductValidator extends Validator {
         final var store = this.product.getStore();
         if( store == null) {
             this.validationHandler().append(new Error("'store' should not be null"));
-            return;
-        }
-
-        if( store.getId() == null) {
-            this.validationHandler().append(new Error("'store.id' should not be null"));
         }
     }
 

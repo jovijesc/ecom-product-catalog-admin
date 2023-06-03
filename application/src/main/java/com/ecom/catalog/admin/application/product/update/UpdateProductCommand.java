@@ -10,7 +10,8 @@ public record UpdateProductCommand(
         ProductStatus status,
         Money price,
         int stock,
-        String category
+        String category,
+        String store
 ) {
 
     public static UpdateProductCommand with(
@@ -19,9 +20,10 @@ public record UpdateProductCommand(
             final String aDescription,
             final Money aPrice,
             final int aStock,
-            final String aCategory
+            final String aCategory,
+            final String aStore
     ) {
-        return new UpdateProductCommand(anId, aName, aDescription, ProductStatus.ACTIVE, aPrice, aStock, aCategory);
+        return new UpdateProductCommand(anId, aName, aDescription, ProductStatus.ACTIVE, aPrice, aStock, aCategory, aStore);
     }
 
     public static UpdateProductCommand with(
@@ -31,9 +33,10 @@ public record UpdateProductCommand(
             final ProductStatus aStatus,
             final Money aPrice,
             final int aStock,
-            final String aCategory
+            final String aCategory,
+            final String aStore
     ) {
-        return new UpdateProductCommand(anId, aName, aDescription, aStatus, aPrice, aStock, aCategory);
+        return new UpdateProductCommand(anId, aName, aDescription, aStatus, aPrice, aStock, aCategory, aStore);
     }
 }
 

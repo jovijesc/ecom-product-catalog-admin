@@ -6,10 +6,8 @@ import com.ecom.catalog.admin.application.product.update.UpdateProductCommand;
 import com.ecom.catalog.admin.domain.category.CategoryGateway;
 import com.ecom.catalog.admin.domain.category.CategoryID;
 import com.ecom.catalog.admin.domain.exceptions.NotificationException;
-import com.ecom.catalog.admin.domain.product.Money;
-import com.ecom.catalog.admin.domain.product.Product;
-import com.ecom.catalog.admin.domain.product.ProductGateway;
-import com.ecom.catalog.admin.domain.product.ProductStatus;
+import com.ecom.catalog.admin.domain.product.*;
+import com.ecom.catalog.admin.domain.utils.IdUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -39,16 +37,20 @@ class UpdateProductUseCaseTest extends UseCaseTest {
     @Mock
     private CategoryGateway categoryGateway;
 
+    @Mock
+    private StoreGateway storeGateway;
+
     @Override
     protected List<Object> getMocks() {
-        return List.of(productGateway, categoryGateway);
+        return List.of(productGateway, categoryGateway, storeGateway);
     }
 
     @Test
     public void givenAValidCommand_whenCallsUpdateProduct_shouldReturnProductId() {
         // given
+        final var expectedStore = Store.with(IdUtils.uuid(), "Minha Loja");
         final var aProduct =
-                Product.newProduct("Celular A", "Descrição A", ProductStatus.ACTIVE, Money.with(10.0), 10, CategoryID.from("123"));
+                Product.newProduct("Celular A", "Descrição A", ProductStatus.ACTIVE, Money.with(10.0), 10, CategoryID.from("123"), expectedStore);
 
         final var expectedName = "Celular";
         final var expectedDescription = "Celular do tipo ABC";
@@ -65,13 +67,17 @@ class UpdateProductUseCaseTest extends UseCaseTest {
                 expectedStatus,
                 expectedPrice,
                 expectedStock,
-                expectedCategoryId.getValue()
+                expectedCategoryId.getValue(),
+                expectedStore.getId()
         );
 
         when(productGateway.findById(eq(expectedId)))
                 .thenReturn(Optional.of(Product.with(aProduct)));
 
         when(categoryGateway.existsById(eq(expectedCategoryId)))
+                .thenReturn(true);
+
+        when(storeGateway.existsById(eq(expectedStore.getId())))
                 .thenReturn(true);
 
         when(productGateway.update(any()))
@@ -86,6 +92,7 @@ class UpdateProductUseCaseTest extends UseCaseTest {
 
         Mockito.verify(productGateway, times(1)).findById(eq(expectedId));
         Mockito.verify(categoryGateway, times(1)).existsById(eq(expectedCategoryId));
+        Mockito.verify(storeGateway, times(1)).existsById(eq(expectedStore.getId()));
         Mockito.verify(productGateway).update(Mockito.argThat(aUpdatedProduct ->
                         Objects.equals(expectedId, aUpdatedProduct.getId())
                         && Objects.equals(expectedName, aUpdatedProduct.getName())
@@ -94,6 +101,7 @@ class UpdateProductUseCaseTest extends UseCaseTest {
                         && Objects.equals(expectedStock, aUpdatedProduct.getStock())
                         && Objects.equals(expectedStatus, aUpdatedProduct.getStatus())
                         && Objects.equals(expectedCategoryId, aUpdatedProduct.getCategoryId())
+                        && Objects.equals(expectedStore, aUpdatedProduct.getStore())
                         && Objects.equals(aProduct.getCreatedAt(), aUpdatedProduct.getCreatedAt())
                         && aProduct.getUpdatedAt().isBefore(aUpdatedProduct.getUpdatedAt())
         ));
@@ -103,7 +111,8 @@ class UpdateProductUseCaseTest extends UseCaseTest {
     public void givenAnInvalidNullName_whenCallsUpdateProduct_shouldReturnNotificationException() {
         // given
 
-        final var aProduct = Product.newProduct("Celular A", "Celular do tipo BBB", Money.with(1700.0), 10, CategoryID.from("123"));
+        final var expectedStore = Store.with(IdUtils.uuid(), "Minha Loja");
+        final var aProduct = Product.newProduct("Celular A", "Celular do tipo BBB", Money.with(1700.0), 10, CategoryID.from("123"), expectedStore);
 
         final var expectedId = aProduct.getId();
         final String expectedName = null;
@@ -123,13 +132,17 @@ class UpdateProductUseCaseTest extends UseCaseTest {
                 expectedStatus,
                 expectedPrice,
                 expectedStock,
-                expectedCategoryId.getValue()
+                expectedCategoryId.getValue(),
+                expectedStore.getId()
         );
 
         when(productGateway.findById(eq(expectedId)))
                 .thenReturn(Optional.of(Product.with(aProduct)));
 
         when(categoryGateway.existsById(eq(expectedCategoryId)))
+                .thenReturn(true);
+
+        when(storeGateway.existsById(eq(expectedStore.getId())))
                 .thenReturn(true);
 
         // when
@@ -142,6 +155,7 @@ class UpdateProductUseCaseTest extends UseCaseTest {
 
         Mockito.verify(productGateway, times(1)).findById(eq(expectedId));
         Mockito.verify(categoryGateway, times(1)).existsById(eq(expectedCategoryId));
+        Mockito.verify(storeGateway, times(1)).existsById(eq(expectedStore.getId()));
         Mockito.verify(productGateway, times(0)).update(any());
 
     }
@@ -149,7 +163,8 @@ class UpdateProductUseCaseTest extends UseCaseTest {
     @Test
     public void givenAnInvalidStock_whenCallsUpdateProduct_shouldReturnNotificationException() {
         // given
-        final var aProduct = Product.newProduct("Celular A", "Celular do tipo BBB", Money.with(1700.0), 10, CategoryID.from("123"));
+        final var expectedStore = Store.with(IdUtils.uuid(), "Minha Loja");
+        final var aProduct = Product.newProduct("Celular A", "Celular do tipo BBB", Money.with(1700.0), 10, CategoryID.from("123"),expectedStore);
 
         final var expectedId = aProduct.getId();
         final var expectedName = "Celular";
@@ -169,13 +184,17 @@ class UpdateProductUseCaseTest extends UseCaseTest {
                 expectedStatus,
                 expectedPrice,
                 expectedStock,
-                expectedCategoryId.getValue()
+                expectedCategoryId.getValue(),
+                expectedStore.getId()
         );
 
         when(productGateway.findById(eq(expectedId)))
                 .thenReturn(Optional.of(Product.with(aProduct)));
 
         when(categoryGateway.existsById(eq(expectedCategoryId)))
+                .thenReturn(true);
+
+        when(storeGateway.existsById(eq(expectedStore.getId())))
                 .thenReturn(true);
 
         // when
@@ -188,6 +207,7 @@ class UpdateProductUseCaseTest extends UseCaseTest {
 
         Mockito.verify(productGateway, times(1)).findById(eq(expectedId));
         Mockito.verify(categoryGateway, times(1)).existsById(eq(expectedCategoryId));
+        Mockito.verify(storeGateway, times(1)).existsById(eq(expectedStore.getId()));
         Mockito.verify(productGateway, times(0)).update(any());
 
     }
@@ -195,7 +215,8 @@ class UpdateProductUseCaseTest extends UseCaseTest {
     @Test
     public void givenANullCategory_whenCallsUpdateProduct_shouldReturnNotificationException() {
         // given
-        final var aProduct = Product.newProduct("Celular A", "Celular do tipo BBB", Money.with(1700.0), 10, CategoryID.from("123"));
+        final var expectedStore = Store.with(IdUtils.uuid(), "Minha Loja");
+        final var aProduct = Product.newProduct("Celular A", "Celular do tipo BBB", Money.with(1700.0), 10, CategoryID.from("123"), expectedStore);
 
         final var expectedId = aProduct.getId();
         final var expectedName = "Celular";
@@ -203,7 +224,6 @@ class UpdateProductUseCaseTest extends UseCaseTest {
         final var expectedPrice = Money.with(1800.03);
         final var expectedStock = 10;
         final var expectedStatus = ProductStatus.ACTIVE;
-        final CategoryID expectedCategoryId = null;
 
         final var expectedErrorCount = 1;
         final var expectedErrorMessage = "'category' should not be null";
@@ -215,11 +235,15 @@ class UpdateProductUseCaseTest extends UseCaseTest {
                 expectedStatus,
                 expectedPrice,
                 expectedStock,
-                null
+                null,
+                expectedStore.getId()
         );
 
         when(productGateway.findById(eq(expectedId)))
                 .thenReturn(Optional.of(Product.with(aProduct)));
+
+        when(storeGateway.existsById(eq(expectedStore.getId())))
+                .thenReturn(true);
 
         // when
         final var actualException = Assertions.assertThrows(NotificationException.class, () -> useCase.execute(aCommand));
@@ -230,7 +254,6 @@ class UpdateProductUseCaseTest extends UseCaseTest {
         Assertions.assertEquals(expectedErrorMessage, actualException.getErrors().get(0).message());
 
         Mockito.verify(productGateway, times(1)).findById(eq(expectedId));
-        Mockito.verify(categoryGateway, times(0)).existsById(eq(expectedCategoryId));
         Mockito.verify(productGateway, times(0)).update(any());
 
     }
@@ -238,7 +261,8 @@ class UpdateProductUseCaseTest extends UseCaseTest {
     @Test
     public void givenAnInvalidCategory_whenCallsUpdateProduct_shouldReturnNotificationException() {
         // given
-        final var aProduct = Product.newProduct("Celular A", "Celular do tipo BBB", Money.with(1700.0), 10, CategoryID.from("123"));
+        final var expectedStore = Store.with(IdUtils.uuid(), "Minha Loja");
+        final var aProduct = Product.newProduct("Celular A", "Celular do tipo BBB", Money.with(1700.0), 10, CategoryID.from("123"),expectedStore);
 
         final var expectedId = aProduct.getId();
         final var expectedName = "Celular";
@@ -258,7 +282,8 @@ class UpdateProductUseCaseTest extends UseCaseTest {
                 expectedStatus,
                 expectedPrice,
                 expectedStock,
-                expectedCategoryId.getValue()
+                expectedCategoryId.getValue(),
+                expectedStore.getId()
         );
 
         when(productGateway.findById(eq(expectedId)))
@@ -266,6 +291,9 @@ class UpdateProductUseCaseTest extends UseCaseTest {
 
         when(categoryGateway.existsById(eq(expectedCategoryId)))
                 .thenReturn(false);
+
+        when(storeGateway.existsById(eq(expectedStore.getId())))
+                .thenReturn(true);
 
         // when
         final var actualException = Assertions.assertThrows(NotificationException.class, () -> useCase.execute(aCommand));
@@ -277,6 +305,7 @@ class UpdateProductUseCaseTest extends UseCaseTest {
 
         Mockito.verify(productGateway, times(1)).findById(eq(expectedId));
         Mockito.verify(categoryGateway, times(1)).existsById(eq(expectedCategoryId));
+        Mockito.verify(storeGateway, times(1)).existsById(eq(expectedStore.getId()));
         Mockito.verify(productGateway, times(0)).update(any());
 
     }
@@ -284,7 +313,8 @@ class UpdateProductUseCaseTest extends UseCaseTest {
     @Test
     public void givenAValidCommandWithInactiveProduct_whenCallsUpdateProduct_shouldReturnProductId() {
         // given
-        final var aProduct = Product.newProduct("Celular A", "Celular do tipo BBB", Money.with(1700.0), 10, CategoryID.from("123"));
+        final var expectedStore = Store.with(IdUtils.uuid(), "Minha Loja");
+        final var aProduct = Product.newProduct("Celular A", "Celular do tipo BBB", Money.with(1700.0), 10, CategoryID.from("123"), expectedStore);
 
         final var expectedId = aProduct.getId();
         final String expectedName = "Celular";
@@ -301,13 +331,17 @@ class UpdateProductUseCaseTest extends UseCaseTest {
                 expectedStatus,
                 expectedPrice,
                 expectedStock,
-                expectedCategoryId.getValue()
+                expectedCategoryId.getValue(),
+                expectedStore.getId()
         );
 
         when(productGateway.findById(eq(expectedId)))
                 .thenReturn(Optional.of(Product.with(aProduct)));
 
         when(categoryGateway.existsById(eq(expectedCategoryId)))
+                .thenReturn(true);
+
+        when(storeGateway.existsById(eq(expectedStore.getId())))
                 .thenReturn(true);
 
         when(productGateway.update(any()))
@@ -323,6 +357,7 @@ class UpdateProductUseCaseTest extends UseCaseTest {
 
         Mockito.verify(productGateway, times(1)).findById(eq(expectedId));
         Mockito.verify(categoryGateway, times(1)).existsById(eq(expectedCategoryId));
+        Mockito.verify(storeGateway, times(1)).existsById(eq(expectedStore.getId()));
         Mockito.verify(productGateway, times(1)).update(Mockito.argThat(aUpdatedProduct ->
                 Objects.equals(expectedId, aUpdatedProduct.getId())
                         && Objects.equals(expectedName, aUpdatedProduct.getName())
@@ -331,9 +366,108 @@ class UpdateProductUseCaseTest extends UseCaseTest {
                         && Objects.equals(expectedStock, aUpdatedProduct.getStock())
                         && Objects.equals(expectedStatus, aUpdatedProduct.getStatus())
                         && Objects.equals(expectedCategoryId, aUpdatedProduct.getCategoryId())
+                        && Objects.equals(expectedStore, aUpdatedProduct.getStore())
                         && Objects.equals(aProduct.getCreatedAt(), aUpdatedProduct.getCreatedAt())
                         && aProduct.getUpdatedAt().isBefore(aUpdatedProduct.getUpdatedAt())
         ));
+
+    }
+
+    @Test
+    public void givenANullStore_whenCallsUpdateProduct_shouldReturnNotificationException() {
+        // given
+        final var expectedCategoryId = CategoryID.from("123");
+        final var aProduct = Product.newProduct("Celular A", "Celular do tipo BBB", Money.with(1700.0), 10, expectedCategoryId,  Store.with(IdUtils.uuid(), "Minha Loja"));
+
+        final var expectedId = aProduct.getId();
+        final var expectedName = "Celular";
+        final var expectedDescription = "Celular do tipo ABC";
+        final var expectedPrice = Money.with(1800.03);
+        final var expectedStock = 10;
+        final var expectedStatus = ProductStatus.ACTIVE;
+
+        final var expectedErrorCount = 1;
+        final var expectedErrorMessage = "'store' should not be null";
+
+        final var aCommand = UpdateProductCommand.with(
+                expectedId.getValue(),
+                expectedName,
+                expectedDescription,
+                expectedStatus,
+                expectedPrice,
+                expectedStock,
+                expectedCategoryId.getValue(),
+                null
+        );
+
+        when(productGateway.findById(eq(expectedId)))
+                .thenReturn(Optional.of(Product.with(aProduct)));
+
+        when(categoryGateway.existsById(eq(expectedCategoryId)))
+                .thenReturn(true);
+
+        // when
+        final var actualException = Assertions.assertThrows(NotificationException.class, () -> useCase.execute(aCommand));
+
+        // then
+        Assertions.assertNotNull(actualException);
+        Assertions.assertEquals(expectedErrorCount, actualException.getErrors().size());
+        Assertions.assertEquals(expectedErrorMessage, actualException.getErrors().get(0).message());
+
+        Mockito.verify(productGateway, times(1)).findById(eq(expectedId));
+        Mockito.verify(categoryGateway, times(1)).existsById(eq(expectedCategoryId));
+        Mockito.verify(productGateway, times(0)).update(any());
+
+    }
+
+    @Test
+    public void givenAnInvalidStore_whenCallsUpdateProduct_shouldReturnNotificationException() {
+        // given
+        final var expectedCategoryId = CategoryID.from("123");
+        final var aProduct = Product.newProduct("Celular A", "Celular do tipo BBB", Money.with(1700.0), 10, expectedCategoryId,Store.with("123", "Minha Loja"));
+        final var expectedId = aProduct.getId();
+        final var expectedName = "Celular";
+        final var expectedDescription = "Celular do tipo ABC";
+        final var expectedPrice = Money.with(1800.03);
+        final var expectedStock = 10;
+        final var expectedStatus = ProductStatus.ACTIVE;
+        final var expectedStoreId = "456";
+
+        final var expectedErrorCount = 1;
+        final var expectedErrorMessage = "Store with ID: 456 could not be found";
+
+        final var aCommand = UpdateProductCommand.with(
+                expectedId.getValue(),
+                expectedName,
+                expectedDescription,
+                expectedStatus,
+                expectedPrice,
+                expectedStock,
+                expectedCategoryId.getValue(),
+                expectedStoreId
+        );
+
+        when(productGateway.findById(eq(expectedId)))
+                .thenReturn(Optional.of(Product.with(aProduct)));
+
+        when(categoryGateway.existsById(eq(expectedCategoryId)))
+                .thenReturn(true);
+
+        when(storeGateway.existsById(eq(expectedStoreId)))
+                .thenReturn(false);
+
+        // when
+        final var actualException = Assertions.assertThrows(NotificationException.class, () -> useCase.execute(aCommand));
+
+        // then
+        Assertions.assertNotNull(actualException);
+        Assertions.assertEquals(expectedErrorCount, actualException.getErrors().size());
+        Assertions.assertEquals(expectedErrorMessage, actualException.getErrors().get(0).message());
+
+        Mockito.verify(productGateway, times(1)).findById(eq(expectedId));
+        Mockito.verify(categoryGateway, times(1)).existsById(eq(expectedCategoryId));
+        Mockito.verify(storeGateway, times(1)).existsById(eq(expectedStoreId));
+        Mockito.verify(productGateway, times(0)).update(any());
 
     }
 }

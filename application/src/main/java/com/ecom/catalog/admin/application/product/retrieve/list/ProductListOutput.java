@@ -14,7 +14,8 @@ public record ProductListOutput(
         Money price,
         int stock,
         String category,
-        Instant createdAt
+        Instant createdAt,
+        String store
 ) {
 
     public static ProductListOutput from(final Product aProduct) {
@@ -26,7 +27,8 @@ public record ProductListOutput(
                 aProduct.getPrice(),
                 aProduct.getStock(),
                 aProduct.getCategoryId().getValue(),
-                aProduct.getCreatedAt()
+                aProduct.getCreatedAt(),
+                aProduct.getStore().getId()
         );
     }
 }

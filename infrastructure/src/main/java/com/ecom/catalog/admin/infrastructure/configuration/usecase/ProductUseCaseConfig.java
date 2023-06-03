@@ -1,6 +1,5 @@
 package com.ecom.catalog.admin.infrastructure.configuration.usecase;
 
-import com.ecom.catalog.admin.application.category.update.DefaultUpdateCategoryUseCase;
 import com.ecom.catalog.admin.application.product.create.CreateProductUseCase;
 import com.ecom.catalog.admin.application.product.create.DefaultCreateProductUseCase;
 import com.ecom.catalog.admin.application.product.retrieve.get.DefaultGetProductByIdUseCase;
@@ -29,12 +28,12 @@ public class ProductUseCaseConfig {
 
     @Bean
     public CreateProductUseCase createProductUseCase() {
-        return new DefaultCreateProductUseCase(productGateway, categoryGateway);
+        return new DefaultCreateProductUseCase(productGateway, categoryGateway, storeGateway);
     }
 
     @Bean
     public UpdateProductUseCase updateProductUseCase() {
-        return new DefaultUpdateProductUseCase(productGateway, categoryGateway);
+        return new DefaultUpdateProductUseCase(productGateway, categoryGateway, storeGateway);
     }
 
     @Bean

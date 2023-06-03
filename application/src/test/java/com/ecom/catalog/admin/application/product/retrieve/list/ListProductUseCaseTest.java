@@ -6,10 +6,8 @@ import com.ecom.catalog.admin.application.product.retrieve.list.ProductListOutpu
 import com.ecom.catalog.admin.domain.category.CategoryID;
 import com.ecom.catalog.admin.domain.pagination.Pagination;
 import com.ecom.catalog.admin.domain.pagination.SearchQuery;
-import com.ecom.catalog.admin.domain.product.Money;
-import com.ecom.catalog.admin.domain.product.Product;
-import com.ecom.catalog.admin.domain.product.ProductGateway;
-import com.ecom.catalog.admin.domain.product.ProductStatus;
+import com.ecom.catalog.admin.domain.product.*;
+import com.ecom.catalog.admin.domain.utils.IdUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -42,9 +40,10 @@ class ListProductUseCaseTest extends UseCaseTest {
     @Test
     public void givenAValidQuery_whenCallsListProduct_shouldReturnProducts() {
         // given
+        final var expectedStore = Store.with(IdUtils.uuid(), "Minha Loja");
         final var products = List.of(
-                Product.newProduct("Celular", "Celular do tipo ABC", ProductStatus.ACTIVE, Money.with(3000.0), 10, CategoryID.from("123")),
-                Product.newProduct("Notebook", "Notebook do tipo 123", ProductStatus.ACTIVE, Money.with(5000.0), 10, CategoryID.from("456"))
+                Product.newProduct("Celular", "Celular do tipo ABC", ProductStatus.ACTIVE, Money.with(3000.0), 10, CategoryID.from("123"), expectedStore),
+                Product.newProduct("Notebook", "Notebook do tipo 123", ProductStatus.ACTIVE, Money.with(5000.0), 10, CategoryID.from("456"), expectedStore)
         );
 
         final var expectedPage = 0;
