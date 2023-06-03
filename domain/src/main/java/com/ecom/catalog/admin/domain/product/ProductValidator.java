@@ -31,6 +31,7 @@ public class ProductValidator extends Validator {
         checkStockConstraints();
         checkPriceConstraints();
         checkCategoryConstraints();
+        checkStoreConstraints();
     }
 
     private void checkNameConstraints() {
@@ -94,4 +95,17 @@ public class ProductValidator extends Validator {
             this.validationHandler().append(new Error("'category' should not be null"));
         }
     }
+
+    private void checkStoreConstraints() {
+        final var store = this.product.getStore();
+        if( store == null) {
+            this.validationHandler().append(new Error("'store' should not be null"));
+            return;
+        }
+
+        if( store.getId() == null) {
+            this.validationHandler().append(new Error("'store.id' should not be null"));
+        }
+    }
+
 }

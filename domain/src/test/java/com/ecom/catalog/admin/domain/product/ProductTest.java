@@ -3,6 +3,7 @@ package com.ecom.catalog.admin.domain.product;
 import com.ecom.catalog.admin.domain.UnitTest;
 import com.ecom.catalog.admin.domain.category.CategoryID;
 import com.ecom.catalog.admin.domain.exceptions.NotificationException;
+import com.ecom.catalog.admin.domain.utils.IdUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -11,6 +12,7 @@ class ProductTest extends UnitTest {
     @Test
     public void givenAValidParams_whenCallNewProduct_thenInstantiateProduct() {
         // given
+        final var expectedStore = Store.with(IdUtils.uuid(), "Minha Loja");
         final String expectedName = "Celular";
         final var expectedDescription = "Celular do tipo ABC";
         final var expectedPrice = Money.with(1800.03);
@@ -20,7 +22,7 @@ class ProductTest extends UnitTest {
 
         // when
         final var actualProduct =
-                Product.newProduct(expectedName, expectedDescription, expectedPrice, expectedStock, expectedCategoryId);
+                Product.newProduct(expectedName, expectedDescription, expectedPrice, expectedStock, expectedCategoryId, expectedStore);
 
         // then
         Assertions.assertNotNull(actualProduct);;
@@ -29,8 +31,10 @@ class ProductTest extends UnitTest {
         Assertions.assertEquals(expectedDescription, actualProduct.getDescription());
         Assertions.assertEquals(expectedPrice, actualProduct.getPrice());
         Assertions.assertEquals(expectedStock, actualProduct.getStock());
+        Assertions.assertEquals(expectedStore, actualProduct.getStore());
         Assertions.assertEquals(expectedStatus, actualProduct.getStatus());
         Assertions.assertEquals(expectedCategoryId, actualProduct.getCategoryId());
+        Assertions.assertEquals(expectedStore, actualProduct.getStore());
         Assertions.assertNotNull(actualProduct.getCreatedAt());
         Assertions.assertNotNull(actualProduct.getUpdatedAt());
 
@@ -40,6 +44,7 @@ class ProductTest extends UnitTest {
     public void givenAnInvalidNullName_whenCallNewProduct_thenShouldReceiverError() {
         // given
         final String expectedName = null;
+        final var expectedStore = Store.with(IdUtils.uuid(), "Minha Loja");
         final var expectedDescription = "Celular do tipo ABC";
         final var expectedPrice = Money.with(1800.03);
         final var expectedStock = 10;
@@ -49,7 +54,7 @@ class ProductTest extends UnitTest {
 
         // when
         final var actualException = Assertions.assertThrows(NotificationException.class, () ->
-                Product.newProduct(expectedName, expectedDescription, expectedPrice, expectedStock, expectedCategoryId));
+                Product.newProduct(expectedName, expectedDescription, expectedPrice, expectedStock, expectedCategoryId, expectedStore));
 
         // then
         Assertions.assertEquals(expectedErrorCount, actualException.getErrors().size());
@@ -60,6 +65,7 @@ class ProductTest extends UnitTest {
     public void givenAnInvalidEmptyName_whenCallNewProduct_thenShouldReceiverError() {
         // given
         final String expectedName = " ";
+        final var expectedStore = Store.with(IdUtils.uuid(), "Minha Loja");
         final var expectedDescription = "Celular do tipo ABC";
         final var expectedPrice = Money.with(1800.03);
         final var expectedStock = 10;
@@ -69,7 +75,7 @@ class ProductTest extends UnitTest {
 
         // when
         final var actualException = Assertions.assertThrows(NotificationException.class, () ->
-                Product.newProduct(expectedName, expectedDescription, expectedPrice, expectedStock, expectedCategoryId));
+                Product.newProduct(expectedName, expectedDescription, expectedPrice, expectedStock, expectedCategoryId, expectedStore));
 
         // then
         Assertions.assertEquals(expectedErrorCount, actualException.getErrors().size());
@@ -80,6 +86,7 @@ class ProductTest extends UnitTest {
     public void givenAnInvalidNullDescription_whenCallNewProduct_thenShouldReceiverError() {
         // given
         final String expectedName = "Celular";
+        final var expectedStore = Store.with(IdUtils.uuid(), "Minha Loja");
         final String expectedDescription = null;
         final var expectedPrice = Money.with(1800.03);
         final var expectedStock = 10;
@@ -89,7 +96,7 @@ class ProductTest extends UnitTest {
 
         // when
         final var actualException = Assertions.assertThrows(NotificationException.class, () ->
-                Product.newProduct(expectedName, expectedDescription, expectedPrice, expectedStock, expectedCategoryId));
+                Product.newProduct(expectedName, expectedDescription, expectedPrice, expectedStock, expectedCategoryId, expectedStore));
 
         // then
         Assertions.assertEquals(expectedErrorCount, actualException.getErrors().size());
@@ -100,6 +107,7 @@ class ProductTest extends UnitTest {
     public void givenAnInvalidEmptyDescription_whenCallNewProduct_thenShouldReceiverError() {
         // given
         final String expectedName = "Celular";
+        final var expectedStore = Store.with(IdUtils.uuid(), "Minha Loja");
         final String expectedDescription = " ";
         final var expectedPrice = Money.with(1800.03);
         final var expectedStock = 10;
@@ -109,7 +117,7 @@ class ProductTest extends UnitTest {
 
         // when
         final var actualException = Assertions.assertThrows(NotificationException.class, () ->
-                Product.newProduct(expectedName, expectedDescription, expectedPrice, expectedStock, expectedCategoryId));
+                Product.newProduct(expectedName, expectedDescription, expectedPrice, expectedStock, expectedCategoryId, expectedStore));
 
         // then
         Assertions.assertEquals(expectedErrorCount, actualException.getErrors().size());
@@ -122,6 +130,7 @@ class ProductTest extends UnitTest {
         final String expectedName = """
                 Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries,
                 """;
+        final var expectedStore = Store.with(IdUtils.uuid(), "Minha Loja");
         final var expectedDescription = "Celular do tipo ABC";
         final var expectedPrice = Money.with(1800.03);
         final var expectedStock = 10;
@@ -131,7 +140,7 @@ class ProductTest extends UnitTest {
 
         // when
         final var actualException = Assertions.assertThrows(NotificationException.class, () ->
-                Product.newProduct(expectedName, expectedDescription, expectedPrice, expectedStock, expectedCategoryId));
+                Product.newProduct(expectedName, expectedDescription, expectedPrice, expectedStock, expectedCategoryId, expectedStore));
 
         // then
         Assertions.assertEquals(expectedErrorCount, actualException.getErrors().size());
@@ -142,6 +151,7 @@ class ProductTest extends UnitTest {
     public void givenAnInvalidDescriptionWithLengthGreaterThan4000_whenCallsNewProduct_thenShouldReceiverError() {
         // given
         final String expectedName = "Celular";
+        final var expectedStore = Store.with(IdUtils.uuid(), "Minha Loja");
         final String expectedDescription = """
                 Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum
                 Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum
@@ -159,7 +169,7 @@ class ProductTest extends UnitTest {
 
         // when
         final var actualException = Assertions.assertThrows(NotificationException.class, () ->
-                Product.newProduct(expectedName, expectedDescription, expectedPrice, expectedStock, expectedCategoryId));
+                Product.newProduct(expectedName, expectedDescription, expectedPrice, expectedStock, expectedCategoryId, expectedStore));
 
         // then
         Assertions.assertEquals(expectedErrorCount, actualException.getErrors().size());
@@ -170,6 +180,7 @@ class ProductTest extends UnitTest {
     public void givenAnInvalidStock_whenCallNewProduct_thenShouldReceiverError() {
         // given
         final String expectedName = "Celular";
+        final var expectedStore = Store.with(IdUtils.uuid(), "Minha Loja");
         final var expectedDescription = "Celular do tipo ABC";
         final var expectedPrice = Money.with(1800.03);
         final var expectedStock = -1;
@@ -179,7 +190,7 @@ class ProductTest extends UnitTest {
 
         // when
         final var actualException = Assertions.assertThrows(NotificationException.class, () ->
-                Product.newProduct(expectedName, expectedDescription, expectedPrice, expectedStock, expectedCategoryId));
+                Product.newProduct(expectedName, expectedDescription, expectedPrice, expectedStock, expectedCategoryId, expectedStore));
 
         // then
         Assertions.assertEquals(expectedErrorCount, actualException.getErrors().size());
@@ -190,6 +201,7 @@ class ProductTest extends UnitTest {
     public void givenAnInvalidNullPrice_whenCallNewProduct_thenShouldReceiverError() {
         // given
         final String expectedName = "Celular";
+        final var expectedStore = Store.with(IdUtils.uuid(), "Minha Loja");
         final var expectedDescription = "Celular do tipo ABC";
         final Money expectedPrice = null;
         final var expectedStock = 10;
@@ -199,7 +211,7 @@ class ProductTest extends UnitTest {
 
         // when
         final var actualException = Assertions.assertThrows(NotificationException.class, () ->
-                Product.newProduct(expectedName, expectedDescription, expectedPrice, expectedStock, expectedCategoryId));
+                Product.newProduct(expectedName, expectedDescription, expectedPrice, expectedStock, expectedCategoryId, expectedStore));
 
         // then
         Assertions.assertEquals(expectedErrorCount, actualException.getErrors().size());
@@ -210,6 +222,7 @@ class ProductTest extends UnitTest {
     public void givenAnInvalidPriceWithAmountLessThan001_whenCallNewProduct_thenShouldReceiverError() {
         // given
         final String expectedName = "Celular";
+        final var expectedStore = Store.with(IdUtils.uuid(), "Minha Loja");
         final var expectedDescription = "Celular do tipo ABC";
         final Money expectedPrice = Money.with(0);
         final var expectedStock = 10;
@@ -219,7 +232,7 @@ class ProductTest extends UnitTest {
 
         // when
         final var actualException = Assertions.assertThrows(NotificationException.class, () ->
-                Product.newProduct(expectedName, expectedDescription, expectedPrice, expectedStock, expectedCategoryId));
+                Product.newProduct(expectedName, expectedDescription, expectedPrice, expectedStock, expectedCategoryId, expectedStore));
 
         // then
         Assertions.assertEquals(expectedErrorCount, actualException.getErrors().size());
@@ -230,6 +243,7 @@ class ProductTest extends UnitTest {
     public void givenAnInvalidNullCategory_whenCallNewProduct_thenShouldReceiverError() {
         // given
         final String expectedName = "Celular";
+        final var expectedStore = Store.with(IdUtils.uuid(), "Minha Loja");
         final var expectedDescription = "Celular do tipo ABC";
         final Money expectedPrice = Money.with(1600.0);
         final var expectedStock = 10;
@@ -239,7 +253,7 @@ class ProductTest extends UnitTest {
 
         // when
         final var actualException = Assertions.assertThrows(NotificationException.class, () ->
-                Product.newProduct(expectedName, expectedDescription, expectedPrice, expectedStock, categoryID));
+                Product.newProduct(expectedName, expectedDescription, expectedPrice, expectedStock, categoryID, expectedStore));
 
         // then
         Assertions.assertEquals(expectedErrorCount, actualException.getErrors().size());
@@ -250,6 +264,7 @@ class ProductTest extends UnitTest {
     public void givenAValidActiveProduct_whenCallDeactivate_thenReturnProductInactivated() {
         // given
         final String expectedName = "Celular";
+        final var expectedStore = Store.with(IdUtils.uuid(), "Minha Loja");
         final var expectedDescription = "Celular do tipo ABC";
         final var expectedPrice = Money.with(1800.03);
         final var expectedStock = 10;
@@ -257,7 +272,7 @@ class ProductTest extends UnitTest {
         final var expectedCategoryId = CategoryID.from("123");
 
         final var aProduct =
-                Product.newProduct(expectedName, expectedDescription, expectedPrice, expectedStock, expectedCategoryId);
+                Product.newProduct(expectedName, expectedDescription, expectedPrice, expectedStock, expectedCategoryId, expectedStore);
 
         final var createdAt = aProduct.getCreatedAt();
         final var updatedAt = aProduct.getUpdatedAt();
@@ -274,6 +289,7 @@ class ProductTest extends UnitTest {
         Assertions.assertEquals(expectedStock, actualProduct.getStock());
         Assertions.assertEquals(expectedStatus, actualProduct.getStatus());
         Assertions.assertEquals(expectedCategoryId, actualProduct.getCategoryId());
+        Assertions.assertEquals(expectedStore, actualProduct.getStore());
         Assertions.assertEquals(createdAt, actualProduct.getCreatedAt());
         Assertions.assertTrue(actualProduct.getUpdatedAt().isAfter(updatedAt));
 
@@ -283,6 +299,7 @@ class ProductTest extends UnitTest {
     public void givenAValidInactiveProduct_whenCallActivate_thenReturnProductActivated() {
         // given
         final String expectedName = "Celular";
+        final var expectedStore = Store.with(IdUtils.uuid(), "Minha Loja");
         final var expectedDescription = "Celular do tipo ABC";
         final var expectedPrice = Money.with(1800.03);
         final var expectedStock = 10;
@@ -290,7 +307,7 @@ class ProductTest extends UnitTest {
         final var expectedCategoryId = CategoryID.from("123");
 
         final var aProduct =
-                Product.newProduct(expectedName, expectedDescription, ProductStatus.INACTIVE, expectedPrice, expectedStock, expectedCategoryId);
+                Product.newProduct(expectedName, expectedDescription, ProductStatus.INACTIVE, expectedPrice, expectedStock, expectedCategoryId, expectedStore);
 
         final var createdAt = aProduct.getCreatedAt();
         final var updatedAt = aProduct.getUpdatedAt();
@@ -309,6 +326,7 @@ class ProductTest extends UnitTest {
         Assertions.assertEquals(expectedStock, actualProduct.getStock());
         Assertions.assertEquals(expectedStatus, actualProduct.getStatus());
         Assertions.assertEquals(expectedCategoryId, actualProduct.getCategoryId());
+        Assertions.assertEquals(expectedStore, actualProduct.getStore());
         Assertions.assertEquals(createdAt, actualProduct.getCreatedAt());
         Assertions.assertTrue(actualProduct.getUpdatedAt().isAfter(updatedAt));
 
@@ -318,6 +336,7 @@ class ProductTest extends UnitTest {
     public void givenAValidProduct_whenCallUpdate_thenReturnProductUpdated() {
         // given
         final String expectedName = "Celular";
+        final var expectedStore = Store.with(IdUtils.uuid(), "Minha Loja");
         final var expectedDescription = "Celular do tipo ABC";
         final var expectedPrice = Money.with(1800.03);
         final var expectedStock = 10;
@@ -325,7 +344,7 @@ class ProductTest extends UnitTest {
         final var expectedCategoryId = CategoryID.from("123");
 
         final var actualProduct =
-                Product.newProduct("Celular Novo", "Celular com outra descrição", ProductStatus.INACTIVE, expectedPrice, expectedStock, expectedCategoryId);
+                Product.newProduct("Celular Novo", "Celular com outra descrição", ProductStatus.INACTIVE, expectedPrice, expectedStock, expectedCategoryId, expectedStore);
 
         final var createdAt = actualProduct.getCreatedAt();
         final var updatedAt = actualProduct.getUpdatedAt();
@@ -333,7 +352,7 @@ class ProductTest extends UnitTest {
         Assertions.assertEquals(actualProduct.getStatus(), ProductStatus.INACTIVE);
 
         // when
-        actualProduct.update(expectedName, expectedDescription, expectedStatus, expectedPrice, expectedStock, expectedCategoryId);
+        actualProduct.update(expectedName, expectedDescription, expectedStatus, expectedPrice, expectedStock, expectedCategoryId, expectedStore);
 
         // then
         Assertions.assertNotNull(actualProduct);;
@@ -344,6 +363,7 @@ class ProductTest extends UnitTest {
         Assertions.assertEquals(expectedStock, actualProduct.getStock());
         Assertions.assertEquals(expectedStatus, actualProduct.getStatus());
         Assertions.assertEquals(expectedCategoryId, actualProduct.getCategoryId());
+        Assertions.assertEquals(expectedStore, actualProduct.getStore());
         Assertions.assertEquals(createdAt, actualProduct.getCreatedAt());
         Assertions.assertTrue(actualProduct.getUpdatedAt().isAfter(updatedAt));
     }
@@ -352,6 +372,7 @@ class ProductTest extends UnitTest {
     public void givenAValidProduct_whenCallUpdateToInactive_thenReturnProductUpdated() {
         // given
         final String expectedName = "Celular";
+        final var expectedStore = Store.with(IdUtils.uuid(), "Minha Loja");
         final var expectedDescription = "Celular do tipo ABC";
         final var expectedPrice = Money.with(1800.03);
         final var expectedStock = 10;
@@ -359,7 +380,7 @@ class ProductTest extends UnitTest {
         final var expectedCategoryId = CategoryID.from("123");
 
         final var actualProduct =
-                Product.newProduct("Celular Novo", "Celular com outra descrição", ProductStatus.ACTIVE, expectedPrice, expectedStock, expectedCategoryId);
+                Product.newProduct("Celular Novo", "Celular com outra descrição", ProductStatus.ACTIVE, expectedPrice, expectedStock, expectedCategoryId, expectedStore);
 
         final var createdAt = actualProduct.getCreatedAt();
         final var updatedAt = actualProduct.getUpdatedAt();
@@ -367,7 +388,7 @@ class ProductTest extends UnitTest {
         Assertions.assertEquals(actualProduct.getStatus(), ProductStatus.ACTIVE);
 
         // when
-        actualProduct.update(expectedName, expectedDescription, expectedStatus, expectedPrice, expectedStock, expectedCategoryId);
+        actualProduct.update(expectedName, expectedDescription, expectedStatus, expectedPrice, expectedStock, expectedCategoryId, expectedStore);
 
         // then
         Assertions.assertNotNull(actualProduct);;
@@ -378,14 +399,17 @@ class ProductTest extends UnitTest {
         Assertions.assertEquals(expectedStock, actualProduct.getStock());
         Assertions.assertEquals(expectedStatus, actualProduct.getStatus());
         Assertions.assertEquals(expectedCategoryId, actualProduct.getCategoryId());
+        Assertions.assertEquals(expectedStore, actualProduct.getStore());
         Assertions.assertEquals(createdAt, actualProduct.getCreatedAt());
         Assertions.assertTrue(actualProduct.getUpdatedAt().isAfter(updatedAt));
+
     }
 
     @Test
     public void givenAnInvalidNullName_whenCallUpdate_thenShouldReceiverError() {
         // given
         final String expectedName = null;
+        final var expectedStore = Store.with(IdUtils.uuid(), "Minha Loja");
         final var expectedDescription = "Celular do tipo ABC";
         final var expectedPrice = Money.with(1800.03);
         final var expectedStock = 10;
@@ -395,17 +419,14 @@ class ProductTest extends UnitTest {
         final var expectedErrorMessage = "'name' should not be null";
 
         final var actualProduct =
-                Product.newProduct("Celular Novo", "Celular com outra descrição", ProductStatus.ACTIVE, expectedPrice, expectedStock, expectedCategoryId);
-
-        final var createdAt = actualProduct.getCreatedAt();
-        final var updatedAt = actualProduct.getUpdatedAt();
+                Product.newProduct("Celular Novo", "Celular com outra descrição", ProductStatus.ACTIVE, expectedPrice, expectedStock, expectedCategoryId, expectedStore);
 
         Assertions.assertEquals(actualProduct.getStatus(), ProductStatus.ACTIVE);
         Assertions.assertNotNull(actualProduct.getName());
 
         // when
         final var actualException = Assertions.assertThrows(NotificationException.class, () ->
-                actualProduct.update(expectedName, expectedDescription, expectedStatus, expectedPrice, expectedStock, expectedCategoryId));
+                actualProduct.update(expectedName, expectedDescription, expectedStatus, expectedPrice, expectedStock, expectedCategoryId, expectedStore));
 
         // then
         Assertions.assertEquals(expectedErrorCount, actualException.getErrors().size());

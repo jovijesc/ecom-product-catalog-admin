@@ -25,6 +25,8 @@ public class Product extends AggregateRoot<ProductID> {
     private Instant createdAt;
     private Instant updatedAt;
 
+    private Store store;
+
     private Product(
             final ProductID anId,
             final String aName,
@@ -34,7 +36,8 @@ public class Product extends AggregateRoot<ProductID> {
             final ProductStatus aStatus,
             final CategoryID aCategory,
             final Instant aCreationDate,
-            final Instant aUpdateDate) {
+            final Instant aUpdateDate,
+            final Store aStore) {
         super(anId);
         this.name = aName;
         this.description = aDescription;
@@ -44,6 +47,7 @@ public class Product extends AggregateRoot<ProductID> {
         this.categoryId = aCategory;
         this.createdAt = Objects.requireNonNull(aCreationDate, "'createdAt' should not be null");
         this.updatedAt = Objects.requireNonNull(aUpdateDate, "'updatedAt' should not be null");
+        this.store = aStore;
         selfValidate();
     }
 
@@ -52,11 +56,12 @@ public class Product extends AggregateRoot<ProductID> {
             final String aDescription,
             final Money aPrice,
             final int aStock,
-            final CategoryID aCategoryId) {
+            final CategoryID aCategoryId,
+            final Store aStore) {
         final var id = ProductID.unique();
         final var now = InstantUtils.now();
         final var DEFAULT_STATUS = ProductStatus.ACTIVE;
-        return new Product(id, aName, aDescription, aPrice, aStock, DEFAULT_STATUS, aCategoryId, now, now);
+        return new Product(id, aName, aDescription, aPrice, aStock, DEFAULT_STATUS, aCategoryId, now, now, aStore);
     }
 
     public static Product newProduct(
@@ -65,10 +70,11 @@ public class Product extends AggregateRoot<ProductID> {
             final ProductStatus aStatus,
             final Money aPrice,
             final int aStock,
-            final CategoryID aCategoryId) {
+            final CategoryID aCategoryId,
+            final Store aStore) {
         final var id = ProductID.unique();
         final var now = InstantUtils.now();
-        return new Product(id, aName, aDescription, aPrice, aStock, aStatus, aCategoryId, now, now);
+        return new Product(id, aName, aDescription, aPrice, aStock, aStatus, aCategoryId, now, now, aStore);
     }
 
     public static Product with(
@@ -80,7 +86,8 @@ public class Product extends AggregateRoot<ProductID> {
             final ProductStatus aStatus,
             final CategoryID aCategoryId,
             final Instant aCreationDate,
-            final Instant aUpdateDate) {
+            final Instant aUpdateDate,
+            final Store aStore) {
         return new Product(
                 anId,
                 aName,
@@ -90,7 +97,8 @@ public class Product extends AggregateRoot<ProductID> {
                 aStatus,
                 aCategoryId,
                 aCreationDate,
-                aUpdateDate
+                aUpdateDate,
+                aStore
         );
     }
 
@@ -104,7 +112,8 @@ public class Product extends AggregateRoot<ProductID> {
                 aProduct.status,
                 aProduct.categoryId,
                 aProduct.createdAt,
-                aProduct.updatedAt
+                aProduct.updatedAt,
+                aProduct.store
         );
     }
 
@@ -126,7 +135,8 @@ public class Product extends AggregateRoot<ProductID> {
                           final ProductStatus aStatus,
                           final Money aPrice,
                           final int aStock,
-                          final CategoryID aCategoryId) {
+                          final CategoryID aCategoryId,
+                          final Store aStore) {
         if(ProductStatus.ACTIVE.equals(aStatus)) {
             activate();
         } else {
@@ -138,6 +148,7 @@ public class Product extends AggregateRoot<ProductID> {
         this.stock = aStock;
         this.categoryId = aCategoryId;
         this.updatedAt = InstantUtils.now();
+        this.store = aStore;
         selfValidate();
         return this;
     }
@@ -186,5 +197,9 @@ public class Product extends AggregateRoot<ProductID> {
 
     public Instant getUpdatedAt() {
         return updatedAt;
+    }
+
+    public Store getStore() {
+        return store;
     }
 }
