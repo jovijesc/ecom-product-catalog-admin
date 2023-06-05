@@ -15,6 +15,9 @@ public class ProductValidator extends Validator {
 
     private static final BigDecimal PRICE_MIN_VALUE = BigDecimal.valueOf(0.01);
 
+    private static final int IMAGES_MAX_TOTAL = 10;
+    private static final int IMAGES_MIN_TOTAL = 1;
+
     private final Product product;
 
 
@@ -32,6 +35,7 @@ public class ProductValidator extends Validator {
         checkPriceConstraints();
         checkCategoryConstraints();
         checkStoreConstraints();
+        checkImagesConstraints();
     }
 
     private void checkNameConstraints() {
@@ -100,6 +104,19 @@ public class ProductValidator extends Validator {
         final var store = this.product.getStore();
         if( store == null) {
             this.validationHandler().append(new Error("'store' should not be null"));
+        }
+    }
+
+    private void checkImagesConstraints() {
+        final var images = this.product.getImages();
+        if(images == null || images.size() == 0) {
+            this.validationHandler().append(new Error("The total number of images should be greater than zero"));
+            return;
+        }
+
+        final int total = this.product.getImages().size();
+        if(total > IMAGES_MAX_TOTAL || total < IMAGES_MIN_TOTAL) {
+            this.validationHandler().append(new Error("The total number of images must be between %s and %s".formatted(IMAGES_MIN_TOTAL, IMAGES_MAX_TOTAL)));
         }
     }
 

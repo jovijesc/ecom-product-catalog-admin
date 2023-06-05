@@ -6,12 +6,10 @@ import com.ecom.catalog.admin.domain.exceptions.NotificationException;
 import com.ecom.catalog.admin.domain.utils.InstantUtils;
 import com.ecom.catalog.admin.domain.validation.ValidationHandler;
 import com.ecom.catalog.admin.domain.validation.handler.Notification;
+import com.sun.source.doctree.SeeTree;
 
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 public class Product extends AggregateRoot<ProductID> {
 
@@ -24,8 +22,9 @@ public class Product extends AggregateRoot<ProductID> {
     private CategoryID categoryId;
     private Instant createdAt;
     private Instant updatedAt;
-
     private Store store;
+
+    private Set<ProductImage> images;
 
     private Product(
             final ProductID anId,
@@ -37,7 +36,8 @@ public class Product extends AggregateRoot<ProductID> {
             final CategoryID aCategory,
             final Instant aCreationDate,
             final Instant aUpdateDate,
-            final Store aStore) {
+            final Store aStore,
+            final Set<ProductImage> images) {
         super(anId);
         this.name = aName;
         this.description = aDescription;
@@ -48,6 +48,7 @@ public class Product extends AggregateRoot<ProductID> {
         this.createdAt = Objects.requireNonNull(aCreationDate, "'createdAt' should not be null");
         this.updatedAt = Objects.requireNonNull(aUpdateDate, "'updatedAt' should not be null");
         this.store = aStore;
+        this.images = images != null ? images : Collections.emptySet();
         selfValidate();
     }
 
@@ -57,11 +58,12 @@ public class Product extends AggregateRoot<ProductID> {
             final Money aPrice,
             final int aStock,
             final CategoryID aCategoryId,
-            final Store aStore) {
+            final Store aStore,
+            final Set<ProductImage> images) {
         final var id = ProductID.unique();
         final var now = InstantUtils.now();
         final var DEFAULT_STATUS = ProductStatus.ACTIVE;
-        return new Product(id, aName, aDescription, aPrice, aStock, DEFAULT_STATUS, aCategoryId, now, now, aStore);
+        return new Product(id, aName, aDescription, aPrice, aStock, DEFAULT_STATUS, aCategoryId, now, now, aStore, images);
     }
 
     public static Product newProduct(
@@ -71,10 +73,11 @@ public class Product extends AggregateRoot<ProductID> {
             final Money aPrice,
             final int aStock,
             final CategoryID aCategoryId,
-            final Store aStore) {
+            final Store aStore,
+            final Set<ProductImage> images) {
         final var id = ProductID.unique();
         final var now = InstantUtils.now();
-        return new Product(id, aName, aDescription, aPrice, aStock, aStatus, aCategoryId, now, now, aStore);
+        return new Product(id, aName, aDescription, aPrice, aStock, aStatus, aCategoryId, now, now, aStore, images);
     }
 
     public static Product with(
@@ -87,7 +90,8 @@ public class Product extends AggregateRoot<ProductID> {
             final CategoryID aCategoryId,
             final Instant aCreationDate,
             final Instant aUpdateDate,
-            final Store aStore) {
+            final Store aStore,
+            final Set<ProductImage> images) {
         return new Product(
                 anId,
                 aName,
@@ -98,7 +102,8 @@ public class Product extends AggregateRoot<ProductID> {
                 aCategoryId,
                 aCreationDate,
                 aUpdateDate,
-                aStore
+                aStore,
+                images
         );
     }
 
@@ -113,7 +118,8 @@ public class Product extends AggregateRoot<ProductID> {
                 aProduct.categoryId,
                 aProduct.createdAt,
                 aProduct.updatedAt,
-                aProduct.store
+                aProduct.store,
+                new HashSet<>(aProduct.getImages())
         );
     }
 
@@ -136,7 +142,8 @@ public class Product extends AggregateRoot<ProductID> {
                           final Money aPrice,
                           final int aStock,
                           final CategoryID aCategoryId,
-                          final Store aStore) {
+                          final Store aStore,
+                          final Set<ProductImage> images) {
         if(ProductStatus.ACTIVE.equals(aStatus)) {
             activate();
         } else {
@@ -149,6 +156,7 @@ public class Product extends AggregateRoot<ProductID> {
         this.categoryId = aCategoryId;
         this.updatedAt = InstantUtils.now();
         this.store = aStore;
+        this.images = new HashSet<>(images != null ? images : Collections.emptySet());
         selfValidate();
         return this;
     }
@@ -201,5 +209,9 @@ public class Product extends AggregateRoot<ProductID> {
 
     public Store getStore() {
         return store;
+    }
+
+    public Set<ProductImage> getImages() {
+        return images != null ? Collections.unmodifiableSet(images) : Collections.emptySet();
     }
 }

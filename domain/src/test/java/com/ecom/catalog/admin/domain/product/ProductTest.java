@@ -8,6 +8,9 @@ import com.ecom.catalog.admin.domain.validation.Error;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.util.HashSet;
+import java.util.Set;
+
 class ProductTest extends UnitTest {
 
     @Test
@@ -20,10 +23,11 @@ class ProductTest extends UnitTest {
         final var expectedStock = 10;
         final var expectedStatus = ProductStatus.ACTIVE;
         final var expectedCategoryId = CategoryID.from("123");
+        final var expectedImages = Set.of(ProductImage.with("123", "image.jpg", "/image",1, true));
 
         // when
         final var actualProduct =
-                Product.newProduct(expectedName, expectedDescription, expectedPrice, expectedStock, expectedCategoryId, expectedStore);
+                Product.newProduct(expectedName, expectedDescription, expectedPrice, expectedStock, expectedCategoryId, expectedStore, expectedImages);
 
         // then
         Assertions.assertNotNull(actualProduct);;
@@ -50,12 +54,13 @@ class ProductTest extends UnitTest {
         final var expectedPrice = Money.with(1800.03);
         final var expectedStock = 10;
         final var expectedCategoryId = CategoryID.from("123");
+        final var expectedImages = Set.of(ProductImage.with("123", "image.jpg", "/image",1, true));
         final var expectedErrorCount = 1;
         final var expectedErrorMessage = "'name' should not be null";
 
         // when
         final var actualException = Assertions.assertThrows(NotificationException.class, () ->
-                Product.newProduct(expectedName, expectedDescription, expectedPrice, expectedStock, expectedCategoryId, expectedStore));
+                Product.newProduct(expectedName, expectedDescription, expectedPrice, expectedStock, expectedCategoryId, expectedStore, expectedImages));
 
         // then
         Assertions.assertEquals(expectedErrorCount, actualException.getErrors().size());
@@ -71,12 +76,13 @@ class ProductTest extends UnitTest {
         final var expectedPrice = Money.with(1800.03);
         final var expectedStock = 10;
         final var expectedCategoryId = CategoryID.from("123");
+        final var expectedImages = Set.of(ProductImage.with("123", "image.jpg", "/image",1, true));
         final var expectedErrorCount = 1;
         final var expectedErrorMessage = "'name' should not be empty";
 
         // when
         final var actualException = Assertions.assertThrows(NotificationException.class, () ->
-                Product.newProduct(expectedName, expectedDescription, expectedPrice, expectedStock, expectedCategoryId, expectedStore));
+                Product.newProduct(expectedName, expectedDescription, expectedPrice, expectedStock, expectedCategoryId, expectedStore, expectedImages));
 
         // then
         Assertions.assertEquals(expectedErrorCount, actualException.getErrors().size());
@@ -92,12 +98,13 @@ class ProductTest extends UnitTest {
         final var expectedPrice = Money.with(1800.03);
         final var expectedStock = 10;
         final var expectedCategoryId = CategoryID.from("123");
+        final var expectedImages = Set.of(ProductImage.with("123", "image.jpg", "/image",1, true));
         final var expectedErrorCount = 1;
         final var expectedErrorMessage = "'description' should not be null";
 
         // when
         final var actualException = Assertions.assertThrows(NotificationException.class, () ->
-                Product.newProduct(expectedName, expectedDescription, expectedPrice, expectedStock, expectedCategoryId, expectedStore));
+                Product.newProduct(expectedName, expectedDescription, expectedPrice, expectedStock, expectedCategoryId, expectedStore, expectedImages));
 
         // then
         Assertions.assertEquals(expectedErrorCount, actualException.getErrors().size());
@@ -113,12 +120,13 @@ class ProductTest extends UnitTest {
         final var expectedPrice = Money.with(1800.03);
         final var expectedStock = 10;
         final var expectedCategoryId = CategoryID.from("123");
+        final var expectedImages = Set.of(ProductImage.with("123", "image.jpg", "/image",1, true));
         final var expectedErrorCount = 1;
         final var expectedErrorMessage = "'description' should not be empty";
 
         // when
         final var actualException = Assertions.assertThrows(NotificationException.class, () ->
-                Product.newProduct(expectedName, expectedDescription, expectedPrice, expectedStock, expectedCategoryId, expectedStore));
+                Product.newProduct(expectedName, expectedDescription, expectedPrice, expectedStock, expectedCategoryId, expectedStore, expectedImages));
 
         // then
         Assertions.assertEquals(expectedErrorCount, actualException.getErrors().size());
@@ -136,12 +144,13 @@ class ProductTest extends UnitTest {
         final var expectedPrice = Money.with(1800.03);
         final var expectedStock = 10;
         final var expectedCategoryId = CategoryID.from("123");
+        final var expectedImages = Set.of(ProductImage.with("123", "image.jpg", "/image",1, true));
         final var expectedErrorCount = 1;
         final var expectedErrorMessage = "'name' must be between 3 and 255 characters";
 
         // when
         final var actualException = Assertions.assertThrows(NotificationException.class, () ->
-                Product.newProduct(expectedName, expectedDescription, expectedPrice, expectedStock, expectedCategoryId, expectedStore));
+                Product.newProduct(expectedName, expectedDescription, expectedPrice, expectedStock, expectedCategoryId, expectedStore, expectedImages));
 
         // then
         Assertions.assertEquals(expectedErrorCount, actualException.getErrors().size());
@@ -165,12 +174,13 @@ class ProductTest extends UnitTest {
         final var expectedPrice = Money.with(1800.03);
         final var expectedStock = 10;
         final var expectedCategoryId = CategoryID.from("123");
+        final var expectedImages = Set.of(ProductImage.with("123", "image.jpg", "/image",1, true));
         final var expectedErrorCount = 1;
         final var expectedErrorMessage = "'description' must be between 1 and 4000 characters";
 
         // when
         final var actualException = Assertions.assertThrows(NotificationException.class, () ->
-                Product.newProduct(expectedName, expectedDescription, expectedPrice, expectedStock, expectedCategoryId, expectedStore));
+                Product.newProduct(expectedName, expectedDescription, expectedPrice, expectedStock, expectedCategoryId, expectedStore, expectedImages));
 
         // then
         Assertions.assertEquals(expectedErrorCount, actualException.getErrors().size());
@@ -186,12 +196,13 @@ class ProductTest extends UnitTest {
         final var expectedPrice = Money.with(1800.03);
         final var expectedStock = -1;
         final var expectedCategoryId = CategoryID.from("123");
+        final var expectedImages = Set.of(ProductImage.with("123", "image.jpg", "/image",1, true));
         final var expectedErrorCount = 1;
         final var expectedErrorMessage = "'stock' cannot have invalid values";
 
         // when
         final var actualException = Assertions.assertThrows(NotificationException.class, () ->
-                Product.newProduct(expectedName, expectedDescription, expectedPrice, expectedStock, expectedCategoryId, expectedStore));
+                Product.newProduct(expectedName, expectedDescription, expectedPrice, expectedStock, expectedCategoryId, expectedStore, expectedImages));
 
         // then
         Assertions.assertEquals(expectedErrorCount, actualException.getErrors().size());
@@ -207,12 +218,13 @@ class ProductTest extends UnitTest {
         final Money expectedPrice = null;
         final var expectedStock = 10;
         final var expectedCategoryId = CategoryID.from("123");
+        final var expectedImages = Set.of(ProductImage.with("123", "image.jpg", "/image",1, true));
         final var expectedErrorCount = 1;
         final var expectedErrorMessage = "'price' should not be null";
 
         // when
         final var actualException = Assertions.assertThrows(NotificationException.class, () ->
-                Product.newProduct(expectedName, expectedDescription, expectedPrice, expectedStock, expectedCategoryId, expectedStore));
+                Product.newProduct(expectedName, expectedDescription, expectedPrice, expectedStock, expectedCategoryId, expectedStore, expectedImages));
 
         // then
         Assertions.assertEquals(expectedErrorCount, actualException.getErrors().size());
@@ -228,12 +240,13 @@ class ProductTest extends UnitTest {
         final Money expectedPrice = Money.with(0);
         final var expectedStock = 10;
         final var expectedCategoryId = CategoryID.from("123");
+        final var expectedImages = Set.of(ProductImage.with("123", "image.jpg", "/image",1, true));
         final var expectedErrorCount = 1;
         final var expectedErrorMessage = "'price' must be greater than zero";
 
         // when
         final var actualException = Assertions.assertThrows(NotificationException.class, () ->
-                Product.newProduct(expectedName, expectedDescription, expectedPrice, expectedStock, expectedCategoryId, expectedStore));
+                Product.newProduct(expectedName, expectedDescription, expectedPrice, expectedStock, expectedCategoryId, expectedStore, expectedImages));
 
         // then
         Assertions.assertEquals(expectedErrorCount, actualException.getErrors().size());
@@ -249,12 +262,13 @@ class ProductTest extends UnitTest {
         final Money expectedPrice = Money.with(1600.0);
         final var expectedStock = 10;
         final CategoryID categoryID = null;
+        final var expectedImages = Set.of(ProductImage.with("123", "image.jpg", "/image",1, true));
         final var expectedErrorCount = 1;
         final var expectedErrorMessage = "'category' should not be null";
 
         // when
         final var actualException = Assertions.assertThrows(NotificationException.class, () ->
-                Product.newProduct(expectedName, expectedDescription, expectedPrice, expectedStock, categoryID, expectedStore));
+                Product.newProduct(expectedName, expectedDescription, expectedPrice, expectedStock, categoryID, expectedStore, expectedImages));
 
         // then
         Assertions.assertEquals(expectedErrorCount, actualException.getErrors().size());
@@ -269,13 +283,70 @@ class ProductTest extends UnitTest {
         final var expectedDescription = "Celular do tipo ABC";
         final Money expectedPrice = Money.with(1600.0);
         final var expectedStock = 10;
-        final CategoryID categoryID = CategoryID.from("123");;
+        final CategoryID categoryID = CategoryID.from("123");
+        final var expectedImages = Set.of(ProductImage.with("123", "image.jpg", "/image",1, true));
         final var expectedErrorCount = 1;
         final var expectedErrorMessage = "'store' should not be null";
 
         // when
         final var actualException = Assertions.assertThrows(NotificationException.class, () ->
-                Product.newProduct(expectedName, expectedDescription, expectedPrice, expectedStock, categoryID, expectedStore));
+                Product.newProduct(expectedName, expectedDescription, expectedPrice, expectedStock, categoryID, expectedStore, expectedImages));
+
+        // then
+        Assertions.assertEquals(expectedErrorCount, actualException.getErrors().size());
+        Assertions.assertEquals(expectedErrorMessage, actualException.getErrors().get(0).message());
+    }
+
+    @Test
+    public void givenAnEmptyImages_whenCallNewProduct_thenShouldReceiverError() {
+        // given
+        final String expectedName = "Celular";
+        final var expectedStore = Store.with(IdUtils.uuid(), "Minha Loja");
+        final var expectedDescription = "Celular do tipo ABC";
+        final Money expectedPrice = Money.with(1600.0);
+        final var expectedStock = 10;
+        final CategoryID categoryID = CategoryID.from("123");
+        final var expectedImages = Set.<ProductImage>of();
+        final var expectedErrorCount = 1;
+        final var expectedErrorMessage = "The total number of images should be greater than zero";
+
+        // when
+        final var actualException = Assertions.assertThrows(NotificationException.class, () ->
+                Product.newProduct(expectedName, expectedDescription, expectedPrice, expectedStock, categoryID, expectedStore, expectedImages));
+
+        // then
+        Assertions.assertEquals(expectedErrorCount, actualException.getErrors().size());
+        Assertions.assertEquals(expectedErrorMessage, actualException.getErrors().get(0).message());
+    }
+
+    @Test
+    public void givenATotalImagesGreaterThan10_whenCallNewProduct_thenShouldReceiveAnError() {
+        // given
+        final var expectedName = "Celular";
+        final var expectedStore = Store.with(IdUtils.uuid(), "Minha Loja");
+        final var expectedDescription = "Celular do tipo ABC";
+        final var expectedPrice = Money.with(1800.03);
+        final var expectedStock = 10;
+        final var expectedCategoryId = CategoryID.from("123");
+        final var expectedImages = Set.of(
+                ProductImage.with("qwe", "image1.jpg", "/image",1, true),
+                ProductImage.with("wer", "image2.jpg", "/image",1, true),
+                ProductImage.with("ert", "image3.jpg", "/image",1, true),
+                ProductImage.with("rty", "image4.jpg", "/image",1, true),
+                ProductImage.with("tyu", "image5.jpg", "/image",1, true),
+                ProductImage.with("yui", "image6.jpg", "/image",1, true),
+                ProductImage.with("uio", "image7.jpg", "/image",1, true),
+                ProductImage.with("iop", "image8.jpg", "/image",1, true),
+                ProductImage.with("asd", "image9.jpg", "/image",1, true),
+                ProductImage.with("sdf", "image10.jpg", "/image",1, true),
+                ProductImage.with("dfg", "image11.jpg", "/image",1, true)
+        );
+        final var expectedErrorCount = 1;
+        final var expectedErrorMessage = "The total number of images must be between 1 and 10";
+
+        // when
+        final var actualException = Assertions.assertThrows(NotificationException.class, () ->
+                Product.newProduct(expectedName, expectedDescription, expectedPrice, expectedStock, expectedCategoryId, expectedStore, expectedImages));
 
         // then
         Assertions.assertEquals(expectedErrorCount, actualException.getErrors().size());
@@ -292,9 +363,10 @@ class ProductTest extends UnitTest {
         final var expectedStock = 10;
         final var expectedStatus = ProductStatus.INACTIVE;
         final var expectedCategoryId = CategoryID.from("123");
+        final var expectedImages = Set.of(ProductImage.with("123", "image.jpg", "/image",1, true));
 
         final var aProduct =
-                Product.newProduct(expectedName, expectedDescription, expectedPrice, expectedStock, expectedCategoryId, expectedStore);
+                Product.newProduct(expectedName, expectedDescription, expectedPrice, expectedStock, expectedCategoryId, expectedStore, expectedImages);
 
         final var createdAt = aProduct.getCreatedAt();
         final var updatedAt = aProduct.getUpdatedAt();
@@ -327,9 +399,10 @@ class ProductTest extends UnitTest {
         final var expectedStock = 10;
         final var expectedStatus = ProductStatus.ACTIVE;
         final var expectedCategoryId = CategoryID.from("123");
+        final var expectedImages = Set.of(ProductImage.with("123", "image.jpg", "/image",1, true));
 
         final var aProduct =
-                Product.newProduct(expectedName, expectedDescription, ProductStatus.INACTIVE, expectedPrice, expectedStock, expectedCategoryId, expectedStore);
+                Product.newProduct(expectedName, expectedDescription, ProductStatus.INACTIVE, expectedPrice, expectedStock, expectedCategoryId, expectedStore, expectedImages);
 
         final var createdAt = aProduct.getCreatedAt();
         final var updatedAt = aProduct.getUpdatedAt();
@@ -364,9 +437,10 @@ class ProductTest extends UnitTest {
         final var expectedStock = 10;
         final var expectedStatus = ProductStatus.ACTIVE;
         final var expectedCategoryId = CategoryID.from("123");
+        final var expectedImages = Set.of(ProductImage.with("123", "image.jpg", "/image",1, true));
 
         final var actualProduct =
-                Product.newProduct("Celular Novo", "Celular com outra descrição", ProductStatus.INACTIVE, expectedPrice, expectedStock, expectedCategoryId, expectedStore);
+                Product.newProduct("Celular Novo", "Celular com outra descrição", ProductStatus.INACTIVE, expectedPrice, expectedStock, expectedCategoryId, expectedStore, expectedImages);
 
         final var createdAt = actualProduct.getCreatedAt();
         final var updatedAt = actualProduct.getUpdatedAt();
@@ -374,7 +448,7 @@ class ProductTest extends UnitTest {
         Assertions.assertEquals(actualProduct.getStatus(), ProductStatus.INACTIVE);
 
         // when
-        actualProduct.update(expectedName, expectedDescription, expectedStatus, expectedPrice, expectedStock, expectedCategoryId, expectedStore);
+        actualProduct.update(expectedName, expectedDescription, expectedStatus, expectedPrice, expectedStock, expectedCategoryId, expectedStore, expectedImages);
 
         // then
         Assertions.assertNotNull(actualProduct);;
@@ -400,9 +474,10 @@ class ProductTest extends UnitTest {
         final var expectedStock = 10;
         final var expectedStatus = ProductStatus.INACTIVE;
         final var expectedCategoryId = CategoryID.from("123");
+        final var expectedImages = Set.of(ProductImage.with("123", "image.jpg", "/image",1, true));
 
         final var actualProduct =
-                Product.newProduct("Celular Novo", "Celular com outra descrição", ProductStatus.ACTIVE, expectedPrice, expectedStock, expectedCategoryId, expectedStore);
+                Product.newProduct("Celular Novo", "Celular com outra descrição", ProductStatus.ACTIVE, expectedPrice, expectedStock, expectedCategoryId, expectedStore, expectedImages);
 
         final var createdAt = actualProduct.getCreatedAt();
         final var updatedAt = actualProduct.getUpdatedAt();
@@ -410,7 +485,7 @@ class ProductTest extends UnitTest {
         Assertions.assertEquals(actualProduct.getStatus(), ProductStatus.ACTIVE);
 
         // when
-        actualProduct.update(expectedName, expectedDescription, expectedStatus, expectedPrice, expectedStock, expectedCategoryId, expectedStore);
+        actualProduct.update(expectedName, expectedDescription, expectedStatus, expectedPrice, expectedStock, expectedCategoryId, expectedStore, expectedImages);
 
         // then
         Assertions.assertNotNull(actualProduct);;
@@ -437,22 +512,51 @@ class ProductTest extends UnitTest {
         final var expectedStock = 10;
         final var expectedStatus = ProductStatus.INACTIVE;
         final var expectedCategoryId = CategoryID.from("123");
+        final var expectedImages = Set.of(ProductImage.with("123", "image.jpg", "/image",1, true));
         final var expectedErrorCount = 1;
         final var expectedErrorMessage = "'name' should not be null";
 
         final var actualProduct =
-                Product.newProduct("Celular Novo", "Celular com outra descrição", ProductStatus.ACTIVE, expectedPrice, expectedStock, expectedCategoryId, expectedStore);
+                Product.newProduct("Celular Novo", "Celular com outra descrição", ProductStatus.ACTIVE, expectedPrice, expectedStock, expectedCategoryId, expectedStore, expectedImages);
 
         Assertions.assertEquals(actualProduct.getStatus(), ProductStatus.ACTIVE);
         Assertions.assertNotNull(actualProduct.getName());
 
         // when
         final var actualException = Assertions.assertThrows(NotificationException.class, () ->
-                actualProduct.update(expectedName, expectedDescription, expectedStatus, expectedPrice, expectedStock, expectedCategoryId, expectedStore));
+                actualProduct.update(expectedName, expectedDescription, expectedStatus, expectedPrice, expectedStock, expectedCategoryId, expectedStore, expectedImages));
 
         // then
         Assertions.assertEquals(expectedErrorCount, actualException.getErrors().size());
         Assertions.assertEquals(expectedErrorMessage, actualException.getErrors().get(0).message());
     }
 
+    @Test
+    public void givenAnEmptyImages_whenCallUpdate_thenShouldReceiverError() {
+        // given
+        final var expectedName = "Celular";
+        final var expectedStore = Store.with(IdUtils.uuid(), "Minha Loja");
+        final var expectedDescription = "Celular do tipo ABC";
+        final var expectedPrice = Money.with(1800.03);
+        final var expectedStock = 10;
+        final var expectedStatus = ProductStatus.INACTIVE;
+        final var expectedCategoryId = CategoryID.from("123");
+        final var expectedImages = Set.<ProductImage>of();
+        final var expectedErrorCount = 1;
+        final var expectedErrorMessage = "The total number of images should be greater than zero";
+
+        final var actualProduct =
+                Product.newProduct("Celular Novo", "Celular com outra descrição", ProductStatus.ACTIVE, expectedPrice, expectedStock, expectedCategoryId, expectedStore, Set.of(ProductImage.with("123", "image.jpg", "/image",1, true)));
+
+        Assertions.assertEquals(actualProduct.getStatus(), ProductStatus.ACTIVE);
+        Assertions.assertNotNull(actualProduct.getName());
+
+        // when
+        final var actualException = Assertions.assertThrows(NotificationException.class, () ->
+                actualProduct.update(expectedName, expectedDescription, expectedStatus, expectedPrice, expectedStock, expectedCategoryId, expectedStore, expectedImages));
+
+        // then
+        Assertions.assertEquals(expectedErrorCount, actualException.getErrors().size());
+        Assertions.assertEquals(expectedErrorMessage, actualException.getErrors().get(0).message());
+    }
 }
