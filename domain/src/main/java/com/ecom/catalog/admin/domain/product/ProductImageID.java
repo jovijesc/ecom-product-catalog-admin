@@ -21,6 +21,10 @@ public class ProductImageID extends Identifier {
         return new com.ecom.catalog.admin.domain.product.ProductImageID(anId);
     }
 
+    public static com.ecom.catalog.admin.domain.product.ProductImageID from(final ProductImage anImage) {
+        return anImage.getId();
+    }
+
     @Override
     public String getValue() {
         return value;

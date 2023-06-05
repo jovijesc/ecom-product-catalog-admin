@@ -11,6 +11,7 @@ class ProductImageTest extends UnitTest {
     public void givenValidParams_whenCallsNewImage_shouldReturnInstance() {
         // given
         final var expectedCheckSum = "abc";
+        final byte[] expectedContent = {10, 20, 30, 40, 50};
         final var expectedName = "Banner.png";
         final var expectedLocation = "/image/ac";
         final var expectedOrder = 1;
@@ -18,7 +19,7 @@ class ProductImageTest extends UnitTest {
 
         // when
         final var actualImage =
-                ProductImage.with(expectedCheckSum, expectedName, expectedLocation, expectedOrder, expectedFeatured);
+                ProductImage.with(expectedCheckSum, expectedContent, expectedName, expectedLocation, expectedOrder, expectedFeatured);
 
         // then
         Assertions.assertNotNull(actualImage);
@@ -33,15 +34,16 @@ class ProductImageTest extends UnitTest {
     public void givenTwoImagesWithSameChecksumAndLocation_whenCallsEquals_shouldReturnTrue() {
         // given
         final var expectedCheckSum = "abc";
+        final byte[] expectedContent = {10, 20, 30, 40, 50};
         final var expectedLocation = "/image/ac";
         final var expectedOrder = 1;
         final var expectedFeatured = true;
 
         final var image01 =
-                ProductImage.with(expectedCheckSum, "Imagem 01", expectedLocation, expectedOrder, expectedFeatured);
+                ProductImage.with(expectedCheckSum, expectedContent, "Imagem 01", expectedLocation, expectedOrder, expectedFeatured);
 
         final var image02 =
-                ProductImage.with(expectedCheckSum, "Imagem 02", expectedLocation, expectedOrder, expectedFeatured);
+                ProductImage.with(expectedCheckSum, expectedContent,"Imagem 02", expectedLocation, expectedOrder, expectedFeatured);
 
         // then
         Assertions.assertEquals(image01, image02);
@@ -51,6 +53,7 @@ class ProductImageTest extends UnitTest {
     @Test
     public void givenInvalidParams_whenCallsWith_shouldReturnError() {
         final var expectedName = "image.jpg";
+        final byte[] expectedContent = {10, 20, 30, 40, 50};
         final var expectedLocation = "/image/ac";
         final var expectedChecksum = "abc";
         final var expectedOrder = 1;
@@ -58,41 +61,47 @@ class ProductImageTest extends UnitTest {
         final var expectedErrorCount = 1;
 
         var actualException = Assertions.assertThrows(NotificationException.class, () ->
-                ProductImage.with(expectedChecksum, null, expectedLocation, expectedOrder, expectedFeatured));
+                ProductImage.with(expectedChecksum, expectedContent, null, expectedLocation, expectedOrder, expectedFeatured));
 
         Assertions.assertEquals(expectedErrorCount, actualException.getErrors().size());
         Assertions.assertEquals("'name' should not be null", actualException.getErrors().get(0).message());
 
         actualException = Assertions.assertThrows(NotificationException.class, () ->
-                ProductImage.with(expectedChecksum, " ", expectedLocation, expectedOrder, expectedFeatured));
+                ProductImage.with(expectedChecksum, expectedContent, " ", expectedLocation, expectedOrder, expectedFeatured));
 
         Assertions.assertEquals(expectedErrorCount, actualException.getErrors().size());
         Assertions.assertEquals("'name' should not be empty", actualException.getErrors().get(0).message());
 
 
         actualException = Assertions.assertThrows(NotificationException.class, () ->
-                ProductImage.with(expectedChecksum, expectedName, null, expectedOrder, expectedFeatured));
+                ProductImage.with(expectedChecksum, expectedContent, expectedName, null, expectedOrder, expectedFeatured));
 
         Assertions.assertEquals(expectedErrorCount, actualException.getErrors().size());
         Assertions.assertEquals("'location' should not be null", actualException.getErrors().get(0).message());
 
         actualException = Assertions.assertThrows(NotificationException.class, () ->
-                ProductImage.with(expectedChecksum, expectedName, " ", expectedOrder, expectedFeatured));
+                ProductImage.with(expectedChecksum, expectedContent, expectedName, " ", expectedOrder, expectedFeatured));
 
         Assertions.assertEquals(expectedErrorCount, actualException.getErrors().size());
         Assertions.assertEquals("'location' should not be empty", actualException.getErrors().get(0).message());
 
         actualException = Assertions.assertThrows(NotificationException.class, () ->
-                ProductImage.with(null, "image.jpg", expectedLocation, expectedOrder, expectedFeatured));
+                ProductImage.with(null, expectedContent,"image.jpg", expectedLocation, expectedOrder, expectedFeatured));
 
         Assertions.assertEquals(expectedErrorCount, actualException.getErrors().size());
         Assertions.assertEquals("'checksum' should not be null", actualException.getErrors().get(0).message());
 
         actualException = Assertions.assertThrows(NotificationException.class, () ->
-                ProductImage.with(" ", "image.jpg", expectedLocation, expectedOrder, expectedFeatured));
+                ProductImage.with(" ", expectedContent,"image.jpg", expectedLocation, expectedOrder, expectedFeatured));
 
         Assertions.assertEquals(expectedErrorCount, actualException.getErrors().size());
         Assertions.assertEquals("'checksum' should not be empty", actualException.getErrors().get(0).message());
+
+        actualException = Assertions.assertThrows(NotificationException.class, () ->
+                ProductImage.with(expectedChecksum, null,"image.jpg", expectedLocation, expectedOrder, expectedFeatured));
+
+        Assertions.assertEquals(expectedErrorCount, actualException.getErrors().size());
+        Assertions.assertEquals("'content' should not be null", actualException.getErrors().get(0).message());
 
     }
 

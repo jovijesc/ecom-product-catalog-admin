@@ -12,14 +12,16 @@ import java.util.Objects;
 public class ProductImage extends Entity<ProductImageID> {
 
     private final String checksum;
+    private final byte[] content;
     private final String name;
     private final String location;
     private final int order;
     private final boolean featured;
 
-    private ProductImage(final ProductImageID anId, final String aChecksum, final  String aName, final String aLocation, final int aOrder, final boolean aFeatured) {
+    private ProductImage(final ProductImageID anId, final String aChecksum, final byte[] aContent,  String aName, final String aLocation, final int aOrder, final boolean aFeatured) {
         super(anId);
         this.checksum = aChecksum;
+        this.content = aContent;
         this.name = aName;
         this.location = aLocation;
         this.order = aOrder;
@@ -27,8 +29,8 @@ public class ProductImage extends Entity<ProductImageID> {
         selfValidate();
     }
 
-    public static ProductImage with(final String aChecksum, final  String aName, final String aLocation, final int aOrder, final boolean aFeatured) {
-        return new ProductImage(ProductImageID.unique(), aChecksum, aName, aLocation, aOrder, aFeatured);
+    public static ProductImage with(final String aChecksum, final byte[] aContent, final  String aName, final String aLocation, final int aOrder, final boolean aFeatured) {
+        return new ProductImage(ProductImageID.unique(), aChecksum, aContent, aName, aLocation, aOrder, aFeatured);
     }
 
     public void validate(ValidationHandler handler) {
@@ -45,6 +47,10 @@ public class ProductImage extends Entity<ProductImageID> {
 
     public String getChecksum() {
         return checksum;
+    }
+
+    public byte[] getContent() {
+        return content;
     }
 
     public String getName() {

@@ -10,6 +10,8 @@ import com.ecom.catalog.admin.application.product.update.DefaultUpdateProductUse
 import com.ecom.catalog.admin.application.product.update.UpdateProductUseCase;
 import com.ecom.catalog.admin.domain.category.CategoryGateway;
 import com.ecom.catalog.admin.domain.product.ProductGateway;
+import com.ecom.catalog.admin.domain.product.ProductImageGateway;
+import com.ecom.catalog.admin.domain.product.StoreGateway;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -21,19 +23,24 @@ public class ProductUseCaseConfig {
     private final ProductGateway productGateway;
     private final CategoryGateway categoryGateway;
 
-    public ProductUseCaseConfig(final ProductGateway productGateway, final CategoryGateway categoryGateway) {
+    private final StoreGateway storeGateway;
+    private final ProductImageGateway productImageGateway;
+
+    public ProductUseCaseConfig(final ProductGateway productGateway, final CategoryGateway categoryGateway, final StoreGateway storeGateway, final ProductImageGateway productImageGateway) {
         this.productGateway = Objects.requireNonNull(productGateway);
         this.categoryGateway = Objects.requireNonNull(categoryGateway);
+        this.storeGateway = Objects.requireNonNull(storeGateway);
+        this.productImageGateway = Objects.requireNonNull(productImageGateway);
     }
 
     @Bean
     public CreateProductUseCase createProductUseCase() {
-        return new DefaultCreateProductUseCase(productGateway, categoryGateway, storeGateway);
+        return new DefaultCreateProductUseCase(productGateway, categoryGateway, storeGateway, productImageGateway);
     }
 
     @Bean
     public UpdateProductUseCase updateProductUseCase() {
-        return new DefaultUpdateProductUseCase(productGateway, categoryGateway, storeGateway);
+        return new DefaultUpdateProductUseCase(productGateway, categoryGateway, storeGateway, productImageGateway);
     }
 
     @Bean

@@ -1,16 +1,19 @@
 package com.ecom.catalog.admin.application.product.update;
 
 import com.ecom.catalog.admin.application.product.UseCaseTest;
+import com.ecom.catalog.admin.application.product.create.CreateProductCommand;
 import com.ecom.catalog.admin.application.product.update.DefaultUpdateProductUseCase;
 import com.ecom.catalog.admin.application.product.update.UpdateProductCommand;
 import com.ecom.catalog.admin.domain.category.CategoryGateway;
 import com.ecom.catalog.admin.domain.category.CategoryID;
+import com.ecom.catalog.admin.domain.exceptions.InternalErrorException;
 import com.ecom.catalog.admin.domain.exceptions.NotificationException;
 import com.ecom.catalog.admin.domain.product.*;
 import com.ecom.catalog.admin.domain.utils.IdUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -19,6 +22,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.ArgumentMatchers.any;
@@ -40,17 +44,21 @@ class UpdateProductUseCaseTest extends UseCaseTest {
     @Mock
     private StoreGateway storeGateway;
 
+    @Mock
+    private ProductImageGateway productImageGateway;
+
     @Override
     protected List<Object> getMocks() {
-        return List.of(productGateway, categoryGateway, storeGateway);
+        return List.of(productGateway, categoryGateway, storeGateway, productImageGateway);
     }
 
     @Test
     public void givenAValidCommand_whenCallsUpdateProduct_shouldReturnProductId() {
         // given
         final var expectedStore = Store.with(IdUtils.uuid(), "Minha Loja");
+        final var expectedImages = Set.of(ProductImage.with("123", new byte[]{10,20,30,40,50},"image.jpg", "/image",1, true));
         final var aProduct =
-                Product.newProduct("Celular A", "Descrição A", ProductStatus.ACTIVE, Money.with(10.0), 10, CategoryID.from("123"), expectedStore);
+                Product.newProduct("Celular A", "Descrição A", ProductStatus.ACTIVE, Money.with(10.0), 10, CategoryID.from("123"), expectedStore, expectedImages);
 
         final var expectedName = "Celular";
         final var expectedDescription = "Celular do tipo ABC";
@@ -68,7 +76,8 @@ class UpdateProductUseCaseTest extends UseCaseTest {
                 expectedPrice,
                 expectedStock,
                 expectedCategoryId.getValue(),
-                expectedStore.getId()
+                expectedStore.getId(),
+                expectedImages
         );
 
         when(productGateway.findById(eq(expectedId)))
@@ -79,6 +88,9 @@ class UpdateProductUseCaseTest extends UseCaseTest {
 
         when(storeGateway.existsById(eq(expectedStore.getId())))
                 .thenReturn(true);
+
+        when(productImageGateway.create(any(), any(), ArgumentMatchers.anySet()))
+                .thenReturn(expectedImages);
 
         when(productGateway.update(any()))
                 .thenAnswer(returnsFirstArg());
@@ -102,6 +114,7 @@ class UpdateProductUseCaseTest extends UseCaseTest {
                         && Objects.equals(expectedStatus, aUpdatedProduct.getStatus())
                         && Objects.equals(expectedCategoryId, aUpdatedProduct.getCategoryId())
                         && Objects.equals(expectedStore, aUpdatedProduct.getStore())
+                        && Objects.equals(expectedImages, aUpdatedProduct.getImages())
                         && Objects.equals(aProduct.getCreatedAt(), aUpdatedProduct.getCreatedAt())
                         && aProduct.getUpdatedAt().isBefore(aUpdatedProduct.getUpdatedAt())
         ));
@@ -112,7 +125,8 @@ class UpdateProductUseCaseTest extends UseCaseTest {
         // given
 
         final var expectedStore = Store.with(IdUtils.uuid(), "Minha Loja");
-        final var aProduct = Product.newProduct("Celular A", "Celular do tipo BBB", Money.with(1700.0), 10, CategoryID.from("123"), expectedStore);
+        final var expectedImages = Set.of(ProductImage.with("123", new byte[]{10,20,30,40,50},"image.jpg", "/image",1, true));
+        final var aProduct = Product.newProduct("Celular A", "Celular do tipo BBB", Money.with(1700.0), 10, CategoryID.from("123"), expectedStore, expectedImages);
 
         final var expectedId = aProduct.getId();
         final String expectedName = null;
@@ -133,7 +147,8 @@ class UpdateProductUseCaseTest extends UseCaseTest {
                 expectedPrice,
                 expectedStock,
                 expectedCategoryId.getValue(),
-                expectedStore.getId()
+                expectedStore.getId(),
+                expectedImages
         );
 
         when(productGateway.findById(eq(expectedId)))
@@ -164,7 +179,8 @@ class UpdateProductUseCaseTest extends UseCaseTest {
     public void givenAnInvalidStock_whenCallsUpdateProduct_shouldReturnNotificationException() {
         // given
         final var expectedStore = Store.with(IdUtils.uuid(), "Minha Loja");
-        final var aProduct = Product.newProduct("Celular A", "Celular do tipo BBB", Money.with(1700.0), 10, CategoryID.from("123"),expectedStore);
+        final var expectedImages = Set.of(ProductImage.with("123", new byte[]{10,20,30,40,50},"image.jpg", "/image",1, true));
+        final var aProduct = Product.newProduct("Celular A", "Celular do tipo BBB", Money.with(1700.0), 10, CategoryID.from("123"),expectedStore, expectedImages);
 
         final var expectedId = aProduct.getId();
         final var expectedName = "Celular";
@@ -185,7 +201,8 @@ class UpdateProductUseCaseTest extends UseCaseTest {
                 expectedPrice,
                 expectedStock,
                 expectedCategoryId.getValue(),
-                expectedStore.getId()
+                expectedStore.getId(),
+                expectedImages
         );
 
         when(productGateway.findById(eq(expectedId)))
@@ -216,7 +233,8 @@ class UpdateProductUseCaseTest extends UseCaseTest {
     public void givenANullCategory_whenCallsUpdateProduct_shouldReturnNotificationException() {
         // given
         final var expectedStore = Store.with(IdUtils.uuid(), "Minha Loja");
-        final var aProduct = Product.newProduct("Celular A", "Celular do tipo BBB", Money.with(1700.0), 10, CategoryID.from("123"), expectedStore);
+        final var expectedImages = Set.of(ProductImage.with("123", new byte[]{10,20,30,40,50},"image.jpg", "/image",1, true));
+        final var aProduct = Product.newProduct("Celular A", "Celular do tipo BBB", Money.with(1700.0), 10, CategoryID.from("123"), expectedStore, expectedImages);
 
         final var expectedId = aProduct.getId();
         final var expectedName = "Celular";
@@ -236,7 +254,8 @@ class UpdateProductUseCaseTest extends UseCaseTest {
                 expectedPrice,
                 expectedStock,
                 null,
-                expectedStore.getId()
+                expectedStore.getId(),
+                expectedImages
         );
 
         when(productGateway.findById(eq(expectedId)))
@@ -262,7 +281,8 @@ class UpdateProductUseCaseTest extends UseCaseTest {
     public void givenAnInvalidCategory_whenCallsUpdateProduct_shouldReturnNotificationException() {
         // given
         final var expectedStore = Store.with(IdUtils.uuid(), "Minha Loja");
-        final var aProduct = Product.newProduct("Celular A", "Celular do tipo BBB", Money.with(1700.0), 10, CategoryID.from("123"),expectedStore);
+        final var expectedImages = Set.of(ProductImage.with("123", new byte[]{10,20,30,40,50},"image.jpg", "/image",1, true));
+        final var aProduct = Product.newProduct("Celular A", "Celular do tipo BBB", Money.with(1700.0), 10, CategoryID.from("123"),expectedStore, expectedImages);
 
         final var expectedId = aProduct.getId();
         final var expectedName = "Celular";
@@ -283,7 +303,8 @@ class UpdateProductUseCaseTest extends UseCaseTest {
                 expectedPrice,
                 expectedStock,
                 expectedCategoryId.getValue(),
-                expectedStore.getId()
+                expectedStore.getId(),
+                expectedImages
         );
 
         when(productGateway.findById(eq(expectedId)))
@@ -314,7 +335,8 @@ class UpdateProductUseCaseTest extends UseCaseTest {
     public void givenAValidCommandWithInactiveProduct_whenCallsUpdateProduct_shouldReturnProductId() {
         // given
         final var expectedStore = Store.with(IdUtils.uuid(), "Minha Loja");
-        final var aProduct = Product.newProduct("Celular A", "Celular do tipo BBB", Money.with(1700.0), 10, CategoryID.from("123"), expectedStore);
+        final var expectedImages = Set.of(ProductImage.with("123", new byte[]{10,20,30,40,50},"image.jpg", "/image",1, true));
+        final var aProduct = Product.newProduct("Celular A", "Celular do tipo BBB", Money.with(1700.0), 10, CategoryID.from("123"), expectedStore, expectedImages);
 
         final var expectedId = aProduct.getId();
         final String expectedName = "Celular";
@@ -332,7 +354,8 @@ class UpdateProductUseCaseTest extends UseCaseTest {
                 expectedPrice,
                 expectedStock,
                 expectedCategoryId.getValue(),
-                expectedStore.getId()
+                expectedStore.getId(),
+                expectedImages
         );
 
         when(productGateway.findById(eq(expectedId)))
@@ -343,6 +366,9 @@ class UpdateProductUseCaseTest extends UseCaseTest {
 
         when(storeGateway.existsById(eq(expectedStore.getId())))
                 .thenReturn(true);
+
+        when(productImageGateway.create(any(), any(), ArgumentMatchers.anySet()))
+                .thenReturn(expectedImages);
 
         when(productGateway.update(any()))
                 .thenAnswer(returnsFirstArg());
@@ -366,6 +392,7 @@ class UpdateProductUseCaseTest extends UseCaseTest {
                         && Objects.equals(expectedStock, aUpdatedProduct.getStock())
                         && Objects.equals(expectedStatus, aUpdatedProduct.getStatus())
                         && Objects.equals(expectedCategoryId, aUpdatedProduct.getCategoryId())
+                        && Objects.equals(expectedImages, aUpdatedProduct.getImages())
                         && Objects.equals(expectedStore, aUpdatedProduct.getStore())
                         && Objects.equals(aProduct.getCreatedAt(), aUpdatedProduct.getCreatedAt())
                         && aProduct.getUpdatedAt().isBefore(aUpdatedProduct.getUpdatedAt())
@@ -377,7 +404,8 @@ class UpdateProductUseCaseTest extends UseCaseTest {
     public void givenANullStore_whenCallsUpdateProduct_shouldReturnNotificationException() {
         // given
         final var expectedCategoryId = CategoryID.from("123");
-        final var aProduct = Product.newProduct("Celular A", "Celular do tipo BBB", Money.with(1700.0), 10, expectedCategoryId,  Store.with(IdUtils.uuid(), "Minha Loja"));
+        final var expectedImages = Set.of(ProductImage.with("123", new byte[]{10,20,30,40,50},"image.jpg", "/image",1, true));
+        final var aProduct = Product.newProduct("Celular A", "Celular do tipo BBB", Money.with(1700.0), 10, expectedCategoryId,  Store.with(IdUtils.uuid(), "Minha Loja"), expectedImages);
 
         final var expectedId = aProduct.getId();
         final var expectedName = "Celular";
@@ -397,7 +425,8 @@ class UpdateProductUseCaseTest extends UseCaseTest {
                 expectedPrice,
                 expectedStock,
                 expectedCategoryId.getValue(),
-                null
+                null,
+                expectedImages
         );
 
         when(productGateway.findById(eq(expectedId)))
@@ -424,7 +453,8 @@ class UpdateProductUseCaseTest extends UseCaseTest {
     public void givenAnInvalidStore_whenCallsUpdateProduct_shouldReturnNotificationException() {
         // given
         final var expectedCategoryId = CategoryID.from("123");
-        final var aProduct = Product.newProduct("Celular A", "Celular do tipo BBB", Money.with(1700.0), 10, expectedCategoryId,Store.with("123", "Minha Loja"));
+        final var expectedImages = Set.of(ProductImage.with("123", new byte[]{10,20,30,40,50},"image.jpg", "/image",1, true));
+        final var aProduct = Product.newProduct("Celular A", "Celular do tipo BBB", Money.with(1700.0), 10, expectedCategoryId,Store.with("123", "Minha Loja"), expectedImages);
         final var expectedId = aProduct.getId();
         final var expectedName = "Celular";
         final var expectedDescription = "Celular do tipo ABC";
@@ -444,7 +474,8 @@ class UpdateProductUseCaseTest extends UseCaseTest {
                 expectedPrice,
                 expectedStock,
                 expectedCategoryId.getValue(),
-                expectedStoreId
+                expectedStoreId,
+                expectedImages
         );
 
         when(productGateway.findById(eq(expectedId)))
@@ -469,5 +500,54 @@ class UpdateProductUseCaseTest extends UseCaseTest {
         Mockito.verify(storeGateway, times(1)).existsById(eq(expectedStoreId));
         Mockito.verify(productGateway, times(0)).update(any());
 
+    }
+
+    @Test
+    public void givenAValidCommand_whenCallsUpdateProductThrowsException_shouldReturnClearResources() {
+        // given
+        final String expectedName = "Celular";
+        final var expectedStoreId = "123";
+        final var expectedDescription = "Celular do tipo ABC";
+        final var expectedPrice = Money.with(1800.03);
+        final var expectedStock = 10;
+        final var expectedStatus = ProductStatus.ACTIVE;
+        final var expectedCategoryId = CategoryID.from("123");
+        final var expectedImages = Set.of(ProductImage.with("123", new byte[]{10,20,30,40,50},"image.jpg", "/image",1, true));
+        final var aProduct = Product.newProduct("Celular A", "Celular do tipo BBB", Money.with(1700.0), 10, CategoryID.from("123"), Store.from(expectedStoreId), expectedImages);
+        final var expectedId = aProduct.getId();
+
+        final var expectedErrorMessage = "An error on update product was observed";
+
+        final var aCommand =
+                UpdateProductCommand.with(expectedId.getValue(), expectedName, expectedDescription, expectedStatus, expectedPrice, expectedStock, expectedCategoryId.getValue(), expectedStoreId, expectedImages);
+
+        when(productGateway.findById(eq(expectedId)))
+                .thenReturn(Optional.of(Product.with(aProduct)));
+
+        when(categoryGateway.existsById(eq(expectedCategoryId)))
+                .thenReturn(true);
+
+        when(storeGateway.existsById(eq(expectedStoreId)))
+                .thenReturn(true);
+
+        when(productImageGateway.create(any(), any(), ArgumentMatchers.anySet()))
+                .thenReturn(expectedImages);
+
+        when(productGateway.update(any()))
+                .thenThrow(new RuntimeException("Internal Server Error"));
+
+        // when
+        final var actualException = Assertions.assertThrows(InternalErrorException.class, () ->
+                useCase.execute(aCommand));
+
+        // then
+        Assertions.assertNotNull(actualException);
+        Assertions.assertTrue(actualException.getMessage().startsWith(expectedErrorMessage));
+
+        Mockito.verify(categoryGateway, times(1)).existsById(eq(expectedCategoryId));
+        Mockito.verify(storeGateway, times(1)).existsById(eq(expectedStoreId));
+        Mockito.verify(productImageGateway, times(1)).create(any(), any(), (Set<ProductImage>) any());
+        Mockito.verify(productGateway, times(1)).update(any());
+        Mockito.verify(productImageGateway).clearImages(any(), any());
     }
 }

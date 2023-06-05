@@ -161,6 +161,12 @@ public class Product extends AggregateRoot<ProductID> {
         return this;
     }
 
+    public Product updateImages(final Set<ProductImage> images) {
+        this.images = new HashSet<>(images != null ? images : Collections.emptySet());
+        selfValidate();
+        return this;
+    }
+
     private Product updateStatus(ProductStatus active) {
         this.status = active;
         this.updatedAt = InstantUtils.now();

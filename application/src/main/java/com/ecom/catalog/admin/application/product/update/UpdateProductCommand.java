@@ -1,7 +1,10 @@
 package com.ecom.catalog.admin.application.product.update;
 
 import com.ecom.catalog.admin.domain.product.Money;
+import com.ecom.catalog.admin.domain.product.ProductImage;
 import com.ecom.catalog.admin.domain.product.ProductStatus;
+
+import java.util.Set;
 
 public record UpdateProductCommand(
         String id,
@@ -11,7 +14,8 @@ public record UpdateProductCommand(
         Money price,
         int stock,
         String category,
-        String store
+        String store,
+        Set<ProductImage> images
 ) {
 
     public static UpdateProductCommand with(
@@ -21,9 +25,10 @@ public record UpdateProductCommand(
             final Money aPrice,
             final int aStock,
             final String aCategory,
-            final String aStore
+            final String aStore,
+            final Set<ProductImage> images
     ) {
-        return new UpdateProductCommand(anId, aName, aDescription, ProductStatus.ACTIVE, aPrice, aStock, aCategory, aStore);
+        return new UpdateProductCommand(anId, aName, aDescription, ProductStatus.ACTIVE, aPrice, aStock, aCategory, aStore, images);
     }
 
     public static UpdateProductCommand with(
@@ -34,9 +39,10 @@ public record UpdateProductCommand(
             final Money aPrice,
             final int aStock,
             final String aCategory,
-            final String aStore
+            final String aStore,
+            final Set<ProductImage> images
     ) {
-        return new UpdateProductCommand(anId, aName, aDescription, aStatus, aPrice, aStock, aCategory, aStore);
+        return new UpdateProductCommand(anId, aName, aDescription, aStatus, aPrice, aStock, aCategory, aStore, images);
     }
 }
 
