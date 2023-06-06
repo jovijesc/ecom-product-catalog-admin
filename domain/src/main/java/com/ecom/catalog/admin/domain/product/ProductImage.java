@@ -33,6 +33,10 @@ public class ProductImage extends Entity<ProductImageID> {
         return new ProductImage(ProductImageID.unique(), aChecksum, aContent, aName, aLocation, aOrder, aFeatured);
     }
 
+    public static ProductImage with(final ProductImage aImage) {
+        return new ProductImage(aImage.getId(), aImage.getChecksum(), aImage.getContent(), aImage.getName(), aImage.getLocation(), aImage.getOrder(), aImage.isFeatured());
+    }
+
     public void validate(ValidationHandler handler) {
         new ProductImageValidator(this, handler).validate();
     }

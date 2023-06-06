@@ -4,7 +4,7 @@ import com.ecom.catalog.admin.domain.ValueObject;
 
 import java.util.Objects;
 
-public class Store extends ValueObject {
+public class Store extends ValueObject implements Cloneable {
     private final String id;
     private final String name;
 
@@ -40,5 +40,14 @@ public class Store extends ValueObject {
     @Override
     public int hashCode() {
         return Objects.hash(getId());
+    }
+
+    @Override
+    public Store clone()  {
+        try {
+            return (Store) super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError();
+        }
     }
 }
