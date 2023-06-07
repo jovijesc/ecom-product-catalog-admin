@@ -12,9 +12,13 @@ public interface ProductGateway {
 
     Optional<Product> findById(ProductID anId);
 
+    Optional<Product> findByImageId(ProductImageID imageId);
+
     Product update(Product aProduct);
 
     Pagination<Product> findAll(SearchQuery aQuery);
 
     List<ProductID> existsByIds(Iterable<ProductID> ids);
+
+
 }

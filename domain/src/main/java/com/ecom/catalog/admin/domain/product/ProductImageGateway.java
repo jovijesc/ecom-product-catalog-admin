@@ -10,7 +10,7 @@ public interface ProductImageGateway {
 
     Set<ProductImage> create(Store store, ProductID anId, Set<ProductImage> images);
 
-    Optional<ProductImage> getImage(Store store, ProductID anId);
+    Optional<ProductImage> getImage(Store store, ProductID anProductId, ProductImageID anId);
 
     void clearImages(Store store, ProductID anId);
 }
