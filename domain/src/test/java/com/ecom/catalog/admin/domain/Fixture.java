@@ -123,6 +123,14 @@ public class Fixture {
                 Stores.lojaEletromania(),
                 Set.of(ProductImages.img01(), ProductImages.img03()));
 
+        public static Product celular() {
+            return Product.with(CELULAR);
+        }
+
+        public static Product notebook() {
+            return Product.with(NOTEBOOK);
+        }
+
         public static String description() {
             return FAKER.options().option(
                     """
