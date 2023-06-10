@@ -32,6 +32,9 @@ public class GetProductByIdUseCaseIT {
     @SpyBean
     private CategoryGateway categoryGateway;
 
+    @SpyBean
+    private StoreGateway storeGateway;
+
     @Test
     public void givenAValidId_whenCallsGetProduct_shouldReturnProduct() {
         // given
@@ -43,9 +46,10 @@ public class GetProductByIdUseCaseIT {
 
         final var expectedCategory =
                 categoryGateway.create(Category.newCategory("Eletrônico", "Eletrônicos do tipo A", true));
+        final var expectedStore =
+                storeGateway.create(Fixture.Stores.lojaEletromania());
+
         final var expectedCategoryId = expectedCategory.getId();
-        // TODO continuar
-        final var expectedStore = Fixture.Stores.lojaEletromania();
         final var expectedImages = Set.of(Fixture.ProductImages.img01());
 
         final var aProduct =
@@ -57,7 +61,7 @@ public class GetProductByIdUseCaseIT {
         final var actualProduct = useCase.execute(expectedId.getValue());
 
         // then
-        Assertions.assertNotNull(actualProduct);;
+        Assertions.assertNotNull(actualProduct);
         Assertions.assertEquals(expectedId.getValue(), actualProduct.id());
         Assertions.assertEquals(expectedName, actualProduct.name());
         Assertions.assertEquals(expectedDescription, actualProduct.description());
@@ -65,6 +69,8 @@ public class GetProductByIdUseCaseIT {
         Assertions.assertEquals(expectedStock, actualProduct.stock());
         Assertions.assertEquals(expectedStatus, actualProduct.status());
         Assertions.assertEquals(expectedCategoryId.getValue(), actualProduct.category());
+        Assertions.assertEquals(expectedStore.getId(), actualProduct.store());
+        Assertions.assertEquals(expectedImages, actualProduct.images());
         Assertions.assertEquals(aProduct.getCreatedAt(), actualProduct.createdAt());
         Assertions.assertEquals(aProduct.getUpdatedAt(), actualProduct.updatedAt());
 

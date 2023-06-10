@@ -43,13 +43,39 @@ public class ProductImageJpaEntity {
         this.featured = featured;
     }
 
-    public static ProductImageJpaEntity from(final ProductImage image) {
+    private ProductImageJpaEntity(
+            final String id,
+            final String checksum,
+            final String name,
+            final String filePath,
+            final boolean featured,
+            final ProductJpaEntity product) {
+        this.id = id;
+        this.checksum = checksum;
+        this.name = name;
+        this.filePath = filePath;
+        this.featured = featured;
+        this.product = product;
+    }
+
+    public static ProductImageJpaEntity from(final ProductImage aImage) {
         return new ProductImageJpaEntity(
-                image.getId().getValue(),
-                image.getChecksum(),
-                image.getName(),
-                image.getLocation(),
-                image.isFeatured()
+                aImage.getId().getValue(),
+                aImage.getChecksum(),
+                aImage.getName(),
+                aImage.getLocation(),
+                aImage.isFeatured()
+        );
+    }
+
+    public static ProductImageJpaEntity from(final ProductImage aImage, ProductJpaEntity aProduct) {
+        return new ProductImageJpaEntity(
+                aImage.getId().getValue(),
+                aImage.getChecksum(),
+                aImage.getName(),
+                aImage.getLocation(),
+                aImage.isFeatured(),
+                aProduct
         );
     }
 

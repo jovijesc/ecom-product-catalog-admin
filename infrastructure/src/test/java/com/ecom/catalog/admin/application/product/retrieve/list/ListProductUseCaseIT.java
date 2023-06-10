@@ -5,10 +5,7 @@ import com.ecom.catalog.admin.domain.Fixture;
 import com.ecom.catalog.admin.domain.category.Category;
 import com.ecom.catalog.admin.domain.category.CategoryGateway;
 import com.ecom.catalog.admin.domain.pagination.SearchQuery;
-import com.ecom.catalog.admin.domain.product.Money;
-import com.ecom.catalog.admin.domain.product.Product;
-import com.ecom.catalog.admin.domain.product.ProductGateway;
-import com.ecom.catalog.admin.domain.product.ProductStatus;
+import com.ecom.catalog.admin.domain.product.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -35,6 +32,9 @@ public class ListProductUseCaseIT {
     @SpyBean
     private CategoryGateway categoryGateway;
 
+    @SpyBean
+    private StoreGateway storeGateway;
+
 
     @Test
     public void givenAValidQuery_whenCallsListProduct_shouldReturnProducts() {
@@ -44,8 +44,9 @@ public class ListProductUseCaseIT {
         final var expectedCategoryTwo =
                 categoryGateway.create(Category.newCategory("Informática", "Informática do tipo A", true));
 
-        // TODO continuar
-        final var expectedStore = Fixture.Stores.lojaEletromania();
+        final var expectedStore =
+                storeGateway.create(Fixture.Stores.lojaEletromania());
+
         final var expectedImages = Set.of(Fixture.ProductImages.img01());
 
         final var products = List.of(

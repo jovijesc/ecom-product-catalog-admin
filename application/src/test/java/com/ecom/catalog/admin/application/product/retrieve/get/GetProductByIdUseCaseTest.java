@@ -70,6 +70,7 @@ class GetProductByIdUseCaseTest extends UseCaseTest {
         Assertions.assertEquals(expectedStatus, actualProduct.status());
         Assertions.assertEquals(expectedCategoryId.getValue(), actualProduct.category());
         Assertions.assertEquals(expectedStore.getId(), actualProduct.store());
+        Assertions.assertEquals(expectedImages, actualProduct.images());
         Assertions.assertEquals(aProduct.getCreatedAt(), actualProduct.createdAt());
         Assertions.assertEquals(aProduct.getUpdatedAt(), actualProduct.updatedAt());
 

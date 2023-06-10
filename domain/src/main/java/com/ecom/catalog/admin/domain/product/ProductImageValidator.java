@@ -20,7 +20,6 @@ public class ProductImageValidator extends Validator {
     @Override
     public void validate() {
         checkChecksumConstraints();
-        checkContentConstraints();
         checkNameConstraints();
         checkLocationConstraints();
     }
@@ -61,11 +60,5 @@ public class ProductImageValidator extends Validator {
         }
     }
 
-    private void checkContentConstraints() {
-        final var content = this.image.getContent();
-        if( content == null) {
-            this.validationHandler().append(new Error("'content' should not be null"));
-        }
-    }
 
 }

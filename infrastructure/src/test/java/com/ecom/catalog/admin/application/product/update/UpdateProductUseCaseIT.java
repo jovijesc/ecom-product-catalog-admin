@@ -7,10 +7,7 @@ import com.ecom.catalog.admin.domain.category.Category;
 import com.ecom.catalog.admin.domain.category.CategoryGateway;
 import com.ecom.catalog.admin.domain.category.CategoryID;
 import com.ecom.catalog.admin.domain.exceptions.NotificationException;
-import com.ecom.catalog.admin.domain.product.Money;
-import com.ecom.catalog.admin.domain.product.Product;
-import com.ecom.catalog.admin.domain.product.ProductGateway;
-import com.ecom.catalog.admin.domain.product.ProductStatus;
+import com.ecom.catalog.admin.domain.product.*;
 import com.ecom.catalog.admin.infrastructure.product.persistence.ProductJpaEntity;
 import com.ecom.catalog.admin.infrastructure.product.persistence.ProductRepository;
 import com.ecom.catalog.admin.infrastructure.utils.MoneyUtils;
@@ -42,6 +39,9 @@ public class UpdateProductUseCaseIT {
     @SpyBean
     private ProductGateway productGateway;
 
+    @SpyBean
+    private StoreGateway storeGateway;
+
     @Autowired
     private ProductRepository productRepository;
 
@@ -50,9 +50,8 @@ public class UpdateProductUseCaseIT {
         // given
         final var expectedCategory =
                 categoryGateway.create(Category.newCategory("Eletrônico", "Eletrônicos do tipo A", true));
-
-        // TODO continuar
-        final var expectedStore = Fixture.Stores.lojaEletromania();
+        final var expectedStore =
+                storeGateway.create(Fixture.Stores.lojaEletromania());
         final var expectedImages = Set.of(Fixture.ProductImages.img01());
 
         final var aProduct =
@@ -102,9 +101,8 @@ public class UpdateProductUseCaseIT {
         // given
         final var expectedCategory =
                 categoryGateway.create(Category.newCategory("Eletrônico", "Eletrônicos do tipo A", true));
-
-        // TODO continuar
-        final var expectedStore = Fixture.Stores.lojaEletromania();
+        final var expectedStore =
+                storeGateway.create(Fixture.Stores.lojaEletromania());
         final var expectedImages = Set.of(Fixture.ProductImages.img01());
 
         final var aProduct =
@@ -152,9 +150,8 @@ public class UpdateProductUseCaseIT {
         // given
         final var expectedCategory =
                 categoryGateway.create(Category.newCategory("Eletrônico", "Eletrônicos do tipo A", true));
-
-        // TODO continuar
-        final var expectedStore = Fixture.Stores.lojaEletromania();
+        final var expectedStore =
+                storeGateway.create(Fixture.Stores.lojaEletromania());
         final var expectedImages = Set.of(Fixture.ProductImages.img01());
 
         final var aProduct =
@@ -202,9 +199,8 @@ public class UpdateProductUseCaseIT {
         // given
         final var expectedCategory =
                 categoryGateway.create(Category.newCategory("Eletrônico", "Eletrônicos do tipo A", true));
-
-        // TODO continuar
-        final var expectedStore = Fixture.Stores.lojaEletromania();
+        final var expectedStore =
+                storeGateway.create(Fixture.Stores.lojaEletromania());
         final var expectedImages = Set.of(Fixture.ProductImages.img01());
 
         final var aProduct =

@@ -5,6 +5,7 @@ import com.ecom.catalog.admin.domain.pagination.Pagination;
 import com.ecom.catalog.admin.domain.pagination.SearchQuery;
 import com.ecom.catalog.admin.domain.product.*;
 import com.ecom.catalog.admin.infrastructure.product.persistence.ProductJpaEntity;
+import com.ecom.catalog.admin.infrastructure.product.persistence.StoreJpaEntity;
 import com.ecom.catalog.admin.infrastructure.product.persistence.StoreRepository;
 import com.ecom.catalog.admin.infrastructure.utils.SpecificationUtils;
 import org.springframework.data.domain.PageRequest;
@@ -29,7 +30,17 @@ public class StoreMySQLGateway implements StoreGateway {
     }
 
     @Override
+    public Store create(Store aStore) {
+        return save(aStore);
+    }
+
+    @Override
     public boolean existsById(String id) {
         return this.repository.existsById(id);
+    }
+
+    private Store save(final Store aStore) {
+        return this.repository.save(StoreJpaEntity.from(aStore))
+                .toAggregate();
     }
 }

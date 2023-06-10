@@ -93,13 +93,6 @@ class ProductImageTest extends UnitTest {
         Assertions.assertEquals(expectedErrorCount, actualException.getErrors().size());
         Assertions.assertEquals("'checksum' should not be empty", actualException.getErrors().get(0).message());
 
-        actualException = Assertions.assertThrows(NotificationException.class, () ->
-                ProductImage.with(expectedChecksum, (byte[]) null,"image.jpg", expectedLocation, expectedFeatured));
-
-
-        Assertions.assertEquals(expectedErrorCount, actualException.getErrors().size());
-        Assertions.assertEquals("'content' should not be null", actualException.getErrors().get(0).message());
-
     }
 
 }

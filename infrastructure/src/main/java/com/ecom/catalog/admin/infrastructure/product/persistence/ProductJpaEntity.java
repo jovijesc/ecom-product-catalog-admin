@@ -92,9 +92,33 @@ public class ProductJpaEntity {
         this.images = images;
     }
 
+    private ProductJpaEntity(
+            final String anId,
+            final String aName,
+            final String aDescription,
+            final MonetaryAmount aPrice,
+            final int aStock,
+            final ProductStatus aStatus,
+            final CategoryJpaEntity aCategory,
+            final Instant aCreationDate,
+            final Instant anUpdateDate,
+            final StoreJpaEntity aStore
+    ) {
+        this.id = anId;
+        this.name = aName;
+        this.description = aDescription;
+        this.price = aPrice;
+        this.stock = aStock;
+        this.status = aStatus;
+        this.category = aCategory;
+        this.createdAt = aCreationDate;
+        this.updatedAt = anUpdateDate;
+        this.store = aStore;
+    }
+
 
     public static ProductJpaEntity from(final Product aProduct) {
-        return new ProductJpaEntity(
+        var aProductJpaEntity =  new ProductJpaEntity(
                 aProduct.getId().getValue(),
                 aProduct.getName(),
                 aProduct.getDescription(),
@@ -104,9 +128,10 @@ public class ProductJpaEntity {
                 CategoryJpaEntity.from(aProduct.getCategoryId()),
                 aProduct.getCreatedAt(),
                 aProduct.getUpdatedAt(),
-                StoreJpaEntity.from(aProduct.getStore()),
-                CollectionUtils.mapTo(aProduct.getImages(), i -> ProductImageJpaEntity.from(i))
+                StoreJpaEntity.from(aProduct.getStore())
         );
+        aProductJpaEntity.setImages(CollectionUtils.mapTo(aProduct.getImages(), i -> ProductImageJpaEntity.from(i,aProductJpaEntity)));
+        return aProductJpaEntity;
     }
 
     public Product toAggregate() {
@@ -122,6 +147,21 @@ public class ProductJpaEntity {
                 getUpdatedAt(),
                 getStore().toAggregate(),
                 CollectionUtils.mapTo(getImages(), ProductImageJpaEntity::toDomain)
+        );
+    }
+
+    public Product toPartialAggregate() {
+        return Product.with(
+                ProductID.from(getId()),
+                getName(),
+                getDescription(),
+                MoneyUtils.fromMonetaryAmount(getPrice()),
+                getStock(),
+                getStatus(),
+                CategoryID.from(getCategory().getId()),
+                getCreatedAt(),
+                getUpdatedAt(),
+                getStore().toAggregate()
         );
     }
 

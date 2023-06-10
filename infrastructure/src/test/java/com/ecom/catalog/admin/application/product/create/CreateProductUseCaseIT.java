@@ -6,13 +6,12 @@ import com.ecom.catalog.admin.domain.Fixture;
 import com.ecom.catalog.admin.domain.category.Category;
 import com.ecom.catalog.admin.domain.category.CategoryGateway;
 import com.ecom.catalog.admin.domain.category.CategoryID;
+import com.ecom.catalog.admin.domain.exceptions.InternalErrorException;
 import com.ecom.catalog.admin.domain.exceptions.NotificationException;
-import com.ecom.catalog.admin.domain.product.Money;
-import com.ecom.catalog.admin.domain.product.Product;
-import com.ecom.catalog.admin.domain.product.ProductGateway;
-import com.ecom.catalog.admin.domain.product.ProductStatus;
+import com.ecom.catalog.admin.domain.product.*;
 import com.ecom.catalog.admin.infrastructure.product.persistence.ProductJpaEntity;
 import com.ecom.catalog.admin.infrastructure.product.persistence.ProductRepository;
+import com.ecom.catalog.admin.infrastructure.product.persistence.StoreRepository;
 import com.ecom.catalog.admin.infrastructure.utils.MoneyUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -40,14 +39,21 @@ public class CreateProductUseCaseIT {
     @SpyBean
     private ProductGateway productGateway;
 
+    @SpyBean
+    private StoreGateway storeGateway;
+
     @Autowired
     private ProductRepository productRepository;
+
 
     @Test
     public void givenAValidCommand_whenCallsCreateProduct_shouldReturnProductId() {
         // given
         final var expectedCategory =
-                categoryGateway.create(Category.newCategory("Eletrônico", "Eletrônicos do tipo A", true));
+                categoryGateway.create(Fixture.Categories.eletronicos());
+        final var expectedStore =
+                storeGateway.create(Fixture.Stores.lojaEletromania());
+        final var expectedImages = Set.of(Fixture.ProductImages.img01());
 
         final var expectedName = "Celular";
         final var expectedDescription = "Celular do tipo ABC";
@@ -56,10 +62,8 @@ public class CreateProductUseCaseIT {
         final var expectedStatus = ProductStatus.ACTIVE;
         final var expectedCategoryId = expectedCategory.getId();
 
-        // TODO continuar
-
         final var aCommand =
-                CreateProductCommand.with(expectedName, expectedDescription, expectedPrice, expectedStock, expectedCategoryId.getValue(), null, null);
+                CreateProductCommand.with(expectedName, expectedDescription, expectedPrice, expectedStock, expectedCategoryId.getValue(), expectedStore.getId(), expectedImages);
 
         final var actualOutput = useCase.execute(aCommand);
 
@@ -85,6 +89,8 @@ public class CreateProductUseCaseIT {
         // given
         final var expectedCategory =
                 categoryGateway.create(Category.newCategory("Eletrônico", "Eletrônicos do tipo A", true));
+        final var expectedStore =
+                storeGateway.create(Fixture.Stores.lojaEletromania());
 
         final String expectedName = null;
         final var expectedDescription = "Celular do tipo ABC";
@@ -92,7 +98,7 @@ public class CreateProductUseCaseIT {
         final var expectedStock = 10;
         final var expectedStatus = ProductStatus.ACTIVE;
         final var expectedCategoryId = expectedCategory.getId();
-        final var expectedStoreId = Fixture.Stores.lojaEletromania().getId();
+        final var expectedStoreId = expectedStore.getId();
         final var expectedImages = Set.of(Fixture.ProductImages.img01());
 
         final var expectedErrorCount = 1;
@@ -120,6 +126,8 @@ public class CreateProductUseCaseIT {
         // given
         final var expectedCategory =
                 categoryGateway.create(Category.newCategory("Eletrônico", "Eletrônicos do tipo A", true));
+        final var expectedStore =
+                storeGateway.create(Fixture.Stores.lojaEletromania());
 
         final String expectedName = "Celular";
         final var expectedDescription = "Celular do tipo ABC";
@@ -127,25 +135,25 @@ public class CreateProductUseCaseIT {
         final var expectedStock = 10;
         final var expectedStatus = ProductStatus.ACTIVE;
         final var expectedCategoryId = expectedCategory.getId();
-        final var expectedStoreId = Fixture.Stores.lojaEletromania().getId();
+        final var expectedStoreId = expectedStore.getId();
         final var expectedImages = Set.of(Fixture.ProductImages.img01());
 
 
-        final var expectedErrorMessage = "Gateway error";
+        final var expectedErrorMessage = "An error on create product was observed";
 
-        doThrow(new IllegalStateException(expectedErrorMessage))
+        doThrow(InternalErrorException.with(expectedErrorMessage))
                 .when(productGateway).create(any());
 
         final var aCommand =
                 CreateProductCommand.with(expectedName, expectedDescription, expectedStatus, expectedPrice, expectedStock, expectedCategoryId.getValue(), expectedStoreId, expectedImages);
 
         // when
-        final var actualException = Assertions.assertThrows(IllegalStateException.class, () ->
+        final var actualException = Assertions.assertThrows(InternalErrorException.class, () ->
                 useCase.execute(aCommand));
 
         // then
         Assertions.assertNotNull(actualException);
-        Assertions.assertEquals(expectedErrorMessage, actualException.getMessage());
+        Assertions.assertTrue(actualException.getMessage().startsWith(expectedErrorMessage));
 
         Mockito.verify(categoryGateway, times(1)).existsById(eq(expectedCategoryId));
         Mockito.verify(productGateway, times(1)).create(any());

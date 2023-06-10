@@ -120,6 +120,32 @@ public class Product extends AggregateRoot<ProductID> {
         );
     }
 
+    public static Product with(
+            final ProductID anId,
+            final String aName,
+            final String aDescription,
+            final Money aPrice,
+            final int aStock,
+            final ProductStatus aStatus,
+            final CategoryID aCategoryId,
+            final Instant aCreationDate,
+            final Instant aUpdateDate,
+            final Store aStore) {
+        return new Product(
+                anId,
+                aName,
+                aDescription,
+                aPrice,
+                aStock,
+                aStatus,
+                aCategoryId,
+                aCreationDate,
+                aUpdateDate,
+                aStore,
+                null
+        );
+    }
+
     public static Product with(final Product aProduct) {
         return with(
                 aProduct.getId(),

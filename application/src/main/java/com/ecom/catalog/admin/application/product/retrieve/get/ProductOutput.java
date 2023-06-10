@@ -2,9 +2,11 @@ package com.ecom.catalog.admin.application.product.retrieve.get;
 
 import com.ecom.catalog.admin.domain.product.Money;
 import com.ecom.catalog.admin.domain.product.Product;
+import com.ecom.catalog.admin.domain.product.ProductImage;
 import com.ecom.catalog.admin.domain.product.ProductStatus;
 
 import java.time.Instant;
+import java.util.Set;
 
 public record ProductOutput(
         String id,
@@ -16,7 +18,8 @@ public record ProductOutput(
         String category,
         Instant createdAt,
         Instant updatedAt,
-        String store
+        String store,
+        Set<ProductImage> images
 ) {
 
     public static ProductOutput from(final Product aProduct) {
@@ -30,7 +33,8 @@ public record ProductOutput(
                 aProduct.getCategoryId().getValue(),
                 aProduct.getCreatedAt(),
                 aProduct.getUpdatedAt(),
-                aProduct.getStore().getId()
+                aProduct.getStore().getId(),
+                aProduct.getImages()
         );
     }
 }

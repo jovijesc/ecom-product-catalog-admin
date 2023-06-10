@@ -13,6 +13,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Objects;
@@ -31,11 +32,13 @@ public class DefaultProductGateway implements ProductGateway {
     }
 
     @Override
+    @Transactional
     public Product create(final Product aProduct) {
         return save(aProduct);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Optional<Product> findById(final ProductID anId) {
         return this.productRepository.findById(anId.getValue())
                 .map(ProductJpaEntity::toAggregate);
@@ -71,7 +74,7 @@ public class DefaultProductGateway implements ProductGateway {
                 pageResult.getNumber(),
                 pageResult.getSize(),
                 pageResult.getTotalElements(),
-                pageResult.map(ProductJpaEntity::toAggregate).toList()
+                pageResult.map(ProductJpaEntity::toPartialAggregate).toList()
         );
 
     }
