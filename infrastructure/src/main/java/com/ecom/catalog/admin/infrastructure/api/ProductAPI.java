@@ -1,10 +1,7 @@
 package com.ecom.catalog.admin.infrastructure.api;
 
 import com.ecom.catalog.admin.domain.pagination.Pagination;
-import com.ecom.catalog.admin.infrastructure.product.models.CreateProductRequest;
-import com.ecom.catalog.admin.infrastructure.product.models.ProductListResponse;
-import com.ecom.catalog.admin.infrastructure.product.models.ProductResponse;
-import com.ecom.catalog.admin.infrastructure.product.models.UpdateProductRequest;
+import com.ecom.catalog.admin.infrastructure.product.models.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -12,13 +9,16 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.Set;
 
 @RequestMapping(value = "products")
 @Tag(name = "Product")
 public interface ProductAPI {
 
     @PostMapping(
-            consumes = MediaType.APPLICATION_JSON_VALUE,
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     @Operation(summary = "Create a new product")
@@ -27,7 +27,7 @@ public interface ProductAPI {
             @ApiResponse(responseCode = "422", description = "A validation error was thrown"),
             @ApiResponse(responseCode = "500", description = "An internal server error was thrown")
     })
-    ResponseEntity<?> create(@RequestBody CreateProductRequest input);
+    ResponseEntity<?> create(@RequestPart(name = "product") CreateProductRequest product, @RequestPart(name = "images") MultipartFile[] images);
 
     @GetMapping
     @Operation(summary = "List all products paginated")

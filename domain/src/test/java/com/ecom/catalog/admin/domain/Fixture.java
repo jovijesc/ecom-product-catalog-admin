@@ -53,10 +53,10 @@ public class Fixture {
 
     public static final class ProductImages {
 
-        private static final ProductImage IMG01 = ProductImage.with("checksum123", new byte[]{10,20,30,40,50},"image01.jpg", "/image",1, true);
-        private static final ProductImage IMG02 = ProductImage.with("checksum456", new byte[]{11,21,31,41,51},"image02.jpg", "/image",1, true);
+        private static final ProductImage IMG01 = ProductImage.with("checksum123", new byte[]{10,20,30,40,50},"image01.jpg", "/image", true);
+        private static final ProductImage IMG02 = ProductImage.with("checksum456", new byte[]{11,21,31,41,51},"image02.jpg", "/image", true);
 
-        private static final ProductImage IMG03 = ProductImage.with("checksum789", new byte[]{12,22,32,42,52},"image03.jpg", "/image",1, true);
+        private static final ProductImage IMG03 = ProductImage.with("checksum789", new byte[]{12,22,32,42,52},"image03.jpg", "/image", true);
 
         public static ProductImage img01() {
             return ProductImage.with(IMG01);

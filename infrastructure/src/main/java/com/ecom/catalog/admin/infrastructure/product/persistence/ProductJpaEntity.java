@@ -1,37 +1,27 @@
 package com.ecom.catalog.admin.infrastructure.product.persistence;
 
 import com.ecom.catalog.admin.domain.category.CategoryID;
-import com.ecom.catalog.admin.domain.product.Product;
-import com.ecom.catalog.admin.domain.product.ProductID;
-import com.ecom.catalog.admin.domain.product.ProductStatus;
+import com.ecom.catalog.admin.domain.product.*;
+import com.ecom.catalog.admin.domain.utils.CollectionUtils;
 import com.ecom.catalog.admin.infrastructure.category.persistence.CategoryJpaEntity;
 import com.ecom.catalog.admin.infrastructure.utils.MoneyUtils;
 import io.hypersistence.utils.hibernate.type.money.MonetaryAmountType;
 import org.hibernate.annotations.Columns;
 import org.hibernate.annotations.TypeDef;
-import org.javamoney.moneta.Money;
 
 import javax.money.MonetaryAmount;
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.Collections;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Entity(name = "Product")
 @Table(name = "products")
 @TypeDef(typeClass = MonetaryAmountType.class, defaultForType = MonetaryAmount.class)
 public class ProductJpaEntity {
 
-    /**
-     *     private String name;
-     *     private String description;
-     *     private Money price;
-     *     private int stock;
-     *     private ProductStatus status;
-     *
-     *     private CategoryID categoryId;
-     *     private Instant createdAt;
-     *     private Instant updatedAt;
-     */
     @Id
     @Column(name = "id", nullable = false)
     private String id;
@@ -44,7 +34,7 @@ public class ProductJpaEntity {
 
     @SuppressWarnings("JpaAttributeTypeInspection")
     @Columns(columns = {
-            @Column(name = "price_amount", columnDefinition="DECIMAL(17,4)", nullable = false),
+            @Column(name = "price_amount", columnDefinition = "DECIMAL(17,4)", nullable = false),
             @Column(name = "price_currency", nullable = false)
     })
     private MonetaryAmount price;
@@ -56,7 +46,7 @@ public class ProductJpaEntity {
     private ProductStatus status;
 
     @OneToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "category_id",  nullable = false)
+    @JoinColumn(name = "category_id", nullable = false)
     private CategoryJpaEntity category;
 
     @Column(name = "created_at", nullable = false, columnDefinition = "DATETIME(6)")
@@ -65,7 +55,16 @@ public class ProductJpaEntity {
     @Column(name = "updated_at", nullable = false, columnDefinition = "DATETIME(6)")
     private Instant updatedAt;
 
-    public ProductJpaEntity() {}
+    @ManyToOne
+    @JoinColumn(name = "store_id", nullable = false)
+    private StoreJpaEntity store;
+
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<ProductImageJpaEntity> images;
+
+
+    public ProductJpaEntity() {
+    }
 
     private ProductJpaEntity(
             final String anId,
@@ -76,7 +75,9 @@ public class ProductJpaEntity {
             final ProductStatus aStatus,
             final CategoryJpaEntity aCategory,
             final Instant aCreationDate,
-            final Instant anUpdateDate
+            final Instant anUpdateDate,
+            final StoreJpaEntity aStore,
+            final Set<ProductImageJpaEntity> images
     ) {
         this.id = anId;
         this.name = aName;
@@ -87,6 +88,8 @@ public class ProductJpaEntity {
         this.category = aCategory;
         this.createdAt = aCreationDate;
         this.updatedAt = anUpdateDate;
+        this.store = aStore;
+        this.images = images;
     }
 
 
@@ -100,7 +103,9 @@ public class ProductJpaEntity {
                 aProduct.getStatus(),
                 CategoryJpaEntity.from(aProduct.getCategoryId()),
                 aProduct.getCreatedAt(),
-                aProduct.getUpdatedAt()
+                aProduct.getUpdatedAt(),
+                StoreJpaEntity.from(aProduct.getStore()),
+                CollectionUtils.mapTo(aProduct.getImages(), i -> ProductImageJpaEntity.from(i))
         );
     }
 
@@ -114,10 +119,11 @@ public class ProductJpaEntity {
                 getStatus(),
                 CategoryID.from(getCategory().getId()),
                 getCreatedAt(),
-                getUpdatedAt()
+                getUpdatedAt(),
+                getStore().toAggregate(),
+                CollectionUtils.mapTo(getImages(), ProductImageJpaEntity::toDomain)
         );
     }
-
 
     public String getId() {
         return id;
@@ -189,5 +195,21 @@ public class ProductJpaEntity {
 
     public void setUpdatedAt(Instant updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public StoreJpaEntity getStore() {
+        return store;
+    }
+
+    public void setStore(StoreJpaEntity store) {
+        this.store = store;
+    }
+
+    public Set<ProductImageJpaEntity> getImages() {
+        return images;
+    }
+
+    public void setImages(Set<ProductImageJpaEntity> images) {
+        this.images = images;
     }
 }

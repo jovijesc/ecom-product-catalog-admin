@@ -1,6 +1,7 @@
 package com.ecom.catalog.admin.infrastructure.product;
 
 import com.ecom.catalog.admin.MySQLGatewayTest;
+import com.ecom.catalog.admin.domain.Fixture;
 import com.ecom.catalog.admin.domain.category.Category;
 import com.ecom.catalog.admin.domain.category.CategoryID;
 import com.ecom.catalog.admin.domain.pagination.SearchQuery;
@@ -21,12 +22,13 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
+import java.util.Set;
 
 @MySQLGatewayTest
 public class ProductMySQLGatewayTest {
 
     @Autowired
-    private ProductMySQLGateway productGateway;
+    private DefaultProductGateway productGateway;
 
     @Autowired
     private ProductRepository productRepository;
@@ -48,8 +50,11 @@ public class ProductMySQLGatewayTest {
         final var expectedDescription = "Celular do tipo ABC";
         final var expectedPrice = Money.with(1800.03);
         final var expectedStock = 10;
+        final var expectedStore = Fixture.Stores.lojaEletromania();
+        final var expectedImages = Set.of(Fixture.ProductImages.img01());
 
-        final var aProduct = Product.newProduct(expectedName, expectedDescription, expectedPrice, expectedStock, expectedCategory.getId());
+
+        final var aProduct = Product.newProduct(expectedName, expectedDescription, expectedPrice, expectedStock, expectedCategory.getId(), expectedStore, expectedImages);
 
         final var expectedId = aProduct.getId();
 
@@ -69,6 +74,9 @@ public class ProductMySQLGatewayTest {
         Assertions.assertEquals(expectedStock, actualProduct.getStock());
         Assertions.assertEquals(aProduct.getStatus(), actualProduct.getStatus());
         Assertions.assertEquals(expectedCategory.getId(), actualProduct.getCategoryId());
+        Assertions.assertEquals(expectedStore, actualProduct.getStore());
+        Assertions.assertEquals(expectedImages, actualProduct.getImages());
+
         Assertions.assertEquals(aProduct.getCreatedAt(), actualProduct.getCreatedAt());
         Assertions.assertEquals(aProduct.getUpdatedAt(), actualProduct.getUpdatedAt());
 
@@ -80,6 +88,7 @@ public class ProductMySQLGatewayTest {
         Assertions.assertEquals(expectedStock, persistedProduct.getStock());
         Assertions.assertEquals(aProduct.getStatus(), persistedProduct.getStatus());
         Assertions.assertEquals(expectedCategory.getId(), persistedProduct.getCategory().toAggregate().getId());
+        Assertions.assertEquals(expectedStore.getId(), persistedProduct.getStore().getId());
         Assertions.assertEquals(aProduct.getCreatedAt(), persistedProduct.getCreatedAt());
         Assertions.assertEquals(aProduct.getUpdatedAt(), persistedProduct.getUpdatedAt());
     }
@@ -96,8 +105,11 @@ public class ProductMySQLGatewayTest {
         final var expectedPrice = Money.with(1800.03);
         final var expectedStock = 10;
         final var expectedStatus = ProductStatus.ACTIVE;
+        final var expectedStore = Fixture.Stores.lojaEletromania();
+        final var expectedImages = Set.of(Fixture.ProductImages.img01());
 
-        final var aProduct = Product.newProduct(expectedName, expectedDescription, ProductStatus.INACTIVE, expectedPrice, expectedStock, expectedCategory.getId());
+
+        final var aProduct = Product.newProduct(expectedName, expectedDescription, ProductStatus.INACTIVE, expectedPrice, expectedStock, expectedCategory.getId(), expectedStore, expectedImages);
 
         final var expectedId = aProduct.getId();
 
@@ -110,7 +122,7 @@ public class ProductMySQLGatewayTest {
         // when
         final var actualProduct = productGateway.update(
                 Product.with(aProduct)
-                        .update(expectedName, expectedDescription, expectedStatus, expectedPrice, expectedStock, expectedCategory.getId())
+                        .update(expectedName, expectedDescription, expectedStatus, expectedPrice, expectedStock, expectedCategory.getId(), expectedStore, expectedImages)
         );
 
         // then
@@ -124,6 +136,8 @@ public class ProductMySQLGatewayTest {
         Assertions.assertEquals(expectedStock, actualProduct.getStock());
         Assertions.assertEquals(expectedStatus, actualProduct.getStatus());
         Assertions.assertEquals(expectedCategory.getId(), actualProduct.getCategoryId());
+        Assertions.assertEquals(expectedStore, actualProduct.getStore());
+        Assertions.assertEquals(expectedImages, actualProduct.getImages());
         Assertions.assertEquals(aProduct.getCreatedAt(), actualProduct.getCreatedAt());
         Assertions.assertTrue(aProduct.getUpdatedAt().isBefore(actualProduct.getUpdatedAt()));
 
@@ -135,6 +149,7 @@ public class ProductMySQLGatewayTest {
         Assertions.assertEquals(expectedStock, persistedProduct.getStock());
         Assertions.assertEquals(expectedStatus, persistedProduct.getStatus());
         Assertions.assertEquals(expectedCategory.getId(), persistedProduct.getCategory().toAggregate().getId());
+        Assertions.assertEquals(expectedStore.getId(), persistedProduct.getStore().getId());
         Assertions.assertEquals(aProduct.getCreatedAt(), persistedProduct.getCreatedAt());
         Assertions.assertTrue(aProduct.getUpdatedAt().isBefore(persistedProduct.getUpdatedAt()));
 
@@ -151,8 +166,10 @@ public class ProductMySQLGatewayTest {
         final var expectedPrice = Money.with(1800.03);
         final var expectedStock = 10;
         final var expectedStatus = ProductStatus.INACTIVE;
+        final var expectedStore = Fixture.Stores.lojaEletromania();
+        final var expectedImages = Set.of(Fixture.ProductImages.img01());
 
-        final var aProduct = Product.newProduct(expectedName, expectedDescription, ProductStatus.ACTIVE, expectedPrice, expectedStock, expectedCategory.getId());
+        final var aProduct = Product.newProduct(expectedName, expectedDescription, ProductStatus.ACTIVE, expectedPrice, expectedStock, expectedCategory.getId(), expectedStore, expectedImages);
 
         final var expectedId = aProduct.getId();
 
@@ -165,7 +182,7 @@ public class ProductMySQLGatewayTest {
         // when
         final var actualProduct = productGateway.update(
                 Product.with(aProduct)
-                        .update(expectedName, expectedDescription, expectedStatus, expectedPrice, expectedStock, expectedCategory.getId())
+                        .update(expectedName, expectedDescription, expectedStatus, expectedPrice, expectedStock, expectedCategory.getId(), expectedStore, expectedImages)
         );
 
         // then
@@ -179,6 +196,8 @@ public class ProductMySQLGatewayTest {
         Assertions.assertEquals(expectedStock, actualProduct.getStock());
         Assertions.assertEquals(expectedStatus, actualProduct.getStatus());
         Assertions.assertEquals(expectedCategory.getId(), actualProduct.getCategoryId());
+        Assertions.assertEquals(expectedStore, actualProduct.getStore());
+        Assertions.assertEquals(expectedImages, actualProduct.getImages());
         Assertions.assertEquals(aProduct.getCreatedAt(), actualProduct.getCreatedAt());
         Assertions.assertTrue(aProduct.getUpdatedAt().isBefore(actualProduct.getUpdatedAt()));
 
@@ -190,6 +209,7 @@ public class ProductMySQLGatewayTest {
         Assertions.assertEquals(expectedStock, persistedProduct.getStock());
         Assertions.assertEquals(expectedStatus, persistedProduct.getStatus());
         Assertions.assertEquals(expectedCategory.getId(), persistedProduct.getCategory().toAggregate().getId());
+        Assertions.assertEquals(expectedStore.getId(), persistedProduct.getStore().getId());
         Assertions.assertEquals(aProduct.getCreatedAt(), persistedProduct.getCreatedAt());
         Assertions.assertTrue(aProduct.getUpdatedAt().isBefore(persistedProduct.getUpdatedAt()));
 
@@ -206,8 +226,10 @@ public class ProductMySQLGatewayTest {
         final var expectedPrice = Money.with(1800.03);
         final var expectedStock = 10;
         final var expectedStatus = ProductStatus.ACTIVE;
+        final var expectedStore = Fixture.Stores.lojaEletromania();
+        final var expectedImages = Set.of(Fixture.ProductImages.img01());
 
-        final var aProduct = Product.newProduct(expectedName, expectedDescription, expectedStatus, expectedPrice, expectedStock, expectedCategory.getId());
+        final var aProduct = Product.newProduct(expectedName, expectedDescription, expectedStatus, expectedPrice, expectedStock, expectedCategory.getId(), expectedStore, expectedImages);
 
         final var expectedId = aProduct.getId();
 
@@ -225,6 +247,7 @@ public class ProductMySQLGatewayTest {
         Assertions.assertEquals(expectedStock, actualProduct.getStock());
         Assertions.assertEquals(expectedStatus, actualProduct.getStatus());
         Assertions.assertEquals(expectedCategory.getId(), actualProduct.getCategoryId());
+        Assertions.assertEquals(expectedStore.getId(), actualProduct.getStore().getId());
         Assertions.assertEquals(aProduct.getCreatedAt(), actualProduct.getCreatedAt());
         Assertions.assertEquals(aProduct.getUpdatedAt(), actualProduct.getUpdatedAt());
 
@@ -345,16 +368,18 @@ public class ProductMySQLGatewayTest {
         final var expectedPrice = Money.with(1800.03);
         final var expectedStock = 10;
         final var expectedStatus = ProductStatus.ACTIVE;
+        final var expectedStore = Fixture.Stores.lojaEletromania();
+        final var expectedImages = Set.of(Fixture.ProductImages.img01());
 
         final var expectedCategoryOne =  categoryRepository.saveAndFlush(CategoryJpaEntity.from(Category.newCategory("Eletrônico", "Eletrônicos do tipo A", true)));
         final var expectedCategoryTwo =  categoryRepository.saveAndFlush(CategoryJpaEntity.from(Category.newCategory("Papelaria", "Papelaria do tipo A", true)));
 
         productRepository.saveAllAndFlush(List.of(
-                ProductJpaEntity.from(Product.newProduct("Celular", "Celular com outra descrição", expectedStatus, expectedPrice, expectedStock, CategoryID.from(expectedCategoryOne.getId()))),
-                ProductJpaEntity.from(Product.newProduct("Tablet", "Tablet com outra descrição", expectedStatus, expectedPrice, expectedStock, CategoryID.from(expectedCategoryOne.getId()))),
-                ProductJpaEntity.from(Product.newProduct("Carregador", "Carregador com outra descrição", expectedStatus, expectedPrice, expectedStock, CategoryID.from(expectedCategoryOne.getId()))),
-                ProductJpaEntity.from(Product.newProduct("Mochila", "Mochila com outra descrição", expectedStatus, expectedPrice, expectedStock, CategoryID.from(expectedCategoryTwo.getId()))),
-                ProductJpaEntity.from(Product.newProduct("Penal", "Penal com outra descrição", expectedStatus, expectedPrice, expectedStock, CategoryID.from(expectedCategoryTwo.getId())))
+                ProductJpaEntity.from(Product.newProduct("Celular", "Celular com outra descrição", expectedStatus, expectedPrice, expectedStock, CategoryID.from(expectedCategoryOne.getId()), expectedStore, expectedImages)),
+                ProductJpaEntity.from(Product.newProduct("Tablet", "Tablet com outra descrição", expectedStatus, expectedPrice, expectedStock, CategoryID.from(expectedCategoryOne.getId()), expectedStore, expectedImages)),
+                ProductJpaEntity.from(Product.newProduct("Carregador", "Carregador com outra descrição", expectedStatus, expectedPrice, expectedStock, CategoryID.from(expectedCategoryOne.getId()), expectedStore, expectedImages)),
+                ProductJpaEntity.from(Product.newProduct("Mochila", "Mochila com outra descrição", expectedStatus, expectedPrice, expectedStock, CategoryID.from(expectedCategoryTwo.getId()), expectedStore, expectedImages)),
+                ProductJpaEntity.from(Product.newProduct("Penal", "Penal com outra descrição", expectedStatus, expectedPrice, expectedStock, CategoryID.from(expectedCategoryTwo.getId()), expectedStore, expectedImages))
         ));
     }
 
@@ -403,8 +428,11 @@ public class ProductMySQLGatewayTest {
         // given
         final var expectedCategory =
                 categoryGateway.create(Category.newCategory("Eletrônico", "Eletrônicos do tipo A", true));
+        final var expectedStore = Fixture.Stores.lojaEletromania();
+        final var expectedImages = Set.of(Fixture.ProductImages.img01());
+
         final var aProduct =
-                Product.newProduct("Celular 1", "Celular descricao", ProductStatus.ACTIVE, Money.with(1800.0),10, expectedCategory.getId());
+                Product.newProduct("Celular 1", "Celular descricao", ProductStatus.ACTIVE, Money.with(1800.0),10, expectedCategory.getId(), expectedStore, expectedImages);
 
         final var expectedItems = 1;
         final var expectedId = aProduct.getId();

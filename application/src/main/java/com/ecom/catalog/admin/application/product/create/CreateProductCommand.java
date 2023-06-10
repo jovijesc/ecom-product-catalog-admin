@@ -41,4 +41,27 @@ public record CreateProductCommand(
     ) {
         return new CreateProductCommand(aName, aDescription, aStatus, aPrice, aStock, aCategory, aStore, images);
     }
+
+    public static CreateProductCommand with(
+            final String aName,
+            final String aDescription,
+            final Money aPrice,
+            final int aStock,
+            final String aCategory,
+            final String aStore
+    ) {
+        return new CreateProductCommand(aName, aDescription, ProductStatus.ACTIVE, aPrice, aStock, aCategory, aStore, null);
+    }
+
+    public static CreateProductCommand with(
+            final String aName,
+            final String aDescription,
+            final ProductStatus aStatus,
+            final Money aPrice,
+            final int aStock,
+            final String aCategory,
+            final String aStore
+    ) {
+        return new CreateProductCommand(aName, aDescription, aStatus, aPrice, aStock, aCategory, aStore, null);
+    }
 }

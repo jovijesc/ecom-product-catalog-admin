@@ -69,9 +69,11 @@ public interface MockDsl {
             final String aStatus,
             final MonetaryAmount aPrice,
             final int aStock,
-            final String aCategory
+            final String aCategory,
+            final String aStore,
+            final int aImageMarkedAsFeatured
     ) throws Exception {
-        final var aRequestBody = new CreateProductRequest(aName, aDescription, aStatus, aPrice, aStock, aCategory);
+        final var aRequestBody = new CreateProductRequest(aName, aDescription, aStatus, aPrice, aStock, aCategory, aStore, aImageMarkedAsFeatured);
         final var actualId = this.given("/products", aRequestBody);
         return ProductID.from(actualId);
     }

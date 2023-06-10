@@ -34,8 +34,12 @@ dependencies {
 
     testImplementation(project(path: ':domain', configuration: 'testClasses'))
 
-    implementation('org.springdoc:springdoc-openapi-webmvc-core:1.6.15')
-    implementation('org.springdoc:springdoc-openapi-ui:1.6.15')
+    implementation('com.google.guava:guava:31.1-jre')
+
+    //implementation('org.springdoc:springdoc-openapi-webmvc-core:1.6.15')
+    implementation("org.springdoc:springdoc-openapi-webmvc-core:1.7.0")
+    implementation('org.springdoc:springdoc-openapi-ui:1.7.0')
+    //implementation('org.springdoc:springdoc-openapi-ui:1.6.15')
 
     implementation('org.springframework.boot:spring-boot-starter-web') {
         exclude module: 'spring-boot-starter-tomcat'

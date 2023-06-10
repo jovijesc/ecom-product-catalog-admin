@@ -80,6 +80,19 @@ public class Product extends AggregateRoot<ProductID> {
         return new Product(id, aName, aDescription, aPrice, aStock, aStatus, aCategoryId, now, now, aStore, images);
     }
 
+    public static Product newProduct(
+            final String aName,
+            final String aDescription,
+            final ProductStatus aStatus,
+            final Money aPrice,
+            final int aStock,
+            final CategoryID aCategoryId,
+            final Store aStore) {
+        final var id = ProductID.unique();
+        final var now = InstantUtils.now();
+        return new Product(id, aName, aDescription, aPrice, aStock, aStatus, aCategoryId, now, now, aStore, null);
+    }
+
     public static Product with(
             final ProductID anId,
             final String aName,
@@ -163,7 +176,6 @@ public class Product extends AggregateRoot<ProductID> {
 
     public Product updateImages(final Set<ProductImage> images) {
         this.images = new HashSet<>(images != null ? images : Collections.emptySet());
-        selfValidate();
         return this;
     }
 

@@ -10,6 +10,7 @@ public record UpdateProductRequest(
         @JsonProperty("status") String status,
         MonetaryAmount price,
         @JsonProperty("stock") int stock,
-        @JsonProperty("category") String category
+        @JsonProperty("category") String category,
+        @JsonProperty("store") String store
 ) {
 }

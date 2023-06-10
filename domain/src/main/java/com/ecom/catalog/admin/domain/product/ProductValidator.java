@@ -109,14 +109,11 @@ public class ProductValidator extends Validator {
 
     private void checkImagesConstraints() {
         final var images = this.product.getImages();
-        if(images == null || images.size() == 0) {
-            this.validationHandler().append(new Error("The total number of images should be greater than zero"));
-            return;
-        }
-
-        final int total = this.product.getImages().size();
-        if(total > IMAGES_MAX_TOTAL || total < IMAGES_MIN_TOTAL) {
-            this.validationHandler().append(new Error("The total number of images must be between %s and %s".formatted(IMAGES_MIN_TOTAL, IMAGES_MAX_TOTAL)));
+        if( images != null && images.size() > 0 ) {
+            final int total = this.product.getImages().size();
+            if(total > IMAGES_MAX_TOTAL || total < IMAGES_MIN_TOTAL) {
+                this.validationHandler().append(new Error("The total number of images must be between %s and %s".formatted(IMAGES_MIN_TOTAL, IMAGES_MAX_TOTAL)));
+            }
         }
     }
 

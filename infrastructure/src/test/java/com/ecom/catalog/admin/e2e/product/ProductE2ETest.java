@@ -70,8 +70,12 @@ public class ProductE2ETest implements MockDsl {
         final var expectedStock = 10;
         final var expectedStatus = ProductStatus.ACTIVE;
         final var expectedCategoryId = expectedCategory;
+        // TODO continuar
+        final var expectedStoreId = "123";
+        final var expectedImageMarkedAsFeatured = 1;
 
-        final var expectedId = givenAProduct(expectedName, expectedDescription, expectedStatus.name(), expectedPrice, expectedStock, expectedCategoryId.getValue());
+
+        final var expectedId = givenAProduct(expectedName, expectedDescription, expectedStatus.name(), expectedPrice, expectedStock, expectedCategoryId.getValue(), expectedStoreId, expectedImageMarkedAsFeatured);
 
         final var actualProduct = retrieveAProduct(expectedId);
 
@@ -92,9 +96,12 @@ public class ProductE2ETest implements MockDsl {
         Assertions.assertTrue(MYSQL_CONTAINER.isRunning());
 
         final var eletronicos = givenACategory("Eletronicos", "Eletronicos do tipo abc", true);
+        // TODO continuar
+        final var storeId = "123";
+        final var expectedImageMarkedAsFeatured = 1;
 
-        givenAProduct("Celular", "Celular do tipo ABC", ProductStatus.ACTIVE.name(), Money.of(1800.03, "BRL"), 10, eletronicos.getValue());
-        givenAProduct("Aspirador", "Aspirador do tipo ABC", ProductStatus.ACTIVE.name(), Money.of(250.30, "BRL"), 15, eletronicos.getValue());
+        givenAProduct("Celular", "Celular do tipo ABC", ProductStatus.ACTIVE.name(), Money.of(1800.03, "BRL"), 10, eletronicos.getValue(), storeId, expectedImageMarkedAsFeatured);
+        givenAProduct("Aspirador", "Aspirador do tipo ABC", ProductStatus.ACTIVE.name(), Money.of(250.30, "BRL"), 15, eletronicos.getValue(), storeId, expectedImageMarkedAsFeatured);
 
         listProducts(0,1)
                 .andExpect(status().isOk())
@@ -126,9 +133,13 @@ public class ProductE2ETest implements MockDsl {
         Assertions.assertTrue(MYSQL_CONTAINER.isRunning());
 
         final var eletronicos = givenACategory("Eletronicos", "Eletronicos do tipo abc", true);
+        // TODO continuar
+        final var storeId = "123";
+        final var expectedImageMarkedAsFeatured = 1;
 
-        givenAProduct("Celular", "Celular do tipo ABC", ProductStatus.ACTIVE.name(), Money.of(1800.03, "BRL"), 10, eletronicos.getValue());
-        givenAProduct("Aspirador", "Aspirador do tipo ABC", ProductStatus.ACTIVE.name(), Money.of(250.30, "BRL"), 15, eletronicos.getValue());
+
+        givenAProduct("Celular", "Celular do tipo ABC", ProductStatus.ACTIVE.name(), Money.of(1800.03, "BRL"), 10, eletronicos.getValue(), storeId, expectedImageMarkedAsFeatured);
+        givenAProduct("Aspirador", "Aspirador do tipo ABC", ProductStatus.ACTIVE.name(), Money.of(250.30, "BRL"), 15, eletronicos.getValue(), storeId, expectedImageMarkedAsFeatured);
 
         listProducts(0,1, "asp")
                 .andExpect(status().isOk())
@@ -145,10 +156,14 @@ public class ProductE2ETest implements MockDsl {
         Assertions.assertTrue(MYSQL_CONTAINER.isRunning());
 
         final var eletronicos = givenACategory("Eletronicos", "Eletronicos do tipo abc", true);
+        // TODO continuar
+        final var storeId = "123";
+        final var expectedImageMarkedAsFeatured = 1;
 
-        givenAProduct("Celular", "Celular do tipo ABC", ProductStatus.ACTIVE.name(), Money.of(1800.03, "BRL"), 10, eletronicos.getValue());
-        givenAProduct("Aspirador", "Aspirador do tipo ABC", ProductStatus.ACTIVE.name(), Money.of(250.30, "BRL"), 15, eletronicos.getValue());
-        givenAProduct("Batedeira", "Batedeira do tipo ABC", ProductStatus.ACTIVE.name(), Money.of(80, "BRL"), 15, eletronicos.getValue());
+
+        givenAProduct("Celular", "Celular do tipo ABC", ProductStatus.ACTIVE.name(), Money.of(1800.03, "BRL"), 10, eletronicos.getValue(), storeId, expectedImageMarkedAsFeatured);
+        givenAProduct("Aspirador", "Aspirador do tipo ABC", ProductStatus.ACTIVE.name(), Money.of(250.30, "BRL"), 15, eletronicos.getValue(), storeId, expectedImageMarkedAsFeatured);
+        givenAProduct("Batedeira", "Batedeira do tipo ABC", ProductStatus.ACTIVE.name(), Money.of(80, "BRL"), 15, eletronicos.getValue(), storeId, expectedImageMarkedAsFeatured);
 
         listProducts(0,3, "", "description", "desc")
                 .andExpect(status().isOk())
@@ -175,8 +190,11 @@ public class ProductE2ETest implements MockDsl {
         final var expectedStock = 10;
         final var expectedStatus = ProductStatus.ACTIVE;
         final var expectedCategoryId = expectedCategory;
+        // TODO continuar
+        final var expectedStoreId = "123";
+        final var expectedImageMarkedAsFeatured = 1;
 
-        final var expectedId = givenAProduct(expectedName, expectedDescription, expectedStatus.name(), expectedPrice, expectedStock, expectedCategoryId.getValue());
+        final var expectedId = givenAProduct(expectedName, expectedDescription, expectedStatus.name(), expectedPrice, expectedStock, expectedCategoryId.getValue(), expectedStoreId, expectedImageMarkedAsFeatured);
 
         final var actualProduct = retrieveAProduct(expectedId);
 
@@ -212,6 +230,10 @@ public class ProductE2ETest implements MockDsl {
         final var expectedCategory =
                 givenACategory("Eletrônico", "Eletrônicos do tipo A", true);
 
+        // TODO continuar
+        final var expectedStoreId = "123";
+        final var expectedImageMarkedAsFeatured = 1;
+
         final var expectedName = "Celular";
         final var expectedDescription = "Celular do tipo ABC";
         final var expectedPrice = Money.of(1800.03, "BRL");
@@ -219,8 +241,8 @@ public class ProductE2ETest implements MockDsl {
         final var expectedStatus = ProductStatus.ACTIVE;
         final var expectedCategoryId = expectedCategory;
 
-        final var actualId = givenAProduct("Novo Celular", "Novo Celular do tipo ABC", ProductStatus.ACTIVE.name(), Money.of(1700.03, "BRL"), 20, expectedCategoryId.getValue());
-        final var aRequestBody = new UpdateProductRequest(expectedName, expectedDescription, expectedStatus.name(), expectedPrice, expectedStock, expectedCategoryId.getValue());
+        final var actualId = givenAProduct("Novo Celular", "Novo Celular do tipo ABC", ProductStatus.ACTIVE.name(), Money.of(1700.03, "BRL"), 20, expectedCategoryId.getValue(), expectedStoreId, expectedImageMarkedAsFeatured);
+        final var aRequestBody = new UpdateProductRequest(expectedName, expectedDescription, expectedStatus.name(), expectedPrice, expectedStock, expectedCategoryId.getValue(), expectedStoreId);
 
         updateAProduct(actualId, aRequestBody)
                 .andExpect(status().isOk());
@@ -251,11 +273,14 @@ public class ProductE2ETest implements MockDsl {
         final var expectedStock = 10;
         final var expectedStatus = ProductStatus.INACTIVE;
         final var expectedCategoryId = expectedCategory;
+        // TODO continuar
+        final var expectedStoreId = "123";
+        final var expectedImageMarkedAsFeatured = 1;
 
-        final var actualId = givenAProduct(expectedName, expectedDescription, ProductStatus.ACTIVE.name(), expectedPrice, expectedStock, expectedCategoryId.getValue());
+        final var actualId = givenAProduct(expectedName, expectedDescription, ProductStatus.ACTIVE.name(), expectedPrice, expectedStock, expectedCategoryId.getValue(), expectedStoreId, expectedImageMarkedAsFeatured);
 
         final var aRequestBody =
-                new UpdateProductRequest(expectedName, expectedDescription, expectedStatus.name(), expectedPrice, expectedStock, expectedCategoryId.getValue());
+                new UpdateProductRequest(expectedName, expectedDescription, expectedStatus.name(), expectedPrice, expectedStock, expectedCategoryId.getValue(), expectedStoreId);
 
         updateAProduct(actualId, aRequestBody)
                 .andExpect(status().isOk());

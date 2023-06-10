@@ -2,6 +2,7 @@ package com.ecom.catalog.admin.application.product.create;
 
 import com.ecom.catalog.admin.IntegrationTest;
 import com.ecom.catalog.admin.application.category.create.DefaultCreateCategoryUseCase;
+import com.ecom.catalog.admin.domain.Fixture;
 import com.ecom.catalog.admin.domain.category.Category;
 import com.ecom.catalog.admin.domain.category.CategoryGateway;
 import com.ecom.catalog.admin.domain.category.CategoryID;
@@ -20,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 
 import java.util.Objects;
+import java.util.Set;
 
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.ArgumentMatchers.any;
@@ -54,8 +56,10 @@ public class CreateProductUseCaseIT {
         final var expectedStatus = ProductStatus.ACTIVE;
         final var expectedCategoryId = expectedCategory.getId();
 
+        // TODO continuar
+
         final var aCommand =
-                CreateProductCommand.with(expectedName, expectedDescription, expectedPrice, expectedStock, expectedCategoryId.getValue());
+                CreateProductCommand.with(expectedName, expectedDescription, expectedPrice, expectedStock, expectedCategoryId.getValue(), null, null);
 
         final var actualOutput = useCase.execute(aCommand);
 
@@ -88,12 +92,14 @@ public class CreateProductUseCaseIT {
         final var expectedStock = 10;
         final var expectedStatus = ProductStatus.ACTIVE;
         final var expectedCategoryId = expectedCategory.getId();
+        final var expectedStoreId = Fixture.Stores.lojaEletromania().getId();
+        final var expectedImages = Set.of(Fixture.ProductImages.img01());
 
         final var expectedErrorCount = 1;
         final var expectedErrorMessage = "'name' should not be null";
 
         final var aCommand =
-                CreateProductCommand.with(expectedName, expectedDescription, expectedStatus, expectedPrice, expectedStock, expectedCategoryId.getValue());
+                CreateProductCommand.with(expectedName, expectedDescription, expectedStatus, expectedPrice, expectedStock, expectedCategoryId.getValue(), expectedStoreId, expectedImages);
 
         // when
         final var actualException = Assertions.assertThrows(NotificationException.class, () ->
@@ -121,6 +127,9 @@ public class CreateProductUseCaseIT {
         final var expectedStock = 10;
         final var expectedStatus = ProductStatus.ACTIVE;
         final var expectedCategoryId = expectedCategory.getId();
+        final var expectedStoreId = Fixture.Stores.lojaEletromania().getId();
+        final var expectedImages = Set.of(Fixture.ProductImages.img01());
+
 
         final var expectedErrorMessage = "Gateway error";
 
@@ -128,7 +137,7 @@ public class CreateProductUseCaseIT {
                 .when(productGateway).create(any());
 
         final var aCommand =
-                CreateProductCommand.with(expectedName, expectedDescription, expectedStatus, expectedPrice, expectedStock, expectedCategoryId.getValue());
+                CreateProductCommand.with(expectedName, expectedDescription, expectedStatus, expectedPrice, expectedStock, expectedCategoryId.getValue(), expectedStoreId, expectedImages);
 
         // when
         final var actualException = Assertions.assertThrows(IllegalStateException.class, () ->

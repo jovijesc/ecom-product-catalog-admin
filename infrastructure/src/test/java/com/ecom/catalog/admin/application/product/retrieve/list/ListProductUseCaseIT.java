@@ -1,6 +1,7 @@
 package com.ecom.catalog.admin.application.product.retrieve.list;
 
 import com.ecom.catalog.admin.IntegrationTest;
+import com.ecom.catalog.admin.domain.Fixture;
 import com.ecom.catalog.admin.domain.category.Category;
 import com.ecom.catalog.admin.domain.category.CategoryGateway;
 import com.ecom.catalog.admin.domain.pagination.SearchQuery;
@@ -15,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 
 import java.util.List;
+import java.util.Set;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -42,9 +44,13 @@ public class ListProductUseCaseIT {
         final var expectedCategoryTwo =
                 categoryGateway.create(Category.newCategory("Informática", "Informática do tipo A", true));
 
+        // TODO continuar
+        final var expectedStore = Fixture.Stores.lojaEletromania();
+        final var expectedImages = Set.of(Fixture.ProductImages.img01());
+
         final var products = List.of(
-                productGateway.create(Product.newProduct("Celular", "Celular do tipo ABC", ProductStatus.ACTIVE, Money.with(3000.0), 10, expectedCategoryOne.getId())),
-                productGateway.create(Product.newProduct("Notebook", "Notebook do tipo 123", ProductStatus.ACTIVE, Money.with(5000.0), 10, expectedCategoryTwo.getId()))
+                productGateway.create(Product.newProduct("Celular", "Celular do tipo ABC", ProductStatus.ACTIVE, Money.with(3000.0), 10, expectedCategoryOne.getId(), expectedStore, expectedImages)),
+                productGateway.create(Product.newProduct("Notebook", "Notebook do tipo 123", ProductStatus.ACTIVE, Money.with(5000.0), 10, expectedCategoryTwo.getId(), expectedStore, expectedImages))
         );
 
         final var expectedPage = 0;

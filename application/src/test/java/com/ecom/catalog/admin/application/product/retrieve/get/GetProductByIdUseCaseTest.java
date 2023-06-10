@@ -47,7 +47,7 @@ class GetProductByIdUseCaseTest extends UseCaseTest {
         final var expectedStock = 10;
         final var expectedStatus = ProductStatus.ACTIVE;
         final var expectedCategoryId = CategoryID.from("123");
-        final var expectedImages = Set.of(ProductImage.with("123", new byte[]{10,20,30,40,50},"image.jpg", "/image",1, true));
+        final var expectedImages = Set.of(ProductImage.with("123", new byte[]{10,20,30,40,50},"image.jpg", "/image", true));
 
         final var aProduct =
                 Product.newProduct(expectedName, expectedDescription, expectedStatus, expectedPrice, expectedStock, expectedCategoryId, expectedStore, expectedImages);

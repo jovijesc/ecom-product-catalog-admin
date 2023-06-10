@@ -5,6 +5,7 @@ import com.ecom.catalog.admin.domain.pagination.SearchQuery;
 import com.ecom.catalog.admin.domain.product.Product;
 import com.ecom.catalog.admin.domain.product.ProductGateway;
 import com.ecom.catalog.admin.domain.product.ProductID;
+import com.ecom.catalog.admin.domain.product.ProductImageID;
 import com.ecom.catalog.admin.infrastructure.product.persistence.ProductJpaEntity;
 import com.ecom.catalog.admin.infrastructure.product.persistence.ProductRepository;
 import com.ecom.catalog.admin.infrastructure.utils.SpecificationUtils;
@@ -21,11 +22,11 @@ import java.util.stream.StreamSupport;
 import static org.springframework.data.jpa.domain.Specification.where;
 
 @Component
-public class ProductMySQLGateway implements ProductGateway {
+public class DefaultProductGateway implements ProductGateway {
 
     private final ProductRepository productRepository;
 
-    public ProductMySQLGateway(ProductRepository productRepository) {
+    public DefaultProductGateway(ProductRepository productRepository) {
         this.productRepository = Objects.requireNonNull(productRepository);
     }
 
@@ -37,6 +38,12 @@ public class ProductMySQLGateway implements ProductGateway {
     @Override
     public Optional<Product> findById(final ProductID anId) {
         return this.productRepository.findById(anId.getValue())
+                .map(ProductJpaEntity::toAggregate);
+    }
+
+    @Override
+    public Optional<Product> findByImageId(final ProductImageID imageId) {
+        return this.productRepository.findByImageId(imageId)
                 .map(ProductJpaEntity::toAggregate);
     }
 

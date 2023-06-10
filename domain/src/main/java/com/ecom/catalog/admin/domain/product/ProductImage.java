@@ -7,6 +7,7 @@ import com.ecom.catalog.admin.domain.utils.IdUtils;
 import com.ecom.catalog.admin.domain.validation.ValidationHandler;
 import com.ecom.catalog.admin.domain.validation.handler.Notification;
 
+import java.util.Arrays;
 import java.util.Objects;
 
 public class ProductImage extends Entity<ProductImageID> {
@@ -15,26 +16,46 @@ public class ProductImage extends Entity<ProductImageID> {
     private final byte[] content;
     private final String name;
     private final String location;
-    private final int order;
     private final boolean featured;
 
-    private ProductImage(final ProductImageID anId, final String aChecksum, final byte[] aContent,  String aName, final String aLocation, final int aOrder, final boolean aFeatured) {
+    private ProductImage(final ProductImageID anId, final String aChecksum, final byte[] aContent,  String aName, final String aLocation, final boolean aFeatured) {
         super(anId);
         this.checksum = aChecksum;
         this.content = aContent;
         this.name = aName;
         this.location = aLocation;
-        this.order = aOrder;
         this.featured = aFeatured;
         selfValidate();
     }
 
-    public static ProductImage with(final String aChecksum, final byte[] aContent, final  String aName, final String aLocation, final int aOrder, final boolean aFeatured) {
-        return new ProductImage(ProductImageID.unique(), aChecksum, aContent, aName, aLocation, aOrder, aFeatured);
+    private ProductImage(final ProductImageID anId, final String aChecksum, String aName, final String aLocation, final boolean aFeatured) {
+        super(anId);
+        this.checksum = aChecksum;
+        this.content = null;
+        this.name = aName;
+        this.location = aLocation;
+        this.featured = aFeatured;
+        selfValidate();
+    }
+
+    public static ProductImage with(final String aChecksum, final byte[] aContent, final String aName, final String aLocation, final boolean aFeatured) {
+        return new ProductImage(ProductImageID.unique(), aChecksum, aContent, aName, aLocation, aFeatured);
+    }
+
+    public static ProductImage with(final String aChecksum, final  String aName, final String aLocation, final boolean aFeatured) {
+        return new ProductImage(ProductImageID.unique(), aChecksum, aName, aLocation, aFeatured);
+    }
+
+    public static ProductImage with(final String anId, final String aChecksum, final String aName, final String aLocation, final boolean aFeatured) {
+        return new ProductImage(ProductImageID.from(anId), aChecksum, aName, aLocation, aFeatured);
+    }
+
+    public static ProductImage with(final String aChecksum, final byte[] aContent, final String aName, final boolean aFeatured) {
+        return new ProductImage(ProductImageID.unique(), aChecksum, aContent, aName, "location", aFeatured);
     }
 
     public static ProductImage with(final ProductImage aImage) {
-        return new ProductImage(aImage.getId(), aImage.getChecksum(), aImage.getContent(), aImage.getName(), aImage.getLocation(), aImage.getOrder(), aImage.isFeatured());
+        return new ProductImage(aImage.getId(), aImage.getChecksum(), aImage.getContent(), aImage.getName(), aImage.getLocation(), aImage.isFeatured());
     }
 
     public void validate(ValidationHandler handler) {
@@ -65,10 +86,6 @@ public class ProductImage extends Entity<ProductImageID> {
         return location;
     }
 
-    public int getOrder() {
-        return order;
-    }
-
     public boolean isFeatured() {
         return featured;
     }
@@ -85,4 +102,5 @@ public class ProductImage extends Entity<ProductImageID> {
     public int hashCode() {
         return Objects.hash(getChecksum(), getLocation());
     }
+
 }

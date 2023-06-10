@@ -2,6 +2,7 @@ package com.ecom.catalog.admin.application.product.update;
 
 import com.ecom.catalog.admin.IntegrationTest;
 import com.ecom.catalog.admin.application.product.create.DefaultCreateProductUseCase;
+import com.ecom.catalog.admin.domain.Fixture;
 import com.ecom.catalog.admin.domain.category.Category;
 import com.ecom.catalog.admin.domain.category.CategoryGateway;
 import com.ecom.catalog.admin.domain.category.CategoryID;
@@ -21,6 +22,7 @@ import org.springframework.boot.test.mock.mockito.SpyBean;
 
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.ArgumentMatchers.any;
@@ -49,8 +51,12 @@ public class UpdateProductUseCaseIT {
         final var expectedCategory =
                 categoryGateway.create(Category.newCategory("Eletrônico", "Eletrônicos do tipo A", true));
 
+        // TODO continuar
+        final var expectedStore = Fixture.Stores.lojaEletromania();
+        final var expectedImages = Set.of(Fixture.ProductImages.img01());
+
         final var aProduct =
-                productGateway.create(Product.newProduct("Celular A", "Descrição A", ProductStatus.ACTIVE, Money.with(10.0), 10, expectedCategory.getId()));
+                productGateway.create(Product.newProduct("Celular A", "Descrição A", ProductStatus.ACTIVE, Money.with(10.0), 10, expectedCategory.getId(), expectedStore, expectedImages));
 
         final var expectedName = "Celular";
         final var expectedDescription = "Celular do tipo ABC";
@@ -67,7 +73,9 @@ public class UpdateProductUseCaseIT {
                 expectedStatus,
                 expectedPrice,
                 expectedStock,
-                expectedCategoryId.getValue()
+                expectedCategoryId.getValue(),
+                expectedStore.getId(),
+                expectedImages
         );
 
         // when
@@ -95,8 +103,12 @@ public class UpdateProductUseCaseIT {
         final var expectedCategory =
                 categoryGateway.create(Category.newCategory("Eletrônico", "Eletrônicos do tipo A", true));
 
+        // TODO continuar
+        final var expectedStore = Fixture.Stores.lojaEletromania();
+        final var expectedImages = Set.of(Fixture.ProductImages.img01());
+
         final var aProduct =
-                productGateway.create(Product.newProduct("Celular A", "Celular do tipo BBB", Money.with(1700.0), 10, expectedCategory.getId()));
+                productGateway.create(Product.newProduct("Celular A", "Celular do tipo BBB", Money.with(1700.0), 10, expectedCategory.getId(), expectedStore, expectedImages));
 
         final var expectedId = aProduct.getId();
         final String expectedName = null;
@@ -116,7 +128,9 @@ public class UpdateProductUseCaseIT {
                 expectedStatus,
                 expectedPrice,
                 expectedStock,
-                expectedCategoryId.getValue()
+                expectedCategoryId.getValue(),
+                expectedStore.getId(),
+                expectedImages
         );
 
         // when
@@ -139,8 +153,12 @@ public class UpdateProductUseCaseIT {
         final var expectedCategory =
                 categoryGateway.create(Category.newCategory("Eletrônico", "Eletrônicos do tipo A", true));
 
+        // TODO continuar
+        final var expectedStore = Fixture.Stores.lojaEletromania();
+        final var expectedImages = Set.of(Fixture.ProductImages.img01());
+
         final var aProduct =
-                productGateway.create(Product.newProduct("Celular A", "Celular do tipo BBB", Money.with(1700.0), 10, expectedCategory.getId()));
+                productGateway.create(Product.newProduct("Celular A", "Celular do tipo BBB", Money.with(1700.0), 10, expectedCategory.getId(), expectedStore, expectedImages));
 
         final var expectedId = aProduct.getId();
         final var expectedName = "Celular";
@@ -160,7 +178,9 @@ public class UpdateProductUseCaseIT {
                 expectedStatus,
                 expectedPrice,
                 expectedStock,
-                expectedCategoryId.getValue()
+                expectedCategoryId.getValue(),
+                expectedStore.getId(),
+                expectedImages
         );
 
         // when
@@ -183,8 +203,12 @@ public class UpdateProductUseCaseIT {
         final var expectedCategory =
                 categoryGateway.create(Category.newCategory("Eletrônico", "Eletrônicos do tipo A", true));
 
+        // TODO continuar
+        final var expectedStore = Fixture.Stores.lojaEletromania();
+        final var expectedImages = Set.of(Fixture.ProductImages.img01());
+
         final var aProduct =
-                productGateway.create(Product.newProduct("Celular A", "Celular do tipo BBB", Money.with(1700.0), 10, expectedCategory.getId()));
+                productGateway.create(Product.newProduct("Celular A", "Celular do tipo BBB", Money.with(1700.0), 10, expectedCategory.getId(), expectedStore, expectedImages));
 
 
         final var expectedId = aProduct.getId();
@@ -202,7 +226,9 @@ public class UpdateProductUseCaseIT {
                 expectedStatus,
                 expectedPrice,
                 expectedStock,
-                expectedCategoryId.getValue()
+                expectedCategoryId.getValue(),
+                expectedStore.getId(),
+                expectedImages
         );
 
 

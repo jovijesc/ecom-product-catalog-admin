@@ -42,7 +42,7 @@ class ListProductUseCaseTest extends UseCaseTest {
     public void givenAValidQuery_whenCallsListProduct_shouldReturnProducts() {
         // given
         final var expectedStore = Store.with(IdUtils.uuid(), "Minha Loja");
-        final var expectedImages = Set.of(ProductImage.with("123", new byte[]{10,20,30,40,50},"image.jpg", "/image",1, true));
+        final var expectedImages = Set.of(ProductImage.with("123", new byte[]{10,20,30,40,50},"image.jpg", "/image", true));
         final var products = List.of(
                 Product.newProduct("Celular", "Celular do tipo ABC", ProductStatus.ACTIVE, Money.with(3000.0), 10, CategoryID.from("123"), expectedStore, expectedImages),
                 Product.newProduct("Notebook", "Notebook do tipo 123", ProductStatus.ACTIVE, Money.with(5000.0), 10, CategoryID.from("456"), expectedStore, expectedImages)

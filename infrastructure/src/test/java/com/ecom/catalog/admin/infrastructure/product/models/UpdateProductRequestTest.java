@@ -22,6 +22,7 @@ public class UpdateProductRequestTest {
         final var expectedStock = 10;
         final var expectedCategoryId = "123";
         final var expectedStatus = ProductStatus.ACTIVE;
+        final var expectedStoreId = "123";
 
         final var request = new UpdateProductRequest(
                 expectedName,
@@ -29,7 +30,8 @@ public class UpdateProductRequestTest {
                 expectedStatus.name(),
                 expectedPrice,
                 expectedStock,
-                expectedCategoryId
+                expectedCategoryId,
+                expectedStoreId
         );
 
         final var actualJson = this.json.write(request);
@@ -41,7 +43,8 @@ public class UpdateProductRequestTest {
                 .hasJsonPathValue("$.stock", expectedStock)
                 .hasJsonPathValue("$.price.amount", expectedPrice.getNumber().toString())
                 .hasJsonPathValue("$.price.currency", expectedPrice.getCurrency().getCurrencyCode())
-                .hasJsonPathValue("$.category", expectedCategoryId);
+                .hasJsonPathValue("$.category", expectedCategoryId)
+                .hasJsonPathValue("$.store", expectedStoreId);
     }
 
     @Test
@@ -52,6 +55,7 @@ public class UpdateProductRequestTest {
         final var expectedStock = 10;
         final var expectedCategoryId = "123";
         final var expectedStatus = ProductStatus.ACTIVE;
+        final var expectedStoreId = "123";
 
         final var json = """
                 {                  
@@ -64,7 +68,8 @@ public class UpdateProductRequestTest {
                        "amount": "%s",
                        "currency": "%s"
                   },
-                  "category": "%s"
+                  "category": "%s",
+                  "store": "%s"
                 }    
                 """.formatted(
                 expectedName,
@@ -73,7 +78,8 @@ public class UpdateProductRequestTest {
                 expectedStock,
                 expectedPrice.getNumber().toString(),
                 expectedPrice.getCurrency().getCurrencyCode(),
-                expectedCategoryId
+                expectedCategoryId,
+                expectedStoreId
         );
 
         final var actualJson = this.json.parse(json);
@@ -84,6 +90,7 @@ public class UpdateProductRequestTest {
                 .hasFieldOrPropertyWithValue("status", expectedStatus.name())
                 .hasFieldOrPropertyWithValue("stock", expectedStock)
                 .hasFieldOrPropertyWithValue("price", expectedPrice)
-                .hasFieldOrPropertyWithValue("category", expectedCategoryId);
+                .hasFieldOrPropertyWithValue("category", expectedCategoryId)
+                .hasFieldOrPropertyWithValue("store", expectedStoreId);
     }
 }

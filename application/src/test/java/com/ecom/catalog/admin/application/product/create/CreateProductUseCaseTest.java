@@ -63,7 +63,7 @@ class CreateProductUseCaseTest extends UseCaseTest {
         final var expectedStock = 10;
         final var expectedStatus = ProductStatus.ACTIVE;
         final var expectedCategoryId = CategoryID.from("123");
-        final var expectedImages = Set.of(ProductImage.with("123", new byte[]{10,20,30,40,50},"image.jpg", "/image",1, true));
+        final var expectedImages = Set.of(ProductImage.with("123", new byte[]{10,20,30,40,50},"image.jpg", "/image", true));
 
         final var aCommand =
                 CreateProductCommand.with(expectedName, expectedDescription, expectedPrice, expectedStock, expectedCategoryId.getValue(), expectedStoreId, expectedImages);
@@ -116,7 +116,7 @@ class CreateProductUseCaseTest extends UseCaseTest {
         final var expectedStock = 10;
         final var expectedStatus = ProductStatus.INACTIVE;
         final var expectedCategoryId = CategoryID.from("123");
-        final var expectedImages = Set.of(ProductImage.with("123", new byte[]{10,20,30,40,50},"image.jpg", "/image",1, true));
+        final var expectedImages = Set.of(ProductImage.with("123", new byte[]{10,20,30,40,50},"image.jpg", "/image", true));
 
         final var aCommand =
                 CreateProductCommand.with(expectedName, expectedDescription, expectedStatus, expectedPrice, expectedStock, expectedCategoryId.getValue(), expectedStoreId, expectedImages);
@@ -161,6 +161,54 @@ class CreateProductUseCaseTest extends UseCaseTest {
     }
 
     @Test
+    public void givenAValidCommandWithoutImages_whenCallsCreateProduct_shouldReturnProductId() {
+        // given
+        final var expectedName = "Celular";
+        final var expectedStoreId = "123";
+        final var expectedDescription = "Celular do tipo ABC";
+        final var expectedPrice = Money.with(1800.03);
+        final var expectedStock = 10;
+        final var expectedStatus = ProductStatus.ACTIVE;
+        final var expectedCategoryId = CategoryID.from("123");
+
+        final var aCommand =
+                CreateProductCommand.with(expectedName, expectedDescription, expectedPrice, expectedStock, expectedCategoryId.getValue(), expectedStoreId);
+
+        when(categoryGateway.existsById(eq(expectedCategoryId)))
+                .thenReturn(true);
+
+        when(storeGateway.existsById(eq(expectedStoreId)))
+                .thenReturn(true);
+
+        when(productGateway.create(any()))
+                .thenAnswer(returnsFirstArg());
+
+        final var actualOutput = useCase.execute(aCommand);
+
+        // then
+        Assertions.assertNotNull(actualOutput);
+        Assertions.assertNotNull(actualOutput.id());
+
+        Mockito.verify(categoryGateway, times(1)).existsById(eq(expectedCategoryId));
+        Mockito.verify(storeGateway, times(1)).existsById(eq(expectedStoreId));
+        Mockito.verify(productGateway).create(Mockito.argThat(aProduct ->
+                Objects.equals(expectedName, aProduct.getName())
+                        && Objects.equals(expectedDescription, aProduct.getDescription())
+                        && Objects.equals(expectedPrice, aProduct.getPrice())
+                        && Objects.equals(expectedStock, aProduct.getStock())
+                        && Objects.equals(expectedStatus, aProduct.getStatus())
+                        && Objects.nonNull(aProduct.getCategoryId())
+                        && Objects.equals(expectedCategoryId, aProduct.getCategoryId())
+                        && Objects.equals(expectedStoreId, aProduct.getStore().getId())
+                        && aProduct.getImages().isEmpty()
+                        && Objects.nonNull(aProduct.getId())
+                        && Objects.nonNull(aProduct.getCreatedAt())
+                        && Objects.nonNull(aProduct.getUpdatedAt())
+        ));
+
+    }
+
+    @Test
     public void givenAnInvalidNullName_whenCallsCreateProduct_shouldReturnDomainException() {
         // given
         final String expectedName = null;
@@ -170,7 +218,7 @@ class CreateProductUseCaseTest extends UseCaseTest {
         final var expectedStock = 10;
         final var expectedStatus = ProductStatus.ACTIVE;
         final var expectedCategoryId = CategoryID.from("123");
-        final var expectedImages = Set.of(ProductImage.with("123", new byte[]{10,20,30,40,50},"image.jpg", "/image",1, true));
+        final var expectedImages = Set.of(ProductImage.with("123", new byte[]{10,20,30,40,50},"image.jpg", "/image", true));
 
         final var expectedErrorCount = 1;
         final var expectedErrorMessage = "'name' should not be null";
@@ -209,7 +257,7 @@ class CreateProductUseCaseTest extends UseCaseTest {
         final var expectedStock = 10;
         final var expectedStatus = ProductStatus.ACTIVE;
         final var expectedCategoryId = CategoryID.from("123");
-        final var expectedImages = Set.of(ProductImage.with("123", new byte[]{10,20,30,40,50},"image.jpg", "/image",1, true));
+        final var expectedImages = Set.of(ProductImage.with("123", new byte[]{10,20,30,40,50},"image.jpg", "/image", true));
 
         final var expectedErrorCount = 1;
         final var expectedErrorMessage = "'name' should not be empty";
@@ -247,7 +295,7 @@ class CreateProductUseCaseTest extends UseCaseTest {
         final var expectedStock = 10;
         final var expectedStatus = ProductStatus.ACTIVE;
         final var expectedCategoryId = CategoryID.from("456");
-        final var expectedImages = Set.of(ProductImage.with("123", new byte[]{10,20,30,40,50},"image.jpg", "/image",1, true));
+        final var expectedImages = Set.of(ProductImage.with("123", new byte[]{10,20,30,40,50},"image.jpg", "/image", true));
 
         final var expectedErrorCount = 1;
         final var expectedErrorMessage = "Category with ID: 456 could not be found";
@@ -285,7 +333,7 @@ class CreateProductUseCaseTest extends UseCaseTest {
         final var expectedStock = 10;
         final var expectedStatus = ProductStatus.ACTIVE;
         final var expectedCategoryId = CategoryID.from("123");
-        final var expectedImages = Set.of(ProductImage.with("123", new byte[]{10,20,30,40,50},"image.jpg", "/image",1, true));
+        final var expectedImages = Set.of(ProductImage.with("123", new byte[]{10,20,30,40,50},"image.jpg", "/image", true));
 
         final var expectedErrorMessage = "An error on create product was observed";
 
@@ -328,7 +376,7 @@ class CreateProductUseCaseTest extends UseCaseTest {
         final var expectedStock = 10;
         final var expectedStatus = ProductStatus.ACTIVE;
         final var expectedCategoryId = CategoryID.from("123");
-        final var expectedImages = Set.of(ProductImage.with("123", new byte[]{10,20,30,40,50},"image.jpg", "/image",1, true));
+        final var expectedImages = Set.of(ProductImage.with("123", new byte[]{10,20,30,40,50},"image.jpg", "/image", true));
 
         final var expectedErrorMessage = "An error on create product was observed";
 
@@ -372,7 +420,7 @@ class CreateProductUseCaseTest extends UseCaseTest {
         final var expectedPrice = Money.with(1800.03);
         final var expectedStock = 10;
         final var expectedStatus = ProductStatus.ACTIVE;
-        final var expectedImages = Set.of(ProductImage.with("123", new byte[]{10,20,30,40,50},"image.jpg", "/image",1, true));
+        final var expectedImages = Set.of(ProductImage.with("123", new byte[]{10,20,30,40,50},"image.jpg", "/image", true));
 
         final var expectedErrorCount = 1;
         final var expectedErrorMessage = "'store' should not be null";
@@ -414,7 +462,7 @@ class CreateProductUseCaseTest extends UseCaseTest {
         final var expectedStock = 10;
         final var expectedStatus = ProductStatus.ACTIVE;
         final var expectedStoreId = "456";
-        final var expectedImages = Set.of(ProductImage.with("123", new byte[]{10,20,30,40,50},"image.jpg", "/image",1, true));
+        final var expectedImages = Set.of(ProductImage.with("123", new byte[]{10,20,30,40,50},"image.jpg", "/image", true));
 
         final var expectedErrorCount = 1;
         final var expectedErrorMessage = "Store with ID: 456 could not be found";

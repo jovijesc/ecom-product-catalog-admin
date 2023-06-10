@@ -1,6 +1,7 @@
 package com.ecom.catalog.admin.infrastructure.api;
 
 import com.ecom.catalog.admin.ControllerTest;
+import com.ecom.catalog.admin.application.product.create.CreateProductCommand;
 import com.ecom.catalog.admin.application.product.create.CreateProductOutput;
 import com.ecom.catalog.admin.application.product.create.CreateProductUseCase;
 import com.ecom.catalog.admin.application.product.retrieve.get.GetProductByIdUseCase;
@@ -9,6 +10,7 @@ import com.ecom.catalog.admin.application.product.retrieve.list.ListProductUseCa
 import com.ecom.catalog.admin.application.product.retrieve.list.ProductListOutput;
 import com.ecom.catalog.admin.application.product.update.UpdateProductOutput;
 import com.ecom.catalog.admin.application.product.update.UpdateProductUseCase;
+import com.ecom.catalog.admin.domain.Fixture;
 import com.ecom.catalog.admin.domain.category.CategoryID;
 import com.ecom.catalog.admin.domain.exceptions.NotFoundException;
 import com.ecom.catalog.admin.domain.exceptions.NotificationException;
@@ -19,6 +21,7 @@ import com.ecom.catalog.admin.domain.product.ProductID;
 import com.ecom.catalog.admin.domain.product.ProductStatus;
 import com.ecom.catalog.admin.domain.validation.Error;
 import com.ecom.catalog.admin.domain.validation.handler.Notification;
+import com.ecom.catalog.admin.infrastructure.product.models.CreateProductImageRequest;
 import com.ecom.catalog.admin.infrastructure.product.models.CreateProductRequest;
 import com.ecom.catalog.admin.infrastructure.product.models.UpdateProductRequest;
 import com.ecom.catalog.admin.infrastructure.utils.MoneyUtils;
@@ -30,12 +33,23 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.json.JacksonTester;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.MediaType;
+import org.springframework.http.server.ServletServerHttpRequest;
+import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.mock.web.MockPart;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMultipartHttpServletRequestBuilder;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.util.List;
-import java.util.Objects;
+import java.io.*;
+import java.nio.file.Files;
+import java.util.*;
 
 import static org.hamcrest.Matchers.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -66,6 +80,7 @@ public class ProductAPITest {
     @MockBean
     private ListProductUseCase listProductUseCase;
 
+
     @Test
     public void givenAValidCommand_whenCallsCreateProduct_shouldReturnProductId() throws Exception {
         // given
@@ -76,17 +91,29 @@ public class ProductAPITest {
         final var expectedStatus = ProductStatus.ACTIVE;
         final var expectedCategoryId = "123";
         final var expectedId = "123";
+        final var expectedStoreId = "123";
+        final var expectedImageMarkedAsFeatured = 1;
 
         final var anInput =
-                new CreateProductRequest(expectedName, expectedDescription, expectedStatus.name(), expectedPrice, expectedStock, expectedCategoryId);
+                new CreateProductRequest(expectedName, expectedDescription, expectedStatus.name(), expectedPrice, expectedStock, expectedCategoryId, expectedStoreId, expectedImageMarkedAsFeatured);
+
+        final var expectedProduct = new MockMultipartFile("product", null,
+                MediaType.APPLICATION_JSON_VALUE, this.mapper.writeValueAsBytes(anInput));
+
+        final var expectedImage1 = new MockMultipartFile("images", "image01.jpg", MediaType.IMAGE_JPEG_VALUE, "IMAGE01".getBytes());
+        final var expectedImage2 = new MockMultipartFile("images", "image02.jpg", MediaType.IMAGE_JPEG_VALUE, "IMAGE02".getBytes());
 
         when(createProductUseCase.execute(any()))
                 .thenReturn(CreateProductOutput.from(expectedId));
 
-        // when
-        final var aRequest = post("/products")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(this.mapper.writeValueAsString(anInput));
+
+        // Create multipart request
+        final var aRequest = multipart("/products")
+                .file(expectedProduct)
+                .file(expectedImage1)
+                .file(expectedImage2)
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.MULTIPART_FORM_DATA);
 
         final var response = this.mvc.perform(aRequest)
                 .andDo(print());
@@ -97,14 +124,20 @@ public class ProductAPITest {
                 .andExpect(header().string("Content-Type", MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(jsonPath("$.id", equalTo(expectedId)));
 
-        verify(createProductUseCase).execute(argThat(cmd ->
-                Objects.equals(expectedName, cmd.name())
-                        && Objects.equals(expectedDescription, cmd.description())
-                        && Objects.equals(expectedStatus, cmd.status())
-                        && Objects.equals(expectedStock, cmd.stock())
-                        && Objects.equals(MoneyUtils.fromMonetaryAmount(expectedPrice), cmd.price())
-                        && Objects.equals(expectedCategoryId, cmd.category())
-        ));
+        final var cmdCaptor = ArgumentCaptor.forClass(CreateProductCommand.class);
+
+        verify(createProductUseCase).execute(cmdCaptor.capture());
+
+        final var actualCmd = cmdCaptor.getValue();
+
+        Assertions.assertEquals(expectedName, actualCmd.name());
+        Assertions.assertEquals(expectedDescription, actualCmd.description());
+        Assertions.assertEquals(expectedStatus, actualCmd.status());
+        Assertions.assertEquals(expectedStock, actualCmd.stock());
+        Assertions.assertEquals(MoneyUtils.fromMonetaryAmount(expectedPrice), actualCmd.price());
+        Assertions.assertEquals(expectedCategoryId, actualCmd.category());
+        Assertions.assertEquals(expectedStoreId, actualCmd.category());
+
     }
 
     @Test
@@ -116,12 +149,14 @@ public class ProductAPITest {
         final var expectedStock = 10;
         final var expectedStatus = ProductStatus.ACTIVE;
         final var expectedCategoryId = "123";
+        final var expectedStoreId = "123";
+        final var expectedImageMarkedAsFeatured = 1;
 
         final var expectedErrorCount = 1;
         final var expectedErrorMessage = "'name' should not be null";
 
         final var anInput =
-                new CreateProductRequest(expectedName, expectedDescription, expectedStatus.name(), expectedPrice, expectedStock, expectedCategoryId);
+                new CreateProductRequest(expectedName, expectedDescription, expectedStatus.name(), expectedPrice, expectedStock, expectedCategoryId, expectedStoreId, expectedImageMarkedAsFeatured);
 
         when(createProductUseCase.execute(any()))
                 .thenThrow(new NotificationException("Error", Notification.create(new Error(expectedErrorMessage))));
@@ -160,14 +195,16 @@ public class ProductAPITest {
         final var expectedStock = 10;
         final var expectedStatus = ProductStatus.ACTIVE;
         final var expectedCategoryId = "123";
+        final var expectedStore = Fixture.Stores.lojaEletromania();
+        final var expectedImages = Set.of(Fixture.ProductImages.img01());
 
         final var aProduct =
-                Product.newProduct("Celular A", "Celular do tipo BBB", com.ecom.catalog.admin.domain.product.Money.with(1700.0), 10, CategoryID.from(expectedCategoryId));
+                Product.newProduct("Celular A", "Celular do tipo BBB", com.ecom.catalog.admin.domain.product.Money.with(1700.0), 10, CategoryID.from(expectedCategoryId), expectedStore, expectedImages);
 
         final var expectedId = aProduct.getId().getValue();
 
         final var anInput =
-                new UpdateProductRequest(expectedName, expectedDescription, expectedStatus.name(), expectedPrice, expectedStock, expectedCategoryId);
+                new UpdateProductRequest(expectedName, expectedDescription, expectedStatus.name(), expectedPrice, expectedStock, expectedCategoryId, expectedStore.getId());
 
         when(updateProductUseCase.execute(any()))
                 .thenReturn(UpdateProductOutput.from(aProduct));
@@ -199,8 +236,9 @@ public class ProductAPITest {
     public void givenAnInvalidNullName_whenCallsUpdateProduct_shouldReturnNotificationException() throws Exception {
         // given
         final var expectedCategoryId = "123";
+
         final var aProduct =
-                Product.newProduct("Celular A", "Celular do tipo BBB", com.ecom.catalog.admin.domain.product.Money.with(1700.0), 10, CategoryID.from(expectedCategoryId));
+                Product.newProduct("Celular A", "Celular do tipo BBB", com.ecom.catalog.admin.domain.product.Money.with(1700.0), 10, CategoryID.from(expectedCategoryId), Fixture.Stores.lojaEletromania(), Set.of(Fixture.ProductImages.img01()));
 
         final var expectedId = aProduct.getId();
         final String expectedName = null;
@@ -208,12 +246,13 @@ public class ProductAPITest {
         final var expectedPrice = Money.of(1800.03, "BRL");
         final var expectedStock = 10;
         final var expectedStatus = ProductStatus.ACTIVE;
+        final var expectedStore = Fixture.Stores.lojaEletromania();
 
         final var expectedErrorCount = 1;
         final var expectedErrorMessage = "'name' should not be null";
 
         final var anInput =
-                new UpdateProductRequest(expectedName, expectedDescription, expectedStatus.name(), expectedPrice, expectedStock, expectedCategoryId);
+                new UpdateProductRequest(expectedName, expectedDescription, expectedStatus.name(), expectedPrice, expectedStock, expectedCategoryId, expectedStore.getId());
 
         when(updateProductUseCase.execute(any()))
                 .thenThrow(new NotificationException("Error", Notification.create(new Error(expectedErrorMessage))));
@@ -252,8 +291,11 @@ public class ProductAPITest {
         final var expectedStock = 10;
         final var expectedStatus = ProductStatus.ACTIVE;
         final var expectedCategoryId = "123";
+        final var expectedStore = Fixture.Stores.lojaEletromania();
+        final var expectedImages = Set.of(Fixture.ProductImages.img01());
+
         final var aProduct =
-                Product.newProduct(expectedName, expectedDescription, expectedPrice, expectedStock, CategoryID.from(expectedCategoryId));
+                Product.newProduct(expectedName, expectedDescription, expectedPrice, expectedStock, CategoryID.from(expectedCategoryId), expectedStore, expectedImages);
 
         final var expectedId = aProduct.getId();
 
@@ -316,8 +358,10 @@ public class ProductAPITest {
         final var expectedPrice = com.ecom.catalog.admin.domain.product.Money.with(1800.03);
         final var expectedStock = 10;
         final var expectedCategoryId = "123";
+        final var expectedStore = Fixture.Stores.lojaEletromania();
+        final var expectedImages = Set.of(Fixture.ProductImages.img01());
         final var aProduct =
-                Product.newProduct(expectedName, expectedDescription, expectedPrice, expectedStock, CategoryID.from(expectedCategoryId));
+                Product.newProduct(expectedName, expectedDescription, expectedPrice, expectedStock, CategoryID.from(expectedCategoryId), expectedStore, expectedImages);
 
         final var expectedItems = List.of(ProductListOutput.from(aProduct));
 

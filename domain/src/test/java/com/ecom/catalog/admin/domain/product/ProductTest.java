@@ -23,7 +23,7 @@ class ProductTest extends UnitTest {
         final var expectedStock = 10;
         final var expectedStatus = ProductStatus.ACTIVE;
         final var expectedCategoryId = CategoryID.from("123");
-        final var expectedImages = Set.of(ProductImage.with("123", new byte[]{10,20,30,40,50},"image.jpg", "/image",1, true));
+        final var expectedImages = Set.of(ProductImage.with("123", new byte[]{10,20,30,40,50},"image.jpg", "/image", true));
 
         // when
         final var actualProduct =
@@ -54,7 +54,7 @@ class ProductTest extends UnitTest {
         final var expectedPrice = Money.with(1800.03);
         final var expectedStock = 10;
         final var expectedCategoryId = CategoryID.from("123");
-        final var expectedImages = Set.of(ProductImage.with("123", new byte[]{10,20,30,40,50},"image.jpg", "/image",1, true));
+        final var expectedImages = Set.of(ProductImage.with("123", new byte[]{10,20,30,40,50},"image.jpg", "/image", true));
         final var expectedErrorCount = 1;
         final var expectedErrorMessage = "'name' should not be null";
 
@@ -76,7 +76,7 @@ class ProductTest extends UnitTest {
         final var expectedPrice = Money.with(1800.03);
         final var expectedStock = 10;
         final var expectedCategoryId = CategoryID.from("123");
-        final var expectedImages = Set.of(ProductImage.with("123", new byte[]{10,20,30,40,50},"image.jpg", "/image",1, true));
+        final var expectedImages = Set.of(ProductImage.with("123", new byte[]{10,20,30,40,50},"image.jpg", "/image", true));
         final var expectedErrorCount = 1;
         final var expectedErrorMessage = "'name' should not be empty";
 
@@ -98,7 +98,7 @@ class ProductTest extends UnitTest {
         final var expectedPrice = Money.with(1800.03);
         final var expectedStock = 10;
         final var expectedCategoryId = CategoryID.from("123");
-        final var expectedImages = Set.of(ProductImage.with("123", new byte[]{10,20,30,40,50},"image.jpg", "/image",1, true));
+        final var expectedImages = Set.of(ProductImage.with("123", new byte[]{10,20,30,40,50},"image.jpg", "/image", true));
         final var expectedErrorCount = 1;
         final var expectedErrorMessage = "'description' should not be null";
 
@@ -120,7 +120,7 @@ class ProductTest extends UnitTest {
         final var expectedPrice = Money.with(1800.03);
         final var expectedStock = 10;
         final var expectedCategoryId = CategoryID.from("123");
-        final var expectedImages = Set.of(ProductImage.with("123", new byte[]{10,20,30,40,50},"image.jpg", "/image",1, true));
+        final var expectedImages = Set.of(ProductImage.with("123", new byte[]{10,20,30,40,50},"image.jpg", "/image", true));
         final var expectedErrorCount = 1;
         final var expectedErrorMessage = "'description' should not be empty";
 
@@ -144,7 +144,7 @@ class ProductTest extends UnitTest {
         final var expectedPrice = Money.with(1800.03);
         final var expectedStock = 10;
         final var expectedCategoryId = CategoryID.from("123");
-        final var expectedImages = Set.of(ProductImage.with("123", new byte[]{10,20,30,40,50},"image.jpg", "/image",1, true));
+        final var expectedImages = Set.of(ProductImage.with("123", new byte[]{10,20,30,40,50},"image.jpg", "/image", true));
         final var expectedErrorCount = 1;
         final var expectedErrorMessage = "'name' must be between 3 and 255 characters";
 
@@ -174,7 +174,7 @@ class ProductTest extends UnitTest {
         final var expectedPrice = Money.with(1800.03);
         final var expectedStock = 10;
         final var expectedCategoryId = CategoryID.from("123");
-        final var expectedImages = Set.of(ProductImage.with("123", new byte[]{10,20,30,40,50},"image.jpg", "/image",1, true));
+        final var expectedImages = Set.of(ProductImage.with("123", new byte[]{10,20,30,40,50},"image.jpg", "/image", true));
         final var expectedErrorCount = 1;
         final var expectedErrorMessage = "'description' must be between 1 and 4000 characters";
 
@@ -196,7 +196,7 @@ class ProductTest extends UnitTest {
         final var expectedPrice = Money.with(1800.03);
         final var expectedStock = -1;
         final var expectedCategoryId = CategoryID.from("123");
-        final var expectedImages = Set.of(ProductImage.with("123", new byte[]{10,20,30,40,50},"image.jpg", "/image",1, true));
+        final var expectedImages = Set.of(ProductImage.with("123", new byte[]{10,20,30,40,50},"image.jpg", "/image", true));
         final var expectedErrorCount = 1;
         final var expectedErrorMessage = "'stock' cannot have invalid values";
 
@@ -218,7 +218,7 @@ class ProductTest extends UnitTest {
         final Money expectedPrice = null;
         final var expectedStock = 10;
         final var expectedCategoryId = CategoryID.from("123");
-        final var expectedImages = Set.of(ProductImage.with("123", new byte[]{10,20,30,40,50},"image.jpg", "/image",1, true));
+        final var expectedImages = Set.of(ProductImage.with("123", new byte[]{10,20,30,40,50},"image.jpg", "/image", true));
         final var expectedErrorCount = 1;
         final var expectedErrorMessage = "'price' should not be null";
 
@@ -240,7 +240,7 @@ class ProductTest extends UnitTest {
         final Money expectedPrice = Money.with(0);
         final var expectedStock = 10;
         final var expectedCategoryId = CategoryID.from("123");
-        final var expectedImages = Set.of(ProductImage.with("123", new byte[]{10,20,30,40,50},"image.jpg", "/image",1, true));
+        final var expectedImages = Set.of(ProductImage.with("123", new byte[]{10,20,30,40,50},"image.jpg", "/image", true));
         final var expectedErrorCount = 1;
         final var expectedErrorMessage = "'price' must be greater than zero";
 
@@ -262,7 +262,7 @@ class ProductTest extends UnitTest {
         final Money expectedPrice = Money.with(1600.0);
         final var expectedStock = 10;
         final CategoryID categoryID = null;
-        final var expectedImages = Set.of(ProductImage.with("123", new byte[]{10,20,30,40,50},"image.jpg", "/image",1, true));
+        final var expectedImages = Set.of(ProductImage.with("123", new byte[]{10,20,30,40,50},"image.jpg", "/image", true));
         final var expectedErrorCount = 1;
         final var expectedErrorMessage = "'category' should not be null";
 
@@ -284,7 +284,7 @@ class ProductTest extends UnitTest {
         final Money expectedPrice = Money.with(1600.0);
         final var expectedStock = 10;
         final CategoryID categoryID = CategoryID.from("123");
-        final var expectedImages = Set.of(ProductImage.with("123", new byte[]{10,20,30,40,50},"image.jpg", "/image",1, true));
+        final var expectedImages = Set.of(ProductImage.with("123", new byte[]{10,20,30,40,50},"image.jpg", "/image", true));
         final var expectedErrorCount = 1;
         final var expectedErrorMessage = "'store' should not be null";
 
@@ -297,27 +297,6 @@ class ProductTest extends UnitTest {
         Assertions.assertEquals(expectedErrorMessage, actualException.getErrors().get(0).message());
     }
 
-    @Test
-    public void givenAnEmptyImages_whenCallNewProduct_thenShouldReceiverError() {
-        // given
-        final String expectedName = "Celular";
-        final var expectedStore = Store.with(IdUtils.uuid(), "Minha Loja");
-        final var expectedDescription = "Celular do tipo ABC";
-        final Money expectedPrice = Money.with(1600.0);
-        final var expectedStock = 10;
-        final CategoryID categoryID = CategoryID.from("123");
-        final var expectedImages = Set.<ProductImage>of();
-        final var expectedErrorCount = 1;
-        final var expectedErrorMessage = "The total number of images should be greater than zero";
-
-        // when
-        final var actualException = Assertions.assertThrows(NotificationException.class, () ->
-                Product.newProduct(expectedName, expectedDescription, expectedPrice, expectedStock, categoryID, expectedStore, expectedImages));
-
-        // then
-        Assertions.assertEquals(expectedErrorCount, actualException.getErrors().size());
-        Assertions.assertEquals(expectedErrorMessage, actualException.getErrors().get(0).message());
-    }
 
     @Test
     public void givenATotalImagesGreaterThan10_whenCallNewProduct_thenShouldReceiveAnError() {
@@ -329,17 +308,17 @@ class ProductTest extends UnitTest {
         final var expectedStock = 10;
         final var expectedCategoryId = CategoryID.from("123");
         final var expectedImages = Set.of(
-                ProductImage.with("qwe",new byte[]{10,20,30,40,50}, "image1.jpg", "/image",1, true),
-                ProductImage.with("wer",new byte[]{10,20,30,40,50}, "image2.jpg", "/image",1, true),
-                ProductImage.with("ert",new byte[]{10,20,30,40,50}, "image3.jpg", "/image",1, true),
-                ProductImage.with("rty",new byte[]{10,20,30,40,50}, "image4.jpg", "/image",1, true),
-                ProductImage.with("tyu",new byte[]{10,20,30,40,50}, "image5.jpg", "/image",1, true),
-                ProductImage.with("yui",new byte[]{10,20,30,40,50}, "image6.jpg", "/image",1, true),
-                ProductImage.with("uio",new byte[]{10,20,30,40,50}, "image7.jpg", "/image",1, true),
-                ProductImage.with("iop",new byte[]{10,20,30,40,50}, "image8.jpg", "/image",1, true),
-                ProductImage.with("asd",new byte[]{10,20,30,40,50}, "image9.jpg", "/image",1, true),
-                ProductImage.with("sdf",new byte[]{10,20,30,40,50}, "image10.jpg", "/image",1, true),
-                ProductImage.with("dfg",new byte[]{10,20,30,40,50}, "image11.jpg", "/image",1, true)
+                ProductImage.with("qwe",new byte[]{10,20,30,40,50}, "image1.jpg", "/image", true),
+                ProductImage.with("wer",new byte[]{10,20,30,40,50}, "image2.jpg", "/image", true),
+                ProductImage.with("ert",new byte[]{10,20,30,40,50}, "image3.jpg", "/image", true),
+                ProductImage.with("rty",new byte[]{10,20,30,40,50}, "image4.jpg", "/image", true),
+                ProductImage.with("tyu",new byte[]{10,20,30,40,50}, "image5.jpg", "/image", true),
+                ProductImage.with("yui",new byte[]{10,20,30,40,50}, "image6.jpg", "/image", true),
+                ProductImage.with("uio",new byte[]{10,20,30,40,50}, "image7.jpg", "/image", true),
+                ProductImage.with("iop",new byte[]{10,20,30,40,50}, "image8.jpg", "/image", true),
+                ProductImage.with("asd",new byte[]{10,20,30,40,50}, "image9.jpg", "/image", true),
+                ProductImage.with("sdf",new byte[]{10,20,30,40,50}, "image10.jpg", "/image", true),
+                ProductImage.with("dfg",new byte[]{10,20,30,40,50}, "image11.jpg", "/image", true)
         );
         final var expectedErrorCount = 1;
         final var expectedErrorMessage = "The total number of images must be between 1 and 10";
@@ -363,7 +342,7 @@ class ProductTest extends UnitTest {
         final var expectedStock = 10;
         final var expectedStatus = ProductStatus.INACTIVE;
         final var expectedCategoryId = CategoryID.from("123");
-        final var expectedImages = Set.of(ProductImage.with("123", new byte[]{10,20,30,40,50},"image.jpg", "/image",1, true));
+        final var expectedImages = Set.of(ProductImage.with("123", new byte[]{10,20,30,40,50},"image.jpg", "/image", true));
 
         final var aProduct =
                 Product.newProduct(expectedName, expectedDescription, expectedPrice, expectedStock, expectedCategoryId, expectedStore, expectedImages);
@@ -399,7 +378,7 @@ class ProductTest extends UnitTest {
         final var expectedStock = 10;
         final var expectedStatus = ProductStatus.ACTIVE;
         final var expectedCategoryId = CategoryID.from("123");
-        final var expectedImages = Set.of(ProductImage.with("123", new byte[]{10,20,30,40,50},"image.jpg", "/image",1, true));
+        final var expectedImages = Set.of(ProductImage.with("123", new byte[]{10,20,30,40,50},"image.jpg", "/image", true));
 
         final var aProduct =
                 Product.newProduct(expectedName, expectedDescription, ProductStatus.INACTIVE, expectedPrice, expectedStock, expectedCategoryId, expectedStore, expectedImages);
@@ -437,7 +416,7 @@ class ProductTest extends UnitTest {
         final var expectedStock = 10;
         final var expectedStatus = ProductStatus.ACTIVE;
         final var expectedCategoryId = CategoryID.from("123");
-        final var expectedImages = Set.of(ProductImage.with("123", new byte[]{10,20,30,40,50},"image.jpg", "/image",1, true));
+        final var expectedImages = Set.of(ProductImage.with("123", new byte[]{10,20,30,40,50},"image.jpg", "/image", true));
 
         final var actualProduct =
                 Product.newProduct("Celular Novo", "Celular com outra descrição", ProductStatus.INACTIVE, expectedPrice, expectedStock, expectedCategoryId, expectedStore, expectedImages);
@@ -474,7 +453,7 @@ class ProductTest extends UnitTest {
         final var expectedStock = 10;
         final var expectedStatus = ProductStatus.INACTIVE;
         final var expectedCategoryId = CategoryID.from("123");
-        final var expectedImages = Set.of(ProductImage.with("123", new byte[]{10,20,30,40,50},"image.jpg", "/image",1, true));
+        final var expectedImages = Set.of(ProductImage.with("123", new byte[]{10,20,30,40,50},"image.jpg", "/image", true));
 
         final var actualProduct =
                 Product.newProduct("Celular Novo", "Celular com outra descrição", ProductStatus.ACTIVE, expectedPrice, expectedStock, expectedCategoryId, expectedStore, expectedImages);
@@ -512,7 +491,7 @@ class ProductTest extends UnitTest {
         final var expectedStock = 10;
         final var expectedStatus = ProductStatus.ACTIVE;
         final var expectedCategoryId = CategoryID.from("123");
-        final var expectedImages = Set.of(ProductImage.with("123", new byte[]{10,20,30,40,50},"image.jpg", "/image",1, true));
+        final var expectedImages = Set.of(ProductImage.with("123", new byte[]{10,20,30,40,50},"image.jpg", "/image", true));
         final var expectedErrorCount = 1;
         final var expectedErrorMessage = "'name' should not be null";
 
@@ -528,55 +507,4 @@ class ProductTest extends UnitTest {
         Assertions.assertEquals(expectedErrorMessage, actualException.getErrors().get(0).message());
     }
 
-    @Test
-    public void givenAnEmptyImages_whenCallUpdate_thenShouldReceiverError() {
-        // given
-        final var expectedName = "Celular";
-        final var expectedStore = Store.with(IdUtils.uuid(), "Minha Loja");
-        final var expectedDescription = "Celular do tipo ABC";
-        final var expectedPrice = Money.with(1800.03);
-        final var expectedStock = 10;
-        final var expectedStatus = ProductStatus.ACTIVE;
-        final var expectedCategoryId = CategoryID.from("123");
-        final var expectedImages = Set.<ProductImage>of();
-        final var expectedErrorCount = 1;
-        final var expectedErrorMessage = "The total number of images should be greater than zero";
-
-        final var actualProduct =
-                Product.newProduct("Celular Novo", "Celular com outra descrição", expectedStatus, expectedPrice, expectedStock, expectedCategoryId, expectedStore, Set.of(ProductImage.with("123", new byte[]{10,20,30,40,50},"image.jpg", "/image",1, true)));
-        // when
-        final var actualException = Assertions.assertThrows(NotificationException.class, () ->
-                actualProduct.update(expectedName, expectedDescription, expectedStatus, expectedPrice, expectedStock, expectedCategoryId, expectedStore, expectedImages));
-
-        // then
-        Assertions.assertEquals(expectedErrorCount, actualException.getErrors().size());
-        Assertions.assertEquals(expectedErrorMessage, actualException.getErrors().get(0).message());
-    }
-
-    @Test
-    public void givenAnEmptyImages_whenCallUpdateImages_thenShouldReceiverError() {
-        // given
-        final var expectedName = "Celular";
-        final var expectedStore = Store.with(IdUtils.uuid(), "Minha Loja");
-        final var expectedDescription = "Celular do tipo ABC";
-        final var expectedPrice = Money.with(1800.03);
-        final var expectedStock = 10;
-        final var expectedStatus = ProductStatus.ACTIVE;
-        final var expectedCategoryId = CategoryID.from("123");
-        final var expectedImages = Set.<ProductImage>of();
-        final var expectedErrorCount = 1;
-        final var expectedErrorMessage = "The total number of images should be greater than zero";
-
-        final var actualProduct =
-                Product.newProduct(expectedName, expectedDescription, expectedStatus, expectedPrice, expectedStock, expectedCategoryId, expectedStore, Set.of(ProductImage.with("123", new byte[]{10,20,30,40,50},"image.jpg", "/image",1, true)));
-        Assertions.assertNotNull(actualProduct.getName());
-
-        // when
-        final var actualException = Assertions.assertThrows(NotificationException.class, () ->
-                actualProduct.updateImages(expectedImages));
-
-        // then
-        Assertions.assertEquals(expectedErrorCount, actualException.getErrors().size());
-        Assertions.assertEquals(expectedErrorMessage, actualException.getErrors().get(0).message());
-    }
 }

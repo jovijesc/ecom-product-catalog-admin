@@ -52,8 +52,10 @@ public class DefaultCreateProductUseCase extends CreateProductUseCase {
     private Product create(final CreateProductCommand aCommand, final Store aStore, final Product aProduct) {
         final var anId = aProduct.getId();
         try {
-            final var images = this.productImageGateway.create(aStore, anId, aCommand.images());
-            return this.productGateway.create(aProduct.updateImages(images));
+            if( aCommand.images() != null && !aCommand.images().isEmpty() ) {
+                aProduct.updateImages(this.productImageGateway.create(aStore, anId, aCommand.images()));
+            }
+            return this.productGateway.create(aProduct);
         } catch(final Throwable t) {
             this.productImageGateway.clearImages(aStore, anId);
             throw InternalErrorException.with("An error on create product was observed [productId:%s]".formatted(anId.getValue()),t);

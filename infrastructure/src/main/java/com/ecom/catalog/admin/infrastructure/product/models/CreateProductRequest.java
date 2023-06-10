@@ -12,6 +12,9 @@ public record CreateProductRequest(
         @JsonProperty("status") String status,
         MonetaryAmount price,
         @JsonProperty("stock") int stock,
-        @JsonProperty("category") String category
+        @JsonProperty("category") String category,
+        @JsonProperty("store") String store,
+
+        @JsonProperty("number_image_marked_featured") int numberImageMarkedAsFeatured
 ) {
 }

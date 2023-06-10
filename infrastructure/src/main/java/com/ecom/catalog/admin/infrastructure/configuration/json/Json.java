@@ -1,5 +1,7 @@
 package com.ecom.catalog.admin.infrastructure.configuration.json;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
@@ -8,14 +10,22 @@ import com.fasterxml.jackson.databind.util.StdDateFormat;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.module.afterburner.AfterburnerModule;
+import org.springdoc.core.SpringDocUtils;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.zalando.jackson.datatype.money.MonetaryAmountFactory;
 import org.zalando.jackson.datatype.money.MoneyModule;
 
+import javax.money.CurrencyUnit;
+import javax.money.MonetaryAmount;
+import java.math.BigDecimal;
 import java.util.concurrent.Callable;
 
 public enum Json {
     INSTANCE;
+
+    static {
+        SpringDocUtils.getConfig().replaceWithClass(MonetaryAmount.class, CustomMonetaryAmount.class);
+    }
 
     public static ObjectMapper mapper() {
         return INSTANCE.mapper.copy();
@@ -51,6 +61,15 @@ public enum Json {
 
     private MoneyModule moneyModule() {
         return new MoneyModule().withQuotedDecimalNumbers();
+    }
+
+    class CustomMonetaryAmount {
+
+        @JsonProperty("amount")
+        private BigDecimal amount;
+
+        @JsonProperty("currency")
+        private String currency;
     }
 
     private static <T> T invoke(final Callable<T> callable) {

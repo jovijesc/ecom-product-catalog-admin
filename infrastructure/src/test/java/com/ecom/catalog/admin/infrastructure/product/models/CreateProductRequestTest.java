@@ -1,6 +1,7 @@
 package com.ecom.catalog.admin.infrastructure.product.models;
 
 import com.ecom.catalog.admin.JacksonTest;
+import com.ecom.catalog.admin.domain.Fixture;
 import com.ecom.catalog.admin.domain.product.ProductStatus;
 import com.ecom.catalog.admin.infrastructure.category.models.CreateCategoryRequest;
 import org.assertj.core.api.Assertions;
@@ -25,6 +26,8 @@ public class CreateProductRequestTest {
         final var expectedStock = 10;
         final var expectedCategoryId = "123";
         final var expectedStatus = ProductStatus.ACTIVE;
+        final var expectedStoreId = "123";
+        final var expectedImageMarkedAsFeatured = 1;
 
         final var request = new CreateProductRequest(
                 expectedName,
@@ -32,7 +35,9 @@ public class CreateProductRequestTest {
                 expectedStatus.name(),
                 expectedPrice,
                 expectedStock,
-                expectedCategoryId
+                expectedCategoryId,
+                expectedStoreId,
+                expectedImageMarkedAsFeatured
         );
 
         final var actualJson = this.json.write(request);
@@ -44,7 +49,9 @@ public class CreateProductRequestTest {
                 .hasJsonPathValue("$.stock", expectedStock)
                 .hasJsonPathValue("$.price.amount", expectedPrice.getNumber().toString())
                 .hasJsonPathValue("$.price.currency", expectedPrice.getCurrency().getCurrencyCode())
-                .hasJsonPathValue("$.category", expectedCategoryId);
+                .hasJsonPathValue("$.category", expectedCategoryId)
+                .hasJsonPathValue("$.store", expectedCategoryId)
+                .hasJsonPathValue("$.number_image_marked_featured", expectedImageMarkedAsFeatured);
     }
 
     @Test
@@ -55,6 +62,8 @@ public class CreateProductRequestTest {
         final var expectedStock = 10;
         final var expectedCategoryId = "123";
         final var expectedStatus = ProductStatus.ACTIVE;
+        final var expectedStoreId = "123";
+        final var expectedImageMarkedAsFeatured = 1;
 
         final var json = """
                 {                  
@@ -67,7 +76,9 @@ public class CreateProductRequestTest {
                        "amount": "%s",
                        "currency": "%s"
                   },
-                  "category": "%s"
+                  "category": "%s",
+                  "store": "%s",
+                  "number_image_marked_featured": "%s"
                 }    
                 """.formatted(
                 expectedName,
@@ -76,7 +87,9 @@ public class CreateProductRequestTest {
                 expectedStock,
                 expectedPrice.getNumber().toString(),
                 expectedPrice.getCurrency().getCurrencyCode(),
-                expectedCategoryId
+                expectedCategoryId,
+                expectedStoreId,
+                expectedImageMarkedAsFeatured
         );
 
         final var actualJson = this.json.parse(json);
@@ -87,6 +100,7 @@ public class CreateProductRequestTest {
                 .hasFieldOrPropertyWithValue("status", expectedStatus.name())
                 .hasFieldOrPropertyWithValue("stock", expectedStock)
                 .hasFieldOrPropertyWithValue("price", expectedPrice)
-                .hasFieldOrPropertyWithValue("category", expectedCategoryId);
+                .hasFieldOrPropertyWithValue("category", expectedCategoryId)
+                .hasFieldOrPropertyWithValue("store", expectedStoreId);
     }
 }

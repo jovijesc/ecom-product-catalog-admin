@@ -44,5 +44,18 @@ public record UpdateProductCommand(
     ) {
         return new UpdateProductCommand(anId, aName, aDescription, aStatus, aPrice, aStock, aCategory, aStore, images);
     }
+
+    public static UpdateProductCommand with(
+            final String anId,
+            final String aName,
+            final String aDescription,
+            final ProductStatus aStatus,
+            final Money aPrice,
+            final int aStock,
+            final String aCategory,
+            final String aStore
+    ) {
+        return new UpdateProductCommand(anId, aName, aDescription, aStatus, aPrice, aStock, aCategory, aStore, null);
+    }
 }
 
