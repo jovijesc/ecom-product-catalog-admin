@@ -1,6 +1,7 @@
 package com.ecom.catalog.admin.infrastructure.api;
 
 import com.ecom.catalog.admin.ControllerTest;
+import com.ecom.catalog.admin.application.category.retrieve.get.CategoryOutput;
 import com.ecom.catalog.admin.application.product.create.CreateProductCommand;
 import com.ecom.catalog.admin.application.product.create.CreateProductOutput;
 import com.ecom.catalog.admin.application.product.create.CreateProductUseCase;
@@ -11,6 +12,7 @@ import com.ecom.catalog.admin.application.product.retrieve.list.ProductListOutpu
 import com.ecom.catalog.admin.application.product.update.UpdateProductOutput;
 import com.ecom.catalog.admin.application.product.update.UpdateProductUseCase;
 import com.ecom.catalog.admin.domain.Fixture;
+import com.ecom.catalog.admin.domain.category.Category;
 import com.ecom.catalog.admin.domain.category.CategoryID;
 import com.ecom.catalog.admin.domain.exceptions.NotFoundException;
 import com.ecom.catalog.admin.domain.exceptions.NotificationException;
@@ -18,38 +20,32 @@ import com.ecom.catalog.admin.domain.pagination.Pagination;
 import com.ecom.catalog.admin.domain.pagination.SearchQuery;
 import com.ecom.catalog.admin.domain.product.Product;
 import com.ecom.catalog.admin.domain.product.ProductID;
+import com.ecom.catalog.admin.domain.product.ProductImage;
 import com.ecom.catalog.admin.domain.product.ProductStatus;
 import com.ecom.catalog.admin.domain.validation.Error;
 import com.ecom.catalog.admin.domain.validation.handler.Notification;
-import com.ecom.catalog.admin.infrastructure.product.models.CreateProductImageRequest;
 import com.ecom.catalog.admin.infrastructure.product.models.CreateProductRequest;
+import com.ecom.catalog.admin.infrastructure.product.models.ProductImageResponse;
 import com.ecom.catalog.admin.infrastructure.product.models.UpdateProductRequest;
 import com.ecom.catalog.admin.infrastructure.utils.MoneyUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.hamcrest.Matchers;
 import org.javamoney.moneta.Money;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.json.JacksonTester;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.HttpEntity;
 import org.springframework.http.MediaType;
-import org.springframework.http.server.ServletServerHttpRequest;
 import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.mock.web.MockPart;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMultipartHttpServletRequestBuilder;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.*;
-import java.nio.file.Files;
-import java.util.*;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 import static org.hamcrest.Matchers.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -82,7 +78,7 @@ public class ProductAPITest {
 
 
     @Test
-    public void givenAValidCommand_whenCallsCreateProduct_shouldReturnProductId() throws Exception {
+    public void givenAValidCommandWithImages_whenCallsCreateProduct_shouldReturnProductId() throws Exception {
         // given
         final var expectedName = "Celular";
         final var expectedDescription = "Celular do tipo ABC";
@@ -137,6 +133,69 @@ public class ProductAPITest {
         Assertions.assertEquals(MoneyUtils.fromMonetaryAmount(expectedPrice), actualCmd.price());
         Assertions.assertEquals(expectedCategoryId, actualCmd.category());
         Assertions.assertEquals(expectedStoreId, actualCmd.category());
+        Assertions.assertEquals(
+                Stream.of(expectedImage1, expectedImage2)
+                        .map(MockMultipartFile::getOriginalFilename)
+                        .collect(Collectors.toSet()),
+                actualCmd.images().stream()
+                        .map(ProductImage::getName)
+                        .collect(Collectors.toSet())
+        );
+
+    }
+
+    @Test
+    public void givenAValidCommandWithoutImages_whenCallsCreateProduct_shouldReturnProductId() throws Exception {
+        // given
+        final var expectedName = "Celular";
+        final var expectedDescription = "Celular do tipo ABC";
+        final var expectedPrice = Money.of(1800.03, "BRL");
+        final var expectedStock = 10;
+        final var expectedStatus = ProductStatus.ACTIVE;
+        final var expectedCategoryId = "123";
+        final var expectedId = "123";
+        final var expectedStoreId = "123";
+        final var expectedImageMarkedAsFeatured = 1;
+
+        final var anInput =
+                new CreateProductRequest(expectedName, expectedDescription, expectedStatus.name(), expectedPrice, expectedStock, expectedCategoryId, expectedStoreId, expectedImageMarkedAsFeatured);
+
+        final var expectedProduct = new MockMultipartFile("product", null,
+                MediaType.APPLICATION_JSON_VALUE, this.mapper.writeValueAsBytes(anInput));
+
+        when(createProductUseCase.execute(any()))
+                .thenReturn(CreateProductOutput.from(expectedId));
+
+
+        // Create multipart request
+        final var aRequest = multipart("/products")
+                .file(expectedProduct)
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.MULTIPART_FORM_DATA);
+
+        final var response = this.mvc.perform(aRequest)
+                .andDo(print());
+
+        // then
+        response.andExpect(status().isCreated())
+                .andExpect(header().string("Location", "/products/" + expectedId))
+                .andExpect(header().string("Content-Type", MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(jsonPath("$.id", equalTo(expectedId)));
+
+        final var cmdCaptor = ArgumentCaptor.forClass(CreateProductCommand.class);
+
+        verify(createProductUseCase).execute(cmdCaptor.capture());
+
+        final var actualCmd = cmdCaptor.getValue();
+
+        Assertions.assertEquals(expectedName, actualCmd.name());
+        Assertions.assertEquals(expectedDescription, actualCmd.description());
+        Assertions.assertEquals(expectedStatus, actualCmd.status());
+        Assertions.assertEquals(expectedStock, actualCmd.stock());
+        Assertions.assertEquals(MoneyUtils.fromMonetaryAmount(expectedPrice), actualCmd.price());
+        Assertions.assertEquals(expectedCategoryId, actualCmd.category());
+        Assertions.assertEquals(expectedStoreId, actualCmd.category());
+        Assertions.assertTrue(actualCmd.images() == null || actualCmd.images().isEmpty());
 
     }
 
@@ -158,12 +217,16 @@ public class ProductAPITest {
         final var anInput =
                 new CreateProductRequest(expectedName, expectedDescription, expectedStatus.name(), expectedPrice, expectedStock, expectedCategoryId, expectedStoreId, expectedImageMarkedAsFeatured);
 
+        final var expectedProduct = new MockMultipartFile("product", null,
+                MediaType.APPLICATION_JSON_VALUE, this.mapper.writeValueAsBytes(anInput));
+
         when(createProductUseCase.execute(any()))
                 .thenThrow(new NotificationException("Error", Notification.create(new Error(expectedErrorMessage))));
         // when
-        final var aRequest = post("/products")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(this.mapper.writeValueAsString(anInput));
+        final var aRequest = multipart("/products")
+                .file(expectedProduct)
+
+                .contentType(MediaType.MULTIPART_FORM_DATA);
 
         final var response = this.mvc.perform(aRequest)
                 .andDo(print());
@@ -196,10 +259,9 @@ public class ProductAPITest {
         final var expectedStatus = ProductStatus.ACTIVE;
         final var expectedCategoryId = "123";
         final var expectedStore = Fixture.Stores.lojaEletromania();
-        final var expectedImages = Set.of(Fixture.ProductImages.img01());
 
         final var aProduct =
-                Product.newProduct("Celular A", "Celular do tipo BBB", com.ecom.catalog.admin.domain.product.Money.with(1700.0), 10, CategoryID.from(expectedCategoryId), expectedStore, expectedImages);
+                Product.newProduct("Celular A", "Celular do tipo BBB", expectedStatus, com.ecom.catalog.admin.domain.product.Money.with(1700.0), 10, CategoryID.from(expectedCategoryId), expectedStore);
 
         final var expectedId = aProduct.getId().getValue();
 
@@ -229,6 +291,7 @@ public class ProductAPITest {
                         && Objects.equals(expectedStock, cmd.stock())
                         && Objects.equals(MoneyUtils.fromMonetaryAmount(expectedPrice), cmd.price())
                         && Objects.equals(expectedCategoryId, cmd.category())
+                        && Objects.equals(expectedStore.getId(), cmd.store())
         ));
     }
 
@@ -238,7 +301,7 @@ public class ProductAPITest {
         final var expectedCategoryId = "123";
 
         final var aProduct =
-                Product.newProduct("Celular A", "Celular do tipo BBB", com.ecom.catalog.admin.domain.product.Money.with(1700.0), 10, CategoryID.from(expectedCategoryId), Fixture.Stores.lojaEletromania(), Set.of(Fixture.ProductImages.img01()));
+                Product.newProduct("Celular A", "Celular do tipo BBB", ProductStatus.ACTIVE, com.ecom.catalog.admin.domain.product.Money.with(1700.0), 10, CategoryID.from(expectedCategoryId), Fixture.Stores.lojaEletromania());
 
         final var expectedId = aProduct.getId();
         final String expectedName = null;
@@ -278,6 +341,7 @@ public class ProductAPITest {
                         && Objects.equals(expectedStock, cmd.stock())
                         && Objects.equals(MoneyUtils.fromMonetaryAmount(expectedPrice), cmd.price())
                         && Objects.equals(expectedCategoryId, cmd.category())
+                        && Objects.equals(expectedStore.getId(), cmd.store())
         ));
 
     }
@@ -292,10 +356,10 @@ public class ProductAPITest {
         final var expectedStatus = ProductStatus.ACTIVE;
         final var expectedCategoryId = "123";
         final var expectedStore = Fixture.Stores.lojaEletromania();
-        final var expectedImages = Set.of(Fixture.ProductImages.img01());
+        final var expectedImages = Set.of(Fixture.ProductImages.img01(), Fixture.ProductImages.img02());
 
         final var aProduct =
-                Product.newProduct(expectedName, expectedDescription, expectedPrice, expectedStock, CategoryID.from(expectedCategoryId), expectedStore, expectedImages);
+                Product.newProduct(expectedName, expectedDescription,expectedStatus, expectedPrice, expectedStock, CategoryID.from(expectedCategoryId), expectedStore, expectedImages);
 
         final var expectedId = aProduct.getId();
 
@@ -309,8 +373,8 @@ public class ProductAPITest {
 
         final var response = this.mvc.perform(aRequest);
 
-        // then
         response.andExpect(status().isOk())
+                .andDo(print())
                 .andExpect(header().string("Content-Type", MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(jsonPath("$.id", equalTo(expectedId.getValue())))
                 .andExpect(jsonPath("$.name", equalTo(expectedName)))
@@ -319,9 +383,26 @@ public class ProductAPITest {
                 .andExpect(jsonPath("$.stock", equalTo(expectedStock)))
                 .andExpect(jsonPath("$.price.amount", equalTo(expectedPrice.getAmount().toString())))
                 .andExpect(jsonPath("$.price.currency", equalTo(expectedPrice.getCurrency().getCurrencyCode())))
+                .andExpect(jsonPath("$.category", equalTo(expectedCategoryId)))
+                .andExpect(jsonPath("$.store", equalTo(expectedStore.getId())))
                 .andExpect(jsonPath("$.created_at", equalTo(aProduct.getCreatedAt().toString())))
-                .andExpect(jsonPath("$.updated_at", equalTo(aProduct.getUpdatedAt().toString())));
+                .andExpect(jsonPath("$.updated_at", equalTo(aProduct.getUpdatedAt().toString())))
+                .andExpect(jsonPath("$.images").isArray())
+                .andExpect(jsonPath("$.images", hasSize(expectedImages.size())));
 
+        for (int i = 0; i < expectedImages.size(); i++) {
+
+            final var expectedImage = (ProductImage) expectedImages.toArray()[i];
+            final var imageJsonPath = String.format("$.images[%d]", i);
+
+            response.andExpect(jsonPath(imageJsonPath + ".id", equalTo(expectedImage.getId().getValue())))
+                    .andExpect(jsonPath(imageJsonPath + ".checksum", equalTo(expectedImage.getChecksum())))
+                    .andExpect(jsonPath(imageJsonPath + ".name", equalTo(expectedImage.getName())))
+                    .andExpect(jsonPath(imageJsonPath + ".location", equalTo(expectedImage.getLocation())))
+                    .andExpect(jsonPath(imageJsonPath + ".featured", equalTo(expectedImage.isFeatured())));
+        }
+
+        // then
         Mockito.verify(getProductByIdUseCase).execute(eq(expectedId.getValue()));
     }
 
@@ -358,10 +439,10 @@ public class ProductAPITest {
         final var expectedPrice = com.ecom.catalog.admin.domain.product.Money.with(1800.03);
         final var expectedStock = 10;
         final var expectedCategoryId = "123";
+        final var expectedStatus = ProductStatus.ACTIVE;
         final var expectedStore = Fixture.Stores.lojaEletromania();
-        final var expectedImages = Set.of(Fixture.ProductImages.img01());
         final var aProduct =
-                Product.newProduct(expectedName, expectedDescription, expectedPrice, expectedStock, CategoryID.from(expectedCategoryId), expectedStore, expectedImages);
+                Product.newProduct(expectedName, expectedDescription, expectedStatus, expectedPrice, expectedStock, CategoryID.from(expectedCategoryId), expectedStore);
 
         final var expectedItems = List.of(ProductListOutput.from(aProduct));
 
@@ -400,6 +481,8 @@ public class ProductAPITest {
                 .andExpect(jsonPath("$.items[0].stock", equalTo(aProduct.getStock())))
                 .andExpect(jsonPath("$.items[0].price.amount", equalTo(aProduct.getPrice().getAmount().toString())))
                 .andExpect(jsonPath("$.items[0].price.currency", equalTo(aProduct.getPrice().getCurrency().getCurrencyCode())))
+                .andExpect(jsonPath("$.items[0].category", equalTo(aProduct.getCategoryId().getValue())))
+                .andExpect(jsonPath("$.items[0].store", equalTo(aProduct.getStore().getId())))
                 .andExpect(jsonPath("$.items[0].created_at", equalTo(aProduct.getCreatedAt().toString())));
 
         final var captor = ArgumentCaptor.forClass(SearchQuery.class);

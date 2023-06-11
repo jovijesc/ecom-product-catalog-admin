@@ -27,7 +27,7 @@ public interface ProductAPI {
             @ApiResponse(responseCode = "422", description = "A validation error was thrown"),
             @ApiResponse(responseCode = "500", description = "An internal server error was thrown")
     })
-    ResponseEntity<?> create(@RequestPart(name = "product") CreateProductRequest product, @RequestPart(name = "images") MultipartFile[] images);
+    ResponseEntity<?> create(@RequestPart(name = "product") CreateProductRequest product, @RequestPart(name = "images", required = false) MultipartFile[] images);
 
     @GetMapping
     @Operation(summary = "List all products paginated")

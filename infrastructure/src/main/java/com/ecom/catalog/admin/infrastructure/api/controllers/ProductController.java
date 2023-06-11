@@ -67,33 +67,6 @@ public class ProductController implements ProductAPI {
         return ResponseEntity.created(URI.create("/products/" + output.id())).body(output);
     }
 
-    private Set<ProductImage> imagesOf(final MultipartFile[] images, final int imageMarkedAsFeatured) {
-        if( images == null ) {
-            return null;
-        }
-        try {
-            return IntStream.range(0, images.length)
-                    .mapToObj(i -> imageOf(images[i], i == imageMarkedAsFeatured))
-                    .peek(System.out::println)
-                    .collect(Collectors.toSet());
-        } catch (Throwable t) {
-            throw new RuntimeException(t);
-        }
-    }
-
-    private ProductImage imageOf(final MultipartFile img, final boolean isFeatured) {
-        try {
-            return ProductImage.with(
-                    HashingUtils.checksum(img.getBytes()),
-                    img.getBytes(),
-                    img.getOriginalFilename(),
-                    isFeatured
-            );
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
     @Override
     public Pagination<ProductListResponse> list(
         final String search,
@@ -125,5 +98,32 @@ public class ProductController implements ProductAPI {
         );
         final var output = this.updateProductUseCase.execute(aCommand);
         return ResponseEntity.ok(output);
+    }
+
+    private Set<ProductImage> imagesOf(final MultipartFile[] images, final int imageMarkedAsFeatured) {
+        if( images == null ) {
+            return null;
+        }
+        try {
+            return IntStream.range(0, images.length)
+                    .mapToObj(i -> imageOf(images[i], i == imageMarkedAsFeatured))
+                    .peek(System.out::println)
+                    .collect(Collectors.toSet());
+        } catch (Throwable t) {
+            throw new RuntimeException(t);
+        }
+    }
+
+    private ProductImage imageOf(final MultipartFile img, final boolean isFeatured) {
+        try {
+            return ProductImage.with(
+                    HashingUtils.checksum(img.getBytes()),
+                    img.getBytes(),
+                    img.getOriginalFilename(),
+                    isFeatured
+            );
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }

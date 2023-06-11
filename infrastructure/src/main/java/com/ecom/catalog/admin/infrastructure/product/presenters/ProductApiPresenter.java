@@ -3,7 +3,10 @@ package com.ecom.catalog.admin.infrastructure.product.presenters;
 import com.ecom.catalog.admin.application.product.retrieve.get.ProductOutput;
 import com.ecom.catalog.admin.application.product.retrieve.list.ProductListOutput;
 import com.ecom.catalog.admin.domain.product.Money;
+import com.ecom.catalog.admin.domain.product.ProductImage;
 import com.ecom.catalog.admin.domain.product.ProductStatus;
+import com.ecom.catalog.admin.domain.utils.CollectionUtils;
+import com.ecom.catalog.admin.infrastructure.product.models.ProductImageResponse;
 import com.ecom.catalog.admin.infrastructure.product.models.ProductListResponse;
 import com.ecom.catalog.admin.infrastructure.product.models.ProductResponse;
 import com.ecom.catalog.admin.infrastructure.utils.MoneyUtils;
@@ -23,8 +26,23 @@ public interface ProductApiPresenter {
                 MoneyUtils.fromMoney(output.price()),
                 output.stock(),
                 output.category(),
+                output.store(),
+                CollectionUtils.mapTo(output.images(), image -> present(image)),
                 output.createdAt(),
                 output.updatedAt()
+        );
+    }
+
+    static ProductImageResponse present(final ProductImage image) {
+        if (image == null) {
+            return null;
+        }
+        return new ProductImageResponse (
+                image.getId().getValue(),
+                image.getChecksum(),
+                image.getName(),
+                image.getLocation(),
+                image.isFeatured()
         );
     }
 
@@ -37,7 +55,8 @@ public interface ProductApiPresenter {
                 MoneyUtils.fromMoney(output.price()),
                 output.stock(),
                 output.category(),
-                output.createdAt()
+                output.createdAt(),
+                output.store()
         );
     }
 

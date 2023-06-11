@@ -25,6 +25,7 @@ public class ProductListResponseTest {
         final var expectedPrice = Money.of(1800.03, "BRL");
         final var expectedStock = 10;
         final var expectedCategoryId = "123";
+        final var expectedStoreId = "123";
         final var expectedId = "123";
         final var expectedStatus = ProductStatus.ACTIVE;
         final var expectedCreatedAt = Instant.now();
@@ -37,7 +38,8 @@ public class ProductListResponseTest {
                 expectedPrice,
                 expectedStock,
                 expectedCategoryId,
-                expectedCreatedAt
+                expectedCreatedAt,
+                expectedStoreId
         );
 
         final var actualJson = this.json.write(response);
@@ -50,7 +52,9 @@ public class ProductListResponseTest {
                 .hasJsonPathValue("$.stock", expectedStock)
                 .hasJsonPathValue("$.price.amount", expectedPrice.getNumber().toString())
                 .hasJsonPathValue("$.price.currency", expectedPrice.getCurrency().getCurrencyCode())
-                .hasJsonPathValue("$.created_at", expectedCreatedAt.toString());
+                .hasJsonPathValue("$.category", expectedCategoryId)
+                .hasJsonPathValue("$.created_at", expectedCreatedAt.toString())
+                .hasJsonPathValue("$.store", expectedStoreId);
 
     }
 

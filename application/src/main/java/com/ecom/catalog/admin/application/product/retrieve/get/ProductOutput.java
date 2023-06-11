@@ -16,11 +16,11 @@ public record ProductOutput(
         Money price,
         int stock,
         String category,
-        Instant createdAt,
-        Instant updatedAt,
         String store,
-        Set<ProductImage> images
-) {
+        Set<ProductImage> images,
+        Instant createdAt,
+        Instant updatedAt
+        ) {
 
     public static ProductOutput from(final Product aProduct) {
         return new ProductOutput(
@@ -31,10 +31,10 @@ public record ProductOutput(
                 aProduct.getPrice(),
                 aProduct.getStock(),
                 aProduct.getCategoryId().getValue(),
-                aProduct.getCreatedAt(),
-                aProduct.getUpdatedAt(),
                 aProduct.getStore().getId(),
-                aProduct.getImages()
+                aProduct.getImages(),
+                aProduct.getCreatedAt(),
+                aProduct.getUpdatedAt()
         );
     }
 }

@@ -14,6 +14,8 @@ public record ProductListResponse(
         MonetaryAmount price,
         @JsonProperty("stock") int stock,
         @JsonProperty("category") String category,
-        @JsonProperty("created_at") Instant createdAt
-) {
+        @JsonProperty("created_at") Instant createdAt,
+
+        @JsonProperty("store") String store
+        ) {
 }

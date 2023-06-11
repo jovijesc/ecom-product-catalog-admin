@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.money.MonetaryAmount;
 import java.time.Instant;
+import java.util.Set;
 
 public record ProductResponse(
         @JsonProperty("id") String id,
@@ -13,6 +14,8 @@ public record ProductResponse(
         @JsonProperty("price") MonetaryAmount price,
         @JsonProperty("stock") int stock,
         @JsonProperty("category") String category,
+        @JsonProperty("store") String store,
+        @JsonProperty("images") Set<ProductImageResponse> images,
         @JsonProperty("created_at") Instant createdAt,
         @JsonProperty("updated_at") Instant updatedAt
 ) {
