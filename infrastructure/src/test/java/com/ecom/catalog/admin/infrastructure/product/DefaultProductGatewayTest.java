@@ -1,14 +1,12 @@
 package com.ecom.catalog.admin.infrastructure.product;
 
+import com.ecom.catalog.admin.IntegrationTest;
 import com.ecom.catalog.admin.MySQLGatewayTest;
 import com.ecom.catalog.admin.domain.Fixture;
 import com.ecom.catalog.admin.domain.category.Category;
 import com.ecom.catalog.admin.domain.category.CategoryID;
 import com.ecom.catalog.admin.domain.pagination.SearchQuery;
-import com.ecom.catalog.admin.domain.product.Money;
-import com.ecom.catalog.admin.domain.product.Product;
-import com.ecom.catalog.admin.domain.product.ProductID;
-import com.ecom.catalog.admin.domain.product.ProductStatus;
+import com.ecom.catalog.admin.domain.product.*;
 import com.ecom.catalog.admin.infrastructure.category.CategoryMySQLGateway;
 import com.ecom.catalog.admin.infrastructure.category.persistence.CategoryJpaEntity;
 import com.ecom.catalog.admin.infrastructure.category.persistence.CategoryRepository;
@@ -24,8 +22,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.List;
 import java.util.Set;
 
-@MySQLGatewayTest
-public class ProductMySQLGatewayTest {
+@IntegrationTest
+public class DefaultProductGatewayTest {
 
     @Autowired
     private DefaultProductGateway productGateway;
@@ -37,6 +35,9 @@ public class ProductMySQLGatewayTest {
     private CategoryMySQLGateway categoryGateway;
 
     @Autowired
+    private StoreGateway storeGateway;
+
+    @Autowired
     private CategoryRepository categoryRepository;
 
     @Test
@@ -45,12 +46,13 @@ public class ProductMySQLGatewayTest {
 
         final var expectedCategory =
                 categoryGateway.create(Category.newCategory("Eletrônico", "Eletrônicos do tipo A", true));
+        final var expectedStore =
+                storeGateway.create(Fixture.Stores.lojaEletromania());
 
         final var expectedName = "Celular";
         final var expectedDescription = "Celular do tipo ABC";
         final var expectedPrice = Money.with(1800.03);
         final var expectedStock = 10;
-        final var expectedStore = Fixture.Stores.lojaEletromania();
         final var expectedImages = Set.of(Fixture.ProductImages.img01());
 
 
@@ -99,13 +101,14 @@ public class ProductMySQLGatewayTest {
         // given
         final var expectedCategory =
                 categoryGateway.create(Category.newCategory("Eletrônico", "Eletrônicos do tipo A", true));
+        final var expectedStore =
+                storeGateway.create(Fixture.Stores.lojaEletromania());
 
         final var expectedName = "Celular";
         final var expectedDescription = "Celular do tipo ABC";
         final var expectedPrice = Money.with(1800.03);
         final var expectedStock = 10;
         final var expectedStatus = ProductStatus.ACTIVE;
-        final var expectedStore = Fixture.Stores.lojaEletromania();
         final var expectedImages = Set.of(Fixture.ProductImages.img01());
 
 
@@ -160,13 +163,14 @@ public class ProductMySQLGatewayTest {
         // given
         final var expectedCategory =
                 categoryGateway.create(Category.newCategory("Eletrônico", "Eletrônicos do tipo A", true));
+        final var expectedStore =
+                storeGateway.create(Fixture.Stores.lojaEletromania());
 
         final var expectedName = "Celular";
         final var expectedDescription = "Celular do tipo ABC";
         final var expectedPrice = Money.with(1800.03);
         final var expectedStock = 10;
         final var expectedStatus = ProductStatus.INACTIVE;
-        final var expectedStore = Fixture.Stores.lojaEletromania();
         final var expectedImages = Set.of(Fixture.ProductImages.img01());
 
         final var aProduct = Product.newProduct(expectedName, expectedDescription, ProductStatus.ACTIVE, expectedPrice, expectedStock, expectedCategory.getId(), expectedStore, expectedImages);
@@ -220,13 +224,14 @@ public class ProductMySQLGatewayTest {
         // given
         final var expectedCategory =
                 categoryGateway.create(Category.newCategory("Eletrônico", "Eletrônicos do tipo A", true));
+        final var expectedStore =
+                storeGateway.create(Fixture.Stores.lojaEletromania());
 
         final var expectedName = "Celular";
         final var expectedDescription = "Celular do tipo ABC";
         final var expectedPrice = Money.with(1800.03);
         final var expectedStock = 10;
         final var expectedStatus = ProductStatus.ACTIVE;
-        final var expectedStore = Fixture.Stores.lojaEletromania();
         final var expectedImages = Set.of(Fixture.ProductImages.img01());
 
         final var aProduct = Product.newProduct(expectedName, expectedDescription, expectedStatus, expectedPrice, expectedStock, expectedCategory.getId(), expectedStore, expectedImages);
@@ -368,7 +373,7 @@ public class ProductMySQLGatewayTest {
         final var expectedPrice = Money.with(1800.03);
         final var expectedStock = 10;
         final var expectedStatus = ProductStatus.ACTIVE;
-        final var expectedStore = Fixture.Stores.lojaEletromania();
+        final var expectedStore = storeGateway.create(Fixture.Stores.lojaEletromania());
         final var expectedImages = Set.of(Fixture.ProductImages.img01());
 
         final var expectedCategoryOne =  categoryRepository.saveAndFlush(CategoryJpaEntity.from(Category.newCategory("Eletrônico", "Eletrônicos do tipo A", true)));

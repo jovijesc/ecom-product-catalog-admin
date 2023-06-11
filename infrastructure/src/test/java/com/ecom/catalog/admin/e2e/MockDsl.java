@@ -10,11 +10,18 @@ import com.ecom.catalog.admin.infrastructure.configuration.json.Json;
 import com.ecom.catalog.admin.infrastructure.product.models.CreateProductRequest;
 import com.ecom.catalog.admin.infrastructure.product.models.ProductResponse;
 import com.ecom.catalog.admin.infrastructure.product.models.UpdateProductRequest;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
 import javax.money.MonetaryAmount;
+
+import java.util.Collections;
+import java.util.Objects;
+import java.util.Set;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -22,6 +29,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public interface MockDsl {
 
     MockMvc mvc();
+
+
+    ObjectMapper mapper();
 
 
     /**
@@ -71,11 +81,26 @@ public interface MockDsl {
             final int aStock,
             final String aCategory,
             final String aStore,
-            final int aImageMarkedAsFeatured
+            final int aImageMarkedAsFeatured,
+            final Set<MockMultipartFile> files
     ) throws Exception {
         final var aRequestBody = new CreateProductRequest(aName, aDescription, aStatus, aPrice, aStock, aCategory, aStore, aImageMarkedAsFeatured);
-        final var actualId = this.given("/products", aRequestBody);
+        final var actualId = this.givenMultipart("/products", aRequestBody, "product", files);
         return ProductID.from(actualId);
+    }
+
+    default ProductID givenAProduct(
+            final String aName,
+            final String aDescription,
+            final String aStatus,
+            final MonetaryAmount aPrice,
+            final int aStock,
+            final String aCategory,
+            final String aStore,
+            final int aImageMarkedAsFeatured
+
+    ) throws Exception {
+        return givenAProduct(aName, aDescription, aStatus, aPrice, aStock, aCategory, aStore, aImageMarkedAsFeatured, null);
     }
 
     default ProductResponse retrieveAProduct(final ProductID anId) throws Exception {
@@ -108,6 +133,25 @@ public interface MockDsl {
         final var aRequest = post(url)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(Json.writeValueAsString(body));
+
+        final var actualId = this.mvc().perform(aRequest)
+                .andExpect(status().isCreated())
+                .andReturn()
+                .getResponse().getHeader("Location")
+                .replace("%s/".formatted(url), "");
+        return actualId;
+    }
+
+    private String givenMultipart(final String url, final Object body, String entityNameRequest, final Set<MockMultipartFile> files) throws Exception {
+        final var expectedEntity = new MockMultipartFile(entityNameRequest, null,
+                MediaType.APPLICATION_JSON_VALUE, this.mapper().writeValueAsBytes(body));
+        final var aRequest = multipart(url)
+                .file(expectedEntity);
+        if(Objects.nonNull(files) && !files.isEmpty()) {
+            files.forEach( file -> aRequest.file(file));
+        }
+        aRequest.accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.MULTIPART_FORM_DATA);
 
         final var actualId = this.mvc().perform(aRequest)
                 .andExpect(status().isCreated())

@@ -356,7 +356,7 @@ public class ProductAPITest {
         final var expectedStatus = ProductStatus.ACTIVE;
         final var expectedCategoryId = "123";
         final var expectedStore = Fixture.Stores.lojaEletromania();
-        final var expectedImages = Set.of(Fixture.ProductImages.img01(), Fixture.ProductImages.img02());
+        final var expectedImages = Set.of(Fixture.ProductImages.img01());
 
         final var aProduct =
                 Product.newProduct(expectedName, expectedDescription,expectedStatus, expectedPrice, expectedStock, CategoryID.from(expectedCategoryId), expectedStore, expectedImages);

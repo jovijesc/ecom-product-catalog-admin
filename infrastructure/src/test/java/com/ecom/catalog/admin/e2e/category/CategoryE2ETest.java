@@ -4,6 +4,7 @@ import com.ecom.catalog.admin.E2ETest;
 import com.ecom.catalog.admin.e2e.MockDsl;
 import com.ecom.catalog.admin.infrastructure.category.models.UpdateCategoryRequest;
 import com.ecom.catalog.admin.infrastructure.category.persistence.CategoryRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +33,10 @@ public class CategoryE2ETest implements MockDsl {
     @Autowired
     private CategoryRepository categoryRepository;
 
+    @Autowired
+    private ObjectMapper mapper;
+
+
     @Container
     private static final MySQLContainer MYSQL_CONTAINER =
             new MySQLContainer("mysql:latest")
@@ -47,6 +52,11 @@ public class CategoryE2ETest implements MockDsl {
     @Override
     public MockMvc mvc() {
         return this.mvc;
+    }
+
+    @Override
+    public ObjectMapper mapper() {
+        return this.mapper;
     }
 
     @Test
