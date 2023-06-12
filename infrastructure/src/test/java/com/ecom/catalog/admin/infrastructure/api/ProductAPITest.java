@@ -1,13 +1,15 @@
 package com.ecom.catalog.admin.infrastructure.api;
 
 import com.ecom.catalog.admin.ControllerTest;
-import com.ecom.catalog.admin.application.category.retrieve.get.CategoryOutput;
 import com.ecom.catalog.admin.application.product.create.CreateProductCommand;
 import com.ecom.catalog.admin.application.product.create.CreateProductOutput;
 import com.ecom.catalog.admin.application.product.create.CreateProductUseCase;
 import com.ecom.catalog.admin.application.product.image.get.GetProductImageCommand;
 import com.ecom.catalog.admin.application.product.image.get.GetProductImageUseCase;
 import com.ecom.catalog.admin.application.product.image.get.ProductImageOutput;
+import com.ecom.catalog.admin.application.product.image.upload.UploadProductImagesCommand;
+import com.ecom.catalog.admin.application.product.image.upload.UploadProductImagesOutput;
+import com.ecom.catalog.admin.application.product.image.upload.UploadProductImagesUseCase;
 import com.ecom.catalog.admin.application.product.retrieve.get.GetProductByIdUseCase;
 import com.ecom.catalog.admin.application.product.retrieve.get.ProductOutput;
 import com.ecom.catalog.admin.application.product.retrieve.list.ListProductUseCase;
@@ -15,7 +17,6 @@ import com.ecom.catalog.admin.application.product.retrieve.list.ProductListOutpu
 import com.ecom.catalog.admin.application.product.update.UpdateProductOutput;
 import com.ecom.catalog.admin.application.product.update.UpdateProductUseCase;
 import com.ecom.catalog.admin.domain.Fixture;
-import com.ecom.catalog.admin.domain.category.Category;
 import com.ecom.catalog.admin.domain.category.CategoryID;
 import com.ecom.catalog.admin.domain.exceptions.NotFoundException;
 import com.ecom.catalog.admin.domain.exceptions.NotificationException;
@@ -25,10 +26,10 @@ import com.ecom.catalog.admin.domain.product.Product;
 import com.ecom.catalog.admin.domain.product.ProductID;
 import com.ecom.catalog.admin.domain.product.ProductImage;
 import com.ecom.catalog.admin.domain.product.ProductStatus;
+import com.ecom.catalog.admin.domain.utils.CollectionUtils;
 import com.ecom.catalog.admin.domain.validation.Error;
 import com.ecom.catalog.admin.domain.validation.handler.Notification;
 import com.ecom.catalog.admin.infrastructure.product.models.CreateProductRequest;
-import com.ecom.catalog.admin.infrastructure.product.models.ProductImageResponse;
 import com.ecom.catalog.admin.infrastructure.product.models.UpdateProductRequest;
 import com.ecom.catalog.admin.infrastructure.utils.ImageTypeUtils;
 import com.ecom.catalog.admin.infrastructure.utils.MoneyUtils;
@@ -48,7 +49,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import static org.hamcrest.Matchers.*;
@@ -84,6 +84,8 @@ public class ProductAPITest {
     @MockBean
     private GetProductImageUseCase getProductImageUseCase;
 
+    @MockBean
+    private UploadProductImagesUseCase uploadProductImagesUseCase;
 
     @Test
     public void givenAValidCommandWithImages_whenCallsCreateProduct_shouldReturnProductId() throws Exception {
@@ -583,6 +585,71 @@ public class ProductAPITest {
         final var actualCommand = captor.getValue();
         Assertions.assertEquals(expectedProductId.getValue(), actualCommand.productId());
         Assertions.assertEquals(expectedImageId.getValue(), actualCommand.imageId());
+
+    }
+
+    @Test
+    public void givenAValidCommand_whenCallsUploadProductImage_shouldReturnImagesIds() throws Exception {
+        // given
+        final var expectedImage01 = Fixture.ProductImages.img01();
+        final var expectedImage02 = Fixture.ProductImages.img02();
+        final var expectedImages = Set.of(expectedImage01, expectedImage02);
+        final var expectedIds = CollectionUtils.mapTo(expectedImages, img -> img.getId().getValue());
+        final var expectedProduct = Product.with(Fixture.Products.celular(), expectedImages);
+        final var expectedId = expectedProduct.getId();
+        final var expectedUris = CollectionUtils.mapTo(expectedImages, img ->
+                "/products/%s/images/%s".formatted(expectedId.getValue(), img.getId().getValue()));
+
+        final var expectedFile01 = new MockMultipartFile("images", expectedImage01.getName(), MediaType.IMAGE_JPEG_VALUE, expectedImage01.getContent());
+        final var expectedFile02 = new MockMultipartFile("images", expectedImage02.getName(), MediaType.IMAGE_JPEG_VALUE, expectedImage02.getContent());
+
+        when(uploadProductImagesUseCase.execute(any()))
+                .thenReturn(UploadProductImagesOutput.with(expectedProduct));
+
+        // when
+        final var aRequest = multipart("/products/{id}/images", expectedId.getValue())
+                .file(expectedFile01)
+                .file(expectedFile02)
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.MULTIPART_FORM_DATA);
+
+        final var response = this.mvc.perform(aRequest);
+
+        // then
+        response.andExpect(status().isCreated())
+                .andExpect(header().string(CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(jsonPath("$.product", equalTo(expectedId.getValue())))
+                .andExpect(jsonPath("$.ids").isArray())
+                .andExpect(jsonPath("$.ids", hasSize(expectedImages.size())))
+                .andExpect(jsonPath("$.uris").isArray())
+                .andExpect(jsonPath("$.uris", hasSize(expectedImages.size())));
+
+        int index = 0;
+        for (String expectedImageId : expectedIds) {
+            final var imageJsonPath = String.format("$.ids[%d]", index++);
+            response.andExpect(jsonPath(imageJsonPath, equalTo(expectedImageId)));
+        }
+
+        index = 0;
+        for (String expectedUri : expectedUris) {
+            final var imageJsonPath = String.format("$.uris[%d]", index++);
+            response.andExpect(jsonPath(imageJsonPath, equalTo(expectedUri)));
+        }
+
+        final var captor = ArgumentCaptor.forClass(UploadProductImagesCommand.class);
+
+        verify(this.uploadProductImagesUseCase).execute(captor.capture());
+
+        final var actualCommand = captor.getValue();
+        Assertions.assertEquals(expectedId.getValue(), actualCommand.productId());
+        Assertions.assertEquals(
+                Stream.of(expectedFile01, expectedFile02)
+                        .map(MockMultipartFile::getOriginalFilename)
+                        .collect(Collectors.toSet()),
+                actualCommand.images().stream()
+                        .map(ProductImage::getName)
+                        .collect(Collectors.toSet())
+        );
 
     }
 

@@ -4,6 +4,8 @@ import com.ecom.catalog.admin.application.product.create.CreateProductUseCase;
 import com.ecom.catalog.admin.application.product.create.DefaultCreateProductUseCase;
 import com.ecom.catalog.admin.application.product.image.get.DefaultGetProductImageUseCase;
 import com.ecom.catalog.admin.application.product.image.get.GetProductImageUseCase;
+import com.ecom.catalog.admin.application.product.image.upload.DefaultUploadProductImagesUseCase;
+import com.ecom.catalog.admin.application.product.image.upload.UploadProductImagesUseCase;
 import com.ecom.catalog.admin.application.product.retrieve.get.DefaultGetProductByIdUseCase;
 import com.ecom.catalog.admin.application.product.retrieve.get.GetProductByIdUseCase;
 import com.ecom.catalog.admin.application.product.retrieve.list.DefaultListProductUseCase;
@@ -58,5 +60,10 @@ public class ProductUseCaseConfig {
     @Bean
     public GetProductImageUseCase getProductImageUseCase() {
         return new DefaultGetProductImageUseCase(productGateway, productImageGateway);
+    }
+
+    @Bean
+    public UploadProductImagesUseCase uploadProductImagesUseCase() {
+        return new DefaultUploadProductImagesUseCase(productGateway, productImageGateway);
     }
 }

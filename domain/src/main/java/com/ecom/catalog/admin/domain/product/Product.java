@@ -179,6 +179,22 @@ public class Product extends AggregateRoot<ProductID> {
         );
     }
 
+    public static Product with(final Product aProduct, final Set<ProductImage> images) {
+        return with(
+                aProduct.getId(),
+                aProduct.name,
+                aProduct.description,
+                aProduct.price,
+                aProduct.stock,
+                aProduct.status,
+                aProduct.categoryId,
+                aProduct.createdAt,
+                aProduct.updatedAt,
+                aProduct.store,
+                new HashSet<>(images)
+        );
+    }
+
     @Override
     public void validate(ValidationHandler handler) {
         new ProductValidator(this, handler).validate();

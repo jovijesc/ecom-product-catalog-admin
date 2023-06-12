@@ -1,5 +1,6 @@
 package com.ecom.catalog.admin.infrastructure.product.presenters;
 
+import com.ecom.catalog.admin.application.product.image.upload.UploadProductImagesOutput;
 import com.ecom.catalog.admin.application.product.retrieve.get.ProductOutput;
 import com.ecom.catalog.admin.application.product.retrieve.list.ProductListOutput;
 import com.ecom.catalog.admin.domain.product.Money;
@@ -9,8 +10,10 @@ import com.ecom.catalog.admin.domain.utils.CollectionUtils;
 import com.ecom.catalog.admin.infrastructure.product.models.ProductImageResponse;
 import com.ecom.catalog.admin.infrastructure.product.models.ProductListResponse;
 import com.ecom.catalog.admin.infrastructure.product.models.ProductResponse;
+import com.ecom.catalog.admin.infrastructure.product.models.UploadProductImagesResponse;
 import com.ecom.catalog.admin.infrastructure.utils.MoneyUtils;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.springframework.util.SimpleIdGenerator;
 
 import javax.money.MonetaryAmount;
 import java.time.Instant;
@@ -60,4 +63,11 @@ public interface ProductApiPresenter {
         );
     }
 
+    static UploadProductImagesResponse present(final UploadProductImagesOutput output, String baseUri) {
+        return new UploadProductImagesResponse(
+                output.productId(),
+                output.imagesIds(),
+                CollectionUtils.mapTo(output.imagesIds(), img -> baseUri.formatted(output.productId(), img))
+        );
+    }
 }

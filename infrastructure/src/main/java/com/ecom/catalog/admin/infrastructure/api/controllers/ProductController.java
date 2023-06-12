@@ -4,6 +4,8 @@ import com.ecom.catalog.admin.application.product.create.CreateProductCommand;
 import com.ecom.catalog.admin.application.product.create.CreateProductUseCase;
 import com.ecom.catalog.admin.application.product.image.get.GetProductImageCommand;
 import com.ecom.catalog.admin.application.product.image.get.GetProductImageUseCase;
+import com.ecom.catalog.admin.application.product.image.upload.UploadProductImagesCommand;
+import com.ecom.catalog.admin.application.product.image.upload.UploadProductImagesUseCase;
 import com.ecom.catalog.admin.application.product.retrieve.get.GetProductByIdUseCase;
 import com.ecom.catalog.admin.application.product.retrieve.list.ListProductUseCase;
 import com.ecom.catalog.admin.application.product.update.UpdateProductCommand;
@@ -18,7 +20,7 @@ import com.ecom.catalog.admin.infrastructure.product.presenters.ProductApiPresen
 import com.ecom.catalog.admin.infrastructure.utils.HashingUtils;
 import com.ecom.catalog.admin.infrastructure.utils.ImageTypeUtils;
 import com.ecom.catalog.admin.infrastructure.utils.MoneyUtils;
-import org.springframework.http.MediaType;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -44,17 +46,21 @@ public class ProductController implements ProductAPI {
 
     private final GetProductImageUseCase getProductImageUseCase;
 
+    private final UploadProductImagesUseCase uploadProductImagesUseCase;
+
     public ProductController(
             final CreateProductUseCase createProductUseCase,
             final UpdateProductUseCase updateProductUseCase,
             final GetProductByIdUseCase getProductByIdUseCase,
             final ListProductUseCase listProductUseCase,
-            final GetProductImageUseCase getProductImageUseCase) {
+            final GetProductImageUseCase getProductImageUseCase,
+            final UploadProductImagesUseCase uploadProductImagesUseCase) {
         this.createProductUseCase = Objects.requireNonNull(createProductUseCase);
         this.updateProductUseCase = Objects.requireNonNull(updateProductUseCase);
         this.getProductByIdUseCase = Objects.requireNonNull(getProductByIdUseCase);
         this.listProductUseCase = Objects.requireNonNull(listProductUseCase);
         this.getProductImageUseCase = Objects.requireNonNull(getProductImageUseCase);
+        this.uploadProductImagesUseCase = Objects.requireNonNull(uploadProductImagesUseCase);
     }
 
     @Override
@@ -119,8 +125,14 @@ public class ProductController implements ProductAPI {
     }
 
     @Override
-    public ResponseEntity<?> uploadImage(final String id, final MultipartFile image) {
-        return null;
+    public ResponseEntity<?> uploadImages(final String id, final MultipartFile[] images) {
+        final var aCommand =
+                UploadProductImagesCommand.with(id, imagesOf(images));
+
+        final var output = this.uploadProductImagesUseCase.execute(aCommand);
+
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(ProductApiPresenter.present(output, "/products/%s/images/%s"));
     }
 
     @Override
@@ -135,11 +147,14 @@ public class ProductController implements ProductAPI {
         try {
             return IntStream.range(0, images.length)
                     .mapToObj(i -> imageOf(images[i], i == imageMarkedAsFeatured))
-                    .peek(System.out::println)
                     .collect(Collectors.toSet());
         } catch (Throwable t) {
             throw new RuntimeException(t);
         }
+    }
+
+    private Set<ProductImage> imagesOf(final MultipartFile[] images) {
+        return imagesOf(images, -1);
     }
 
     private ProductImage imageOf(final MultipartFile img, final boolean isFeatured) {

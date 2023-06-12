@@ -10,13 +10,12 @@ import java.util.Objects;
 
 public class DefaultUploadProductImagesUseCase extends UploadProductImagesUseCase {
 
+    private final ProductGateway productGateway;
     private final ProductImageGateway productImageGateway;
 
-    private final ProductGateway productGateway;
-
-    public DefaultUploadProductImagesUseCase(final ProductImageGateway productImageGateway, final ProductGateway productGateway) {
-        this.productImageGateway = Objects.requireNonNull(productImageGateway);
+    public DefaultUploadProductImagesUseCase(final ProductGateway productGateway, final ProductImageGateway productImageGateway) {
         this.productGateway = Objects.requireNonNull(productGateway);
+        this.productImageGateway = Objects.requireNonNull(productImageGateway);
     }
 
     @Override

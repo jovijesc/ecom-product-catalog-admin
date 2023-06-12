@@ -14,4 +14,5 @@ public record UploadProductImagesOutput(
         return new UploadProductImagesOutput(aProduct.getId().getValue(),
                 CollectionUtils.mapTo(aProduct.getImages(), productImage -> productImage.getId().getValue()));
     }
+
 }

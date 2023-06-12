@@ -83,15 +83,15 @@ public interface ProductAPI {
     ) ;
 
     @PostMapping(value = "{id}/images")
-    @Operation(summary = "Upload a image")
+    @Operation(summary = "Upload images")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Image created successfully"),
+            @ApiResponse(responseCode = "201", description = "Images created successfully"),
             @ApiResponse(responseCode = "404", description = "Product was not found"),
             @ApiResponse(responseCode = "500", description = "An internal server error was thrown")
     })
-    ResponseEntity<?> uploadImage(
+    ResponseEntity<?> uploadImages(
             @PathVariable(name = "id") String id,
-            @RequestParam(name = "image") MultipartFile image
+            @RequestParam(name = "images") MultipartFile[] image
     ) ;
 
     @DeleteMapping(value = "{id}/images/{idImage}")
