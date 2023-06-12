@@ -1,6 +1,7 @@
 package com.ecom.catalog.admin.domain.product;
 
 import com.ecom.catalog.admin.domain.AggregateRoot;
+import com.ecom.catalog.admin.domain.category.Category;
 import com.ecom.catalog.admin.domain.category.CategoryID;
 import com.ecom.catalog.admin.domain.exceptions.NotificationException;
 import com.ecom.catalog.admin.domain.utils.InstantUtils;
@@ -159,6 +160,22 @@ public class Product extends AggregateRoot<ProductID> {
                 aProduct.updatedAt,
                 aProduct.store,
                 new HashSet<>(aProduct.getImages())
+        );
+    }
+
+    public static Product with(final Product aProduct, final CategoryID aCategoryId, final Store aStore, final Set<ProductImage> images) {
+        return with(
+                aProduct.getId(),
+                aProduct.name,
+                aProduct.description,
+                aProduct.price,
+                aProduct.stock,
+                aProduct.status,
+                aCategoryId,
+                aProduct.createdAt,
+                aProduct.updatedAt,
+                aStore,
+                new HashSet<>(images)
         );
     }
 

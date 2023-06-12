@@ -131,6 +131,7 @@ public class Fixture {
             return Product.with(NOTEBOOK);
         }
 
+
         public static String description() {
             return FAKER.options().option(
                     """

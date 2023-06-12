@@ -5,6 +5,9 @@ import com.ecom.catalog.admin.application.category.retrieve.get.CategoryOutput;
 import com.ecom.catalog.admin.application.product.create.CreateProductCommand;
 import com.ecom.catalog.admin.application.product.create.CreateProductOutput;
 import com.ecom.catalog.admin.application.product.create.CreateProductUseCase;
+import com.ecom.catalog.admin.application.product.image.get.GetProductImageCommand;
+import com.ecom.catalog.admin.application.product.image.get.GetProductImageUseCase;
+import com.ecom.catalog.admin.application.product.image.get.ProductImageOutput;
 import com.ecom.catalog.admin.application.product.retrieve.get.GetProductByIdUseCase;
 import com.ecom.catalog.admin.application.product.retrieve.get.ProductOutput;
 import com.ecom.catalog.admin.application.product.retrieve.list.ListProductUseCase;
@@ -27,6 +30,7 @@ import com.ecom.catalog.admin.domain.validation.handler.Notification;
 import com.ecom.catalog.admin.infrastructure.product.models.CreateProductRequest;
 import com.ecom.catalog.admin.infrastructure.product.models.ProductImageResponse;
 import com.ecom.catalog.admin.infrastructure.product.models.UpdateProductRequest;
+import com.ecom.catalog.admin.infrastructure.utils.ImageTypeUtils;
 import com.ecom.catalog.admin.infrastructure.utils.MoneyUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.javamoney.moneta.Money;
@@ -51,6 +55,7 @@ import static org.hamcrest.Matchers.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
+import static org.springframework.http.HttpHeaders.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -75,6 +80,9 @@ public class ProductAPITest {
 
     @MockBean
     private ListProductUseCase listProductUseCase;
+
+    @MockBean
+    private GetProductImageUseCase getProductImageUseCase;
 
 
     @Test
@@ -544,5 +552,40 @@ public class ProductAPITest {
         Assertions.assertEquals(expectedTerms, actualQuery.terms());
 
     }
+
+    @Test
+    public void givenAValidProductIdAndImageId_whenCallsGetProductImage_shouldReturnContent() throws Exception {
+        // given
+        final var expectedProductId = ProductID.unique();
+        final var expectedImage = Fixture.ProductImages.img01();
+        final var expectedImageId = expectedImage.getId();
+        final var expectedImageOutput = ProductImageOutput.with(expectedImage);
+
+        when(getProductImageUseCase.execute(any())).thenReturn(expectedImageOutput);
+
+        // when
+        final var aRequest = get("/products/{id}/images/{idImage}",
+                expectedProductId.getValue(), expectedImageId.getValue());
+
+        final var response = this.mvc.perform(aRequest);
+
+        // then
+        response.andExpect(status().isOk())
+                .andExpect(header().string(CONTENT_TYPE, ImageTypeUtils.getContentType(expectedImage.getName())))
+                .andExpect(header().string(CONTENT_LENGTH, String.valueOf(expectedImageOutput.content().length)))
+                .andExpect(header().string(CONTENT_DISPOSITION, "attachment; filename=%s".formatted(expectedImageOutput.name())))
+                .andExpect(content().bytes(expectedImageOutput.content()));
+
+        final var captor = ArgumentCaptor.forClass(GetProductImageCommand.class);
+
+        verify(this.getProductImageUseCase).execute(captor.capture());
+
+        final var actualCommand = captor.getValue();
+        Assertions.assertEquals(expectedProductId.getValue(), actualCommand.productId());
+        Assertions.assertEquals(expectedImageId.getValue(), actualCommand.imageId());
+
+    }
+
+
 
 }

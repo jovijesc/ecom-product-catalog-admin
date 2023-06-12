@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -68,5 +69,40 @@ public interface ProductAPI {
             @ApiResponse(responseCode = "500", description = "An internal server error was thrown")
     })
     ResponseEntity<?> updateById(@PathVariable(name = "id") String id, @RequestBody UpdateProductRequest input);
+
+    @GetMapping(value = "{id}/images/{idImage}")
+    @Operation(summary = "Get a image by it's id")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Image retrieved successfully"),
+            @ApiResponse(responseCode = "404", description = "Image was not found"),
+            @ApiResponse(responseCode = "500", description = "An internal server error was thrown")
+    })
+    ResponseEntity<byte[]> getImageById(
+            @PathVariable(name = "id") String id,
+            @PathVariable(name = "idImage") String idImage
+    ) ;
+
+    @PostMapping(value = "{id}/images")
+    @Operation(summary = "Upload a image")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Image created successfully"),
+            @ApiResponse(responseCode = "404", description = "Product was not found"),
+            @ApiResponse(responseCode = "500", description = "An internal server error was thrown")
+    })
+    ResponseEntity<?> uploadImage(
+            @PathVariable(name = "id") String id,
+            @RequestParam(name = "image") MultipartFile image
+    ) ;
+
+    @DeleteMapping(value = "{id}/images/{idImage}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Operation(summary = "Delete an image by it's identifier")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Image deleted"),
+            @ApiResponse(responseCode = "500", description = "An internal server error was thrown")
+    })
+    void deleteImageById(
+            @PathVariable(name = "id") String id,
+            @PathVariable(name = "idImage") String idImage);
 
 }
