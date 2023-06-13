@@ -94,15 +94,4 @@ public interface ProductAPI {
             @RequestParam(name = "images") MultipartFile[] image
     ) ;
 
-    @DeleteMapping(value = "{id}/images/{idImage}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    @Operation(summary = "Delete an image by it's identifier")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "204", description = "Image deleted"),
-            @ApiResponse(responseCode = "500", description = "An internal server error was thrown")
-    })
-    void deleteImageById(
-            @PathVariable(name = "id") String id,
-            @PathVariable(name = "idImage") String idImage);
-
 }

@@ -135,11 +135,6 @@ public class ProductController implements ProductAPI {
                 .body(ProductApiPresenter.present(output, "/products/%s/images/%s"));
     }
 
-    @Override
-    public void deleteImageById(final String id, final String idImage) {
-
-    }
-
     private Set<ProductImage> imagesOf(final MultipartFile[] images, final int imageMarkedAsFeatured) {
         if( images == null ) {
             return null;
