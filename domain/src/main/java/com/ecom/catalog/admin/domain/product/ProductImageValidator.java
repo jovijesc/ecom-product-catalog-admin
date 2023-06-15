@@ -37,13 +37,13 @@ public class ProductImageValidator extends Validator {
     }
 
     private void checkLocationConstraints() {
-        final var description = this.image.getLocation();
-        if( description == null) {
+        final var location = this.image.getLocation();
+        if( location == null) {
             this.validationHandler().append(new Error("'location' should not be null"));
             return;
         }
 
-        if( description.isBlank()) {
+        if( location.isBlank()) {
             this.validationHandler().append(new Error("'location' should not be empty"));
         }
     }

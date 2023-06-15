@@ -2,10 +2,15 @@ package com.ecom.catalog.admin.e2e.product;
 
 import com.ecom.catalog.admin.E2ETest;
 import com.ecom.catalog.admin.application.product.create.CreateProductCommand;
+import com.ecom.catalog.admin.application.product.image.upload.UploadProductImagesCommand;
+import com.ecom.catalog.admin.application.product.image.upload.UploadProductImagesOutput;
 import com.ecom.catalog.admin.domain.Fixture;
 import com.ecom.catalog.admin.domain.category.Category;
+import com.ecom.catalog.admin.domain.product.Product;
+import com.ecom.catalog.admin.domain.product.ProductImage;
 import com.ecom.catalog.admin.domain.product.ProductStatus;
 import com.ecom.catalog.admin.domain.product.StoreGateway;
+import com.ecom.catalog.admin.domain.utils.CollectionUtils;
 import com.ecom.catalog.admin.e2e.MockDsl;
 import com.ecom.catalog.admin.infrastructure.category.models.UpdateCategoryRequest;
 import com.ecom.catalog.admin.infrastructure.category.persistence.CategoryRepository;
@@ -18,6 +23,7 @@ import org.javamoney.moneta.Money;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
@@ -29,12 +35,18 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @E2ETest
 @Testcontainers
@@ -318,6 +330,7 @@ public class ProductE2ETest implements MockDsl {
         Assertions.assertNotNull(actualProduct.getCreatedAt());
         Assertions.assertNotNull(actualProduct.getUpdatedAt());
     }
+
     private static Set<MockMultipartFile> mockImages() {
         final var images = Set.of(
                 new MockMultipartFile("images", "image01.jpg", MediaType.IMAGE_JPEG_VALUE, "IMAGE01".getBytes()),

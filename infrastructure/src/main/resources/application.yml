@@ -34,7 +34,8 @@ spring:
       "[hibernate.connection.provider_disables_autocommit]": true
       # Para aumentar a performance ao máximo, desabilitamos o auto-commit e o open-in-view.
       # https://vladmihalcea.com/why-you-should-always-use-hibernate-connection-provider_disables_autocommit-for-resource-local-jpa-transactions/
-
+  config:
+    import: optional:file:.env[.properties]
   servlet:
     multipart:
       enabled: true
@@ -42,12 +43,15 @@ spring:
       max-request-size: 100MB
 
 aws:
-  accessKey: ${AWS_ACCESS_KEY}
-  secretKey: ${AWS_SECRET_KEY}
-  region: ${AWS_REGION}
+  access-key: ${AWS_ACCESS_KEY}
+  secret-key: ${AWS_SECRET_KEY}
+  region: us-east-1
   s3:
-    bucket: ${AWS_BUCKET_NAME}
+    bucket: ecom-product-108739
 
+storage:
+  product-catalog:
+    location-pattern: storeId-{storeId}/productId-{productId}
 
 logging:
   level:

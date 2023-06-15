@@ -1,13 +1,10 @@
 package com.ecom.catalog.admin.domain.product;
 
 import com.ecom.catalog.admin.domain.Entity;
-import com.ecom.catalog.admin.domain.ValueObject;
 import com.ecom.catalog.admin.domain.exceptions.NotificationException;
-import com.ecom.catalog.admin.domain.utils.IdUtils;
 import com.ecom.catalog.admin.domain.validation.ValidationHandler;
 import com.ecom.catalog.admin.domain.validation.handler.Notification;
 
-import java.util.Arrays;
 import java.util.Objects;
 
 public class ProductImage extends Entity<ProductImageID> {

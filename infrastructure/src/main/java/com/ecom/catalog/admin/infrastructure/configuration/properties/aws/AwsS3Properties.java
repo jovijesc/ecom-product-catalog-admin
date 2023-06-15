@@ -1,4 +1,4 @@
-package com.ecom.catalog.admin.infrastructure.configuration.properties;
+package com.ecom.catalog.admin.infrastructure.configuration.properties.aws;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,6 +16,7 @@ public class AwsS3Properties implements InitializingBean {
     public void setBucket(String bucket) {
         this.bucket = bucket;
     }
+
 
     @Override
     public void afterPropertiesSet() throws Exception {
