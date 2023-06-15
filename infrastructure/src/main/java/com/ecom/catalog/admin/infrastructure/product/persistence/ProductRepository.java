@@ -19,6 +19,6 @@ public interface ProductRepository extends JpaRepository<ProductJpaEntity, Strin
     @Query(value = "select p.id from Product p where p.id in :ids")
     List<String> existsById(@Param("ids") List<String> ids);
 
-    @Query(value = "select p from Product p join p.images i where i.id = :imageId")
+    @Query(value = "select p from Product p join fetch p.images i where i.id = :imageId")
     Optional<ProductJpaEntity> findByImageId(ProductImageID imageId);
 }

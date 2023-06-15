@@ -23,19 +23,29 @@ public class DefaultProductImageGateway implements ProductImageGateway {
 
     @Override
     public ProductImage create(Store store, ProductID anId, ProductImage image) {
-        this.storageService.store(Set.of(toProductImageWithLocation(store, anId, image)));
-        return image;
+        final var imageWithLocation = toProductImageWithLocation(store, anId, image);
+        this.storageService.store(Set.of(imageWithLocation));
+        return imageWithLocation;
     }
 
     @Override
     public Set<ProductImage> create(Store store, ProductID anId, Set<ProductImage> images) {
         final var imagesWithPath = images.stream()
-                .map(img -> {
-                    return toProductImageWithLocation(store, anId, img);
-                })
+                .map(img -> toProductImageWithLocation(store, anId, img))
                 .collect(Collectors.toSet());
         this.storageService.store(imagesWithPath);
-        return images;
+        return imagesWithPath;
+    }
+
+    @Override
+    public Optional<ProductImage> getImage(Store store, ProductID anProductId, ProductImage anImage) {
+        return this.storageService.get(filepath(store, anProductId, anImage.getName()));
+    }
+
+    @Override
+    public void clearImages(Store store, ProductID anId) {
+        final var ids = this.storageService.list(folder(store, anId));
+        this.storageService.deleteAll(ids);
     }
 
     private ProductImage toProductImageWithLocation(Store store, ProductID anId, ProductImage img) {
@@ -45,16 +55,6 @@ public class DefaultProductImageGateway implements ProductImageGateway {
                 img.getName(),
                 filepath(store, anId, img.getName()),
                 img.isFeatured());
-    }
-
-    @Override
-    public Optional<ProductImage> getImage(Store store, ProductID anProductId, ProductImageID anId) {
-        return Optional.empty();
-    }
-
-    @Override
-    public void clearImages(Store store, ProductID anId) {
-
     }
 
     private String folder(final Store store, final ProductID anId) {

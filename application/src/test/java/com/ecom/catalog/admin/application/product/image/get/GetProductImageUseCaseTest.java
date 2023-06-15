@@ -47,10 +47,10 @@ class GetProductImageUseCaseTest extends UseCaseTest {
         when(productGateway.findByImageId(expectedId))
                 .thenReturn(Optional.of(aProduct));
 
-        when(productImageGateway.getImage(aStore, aProduct.getId(), expectedId))
+        when(productImageGateway.getImage(aStore, aProduct.getId(), expectedImage))
                 .thenReturn(Optional.of(expectedImage));
 
-        final var aCommand = GetProductImageCommand.with(expectedId.getValue());
+        final var aCommand = GetProductImageCommand.with(aProduct.getId().getValue(), expectedId.getValue());
 
         // when
         final var actualResult = this.useCase.execute(aCommand);
@@ -72,10 +72,10 @@ class GetProductImageUseCaseTest extends UseCaseTest {
         when(productGateway.findByImageId(expectedId))
                 .thenReturn(Optional.of(aProduct));
 
-        when(productImageGateway.getImage(aStore, aProduct.getId(), expectedId))
+        when(productImageGateway.getImage(aStore, aProduct.getId(), expectedImage))
                 .thenReturn(Optional.empty());
 
-        final var aCommand = GetProductImageCommand.with(expectedId.getValue());
+        final var aCommand = GetProductImageCommand.with(aProduct.getId().getValue(), expectedId.getValue());
 
         // when
         final var actualException = Assertions.assertThrows(NotFoundException.class, () -> this.useCase.execute(aCommand));

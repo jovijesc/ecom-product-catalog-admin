@@ -10,7 +10,9 @@ import java.util.Set;
 public interface StorageService {
 
     Optional<ProductImage> get(final String name);
-    void store(Set<ProductImage> images);
-    void delete(String name);
+    void store(final Set<ProductImage> images);
+
+    List<String> list(final String prefix);
+    void delete(final String name);
     void deleteAll(final Collection<String> names);
 }

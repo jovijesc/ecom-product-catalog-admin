@@ -55,6 +55,10 @@ public class ProductImage extends Entity<ProductImageID> {
         return new ProductImage(aImage.getId(), aImage.getChecksum(), aImage.getContent(), aImage.getName(), aImage.getLocation(), aImage.isFeatured());
     }
 
+    public static ProductImage with(final ProductImage aImage, final String aLocation) {
+        return new ProductImage(aImage.getId(), aImage.getChecksum(), aImage.getContent(), aImage.getName(), aLocation, aImage.isFeatured());
+    }
+
     public void validate(ValidationHandler handler) {
         new ProductImageValidator(this, handler).validate();
     }

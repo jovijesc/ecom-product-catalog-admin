@@ -60,6 +60,20 @@ public class AwsS3Service implements StorageService {
     }
 
     @Override
+    public List<String> list(final String prefix) {
+        final var request = ListObjectsV2Request.builder()
+                .bucket(bucket)
+                .prefix(prefix)
+                .build();
+
+        final var response = client.listObjectsV2(request);
+
+        return response.contents().stream()
+                .map(obj -> obj.key())
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public void delete(final String name) {
         final var request = DeleteObjectRequest.builder()
                 .bucket(bucket)

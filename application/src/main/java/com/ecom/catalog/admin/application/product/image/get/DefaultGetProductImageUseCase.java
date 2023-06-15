@@ -1,9 +1,7 @@
 package com.ecom.catalog.admin.application.product.image.get;
 
 import com.ecom.catalog.admin.domain.exceptions.NotFoundException;
-import com.ecom.catalog.admin.domain.product.ProductGateway;
-import com.ecom.catalog.admin.domain.product.ProductImageGateway;
-import com.ecom.catalog.admin.domain.product.ProductImageID;
+import com.ecom.catalog.admin.domain.product.*;
 import com.ecom.catalog.admin.domain.validation.Error;
 
 import java.util.Objects;
@@ -25,10 +23,14 @@ public class DefaultGetProductImageUseCase extends GetProductImageUseCase {
                 .orElseThrow(() -> notFound(anId.getValue()));
         final var aStore = aProduct.getStore();
 
-        final var anImage = this.productImageGateway.getImage(aStore, aProduct.getId(), anId)
+        final var anImage = this.productImageGateway.getImage(aStore, aProduct.getId(), getImage(aProduct, anId))
                 .orElseThrow(() -> notFound(anId.getValue()));
 
         return ProductImageOutput.with(anImage);
+    }
+
+    private ProductImage getImage(final Product aProduct, final ProductImageID anId ) {
+        return aProduct.getImages().stream().findFirst().orElseThrow(() -> notFound(anId.getValue()));
     }
 
     private NotFoundException notFound(final String anId) {
