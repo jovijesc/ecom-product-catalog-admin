@@ -2,24 +2,19 @@ package com.ecom.catalog.admin.infrastructure.product;
 
 import com.ecom.catalog.admin.IntegrationTest;
 import com.ecom.catalog.admin.domain.Fixture;
-import com.ecom.catalog.admin.domain.product.*;
+import com.ecom.catalog.admin.domain.product.ProductID;
+import com.ecom.catalog.admin.domain.product.ProductImage;
+import com.ecom.catalog.admin.domain.product.ProductImageGateway;
+import com.ecom.catalog.admin.domain.product.Store;
 import com.ecom.catalog.admin.infrastructure.services.StorageService;
 import com.ecom.catalog.admin.infrastructure.services.impl.AwsS3Service;
-import org.junit.Rule;
+import com.ecom.catalog.admin.infrastructure.services.local.InMemoryStorageService;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.mock.web.MockMultipartFile;
 
-import java.util.ArrayList;
 import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @IntegrationTest
 class DefaultProductImageGatewayTest {
@@ -36,7 +31,7 @@ class DefaultProductImageGatewayTest {
         Assertions.assertInstanceOf(DefaultProductImageGateway.class, productImageGateway);
 
         Assertions.assertNotNull(storageService);
-        Assertions.assertInstanceOf(AwsS3Service.class, storageService);
+        Assertions.assertInstanceOf(InMemoryStorageService.class, storageService);
     }
 
     @Test
@@ -77,10 +72,10 @@ class DefaultProductImageGatewayTest {
         final var actualImageStored1 = this.storageService.get(expectedLocations.get(0)).get();
         final var actualImageStored2 = this.storageService.get(expectedLocations.get(1)).get();
 
-        Assertions.assertEquals(actualImageStored1.getName(), expectedLocations.get(0));
+        Assertions.assertEquals(actualImageStored1.getLocation(), expectedLocations.get(0));
         Assertions.assertArrayEquals(actualImageStored1.getContent(), expectedImage1.getContent());
 
-        Assertions.assertEquals(actualImageStored2.getName(), expectedLocations.get(1));
+        Assertions.assertEquals(actualImageStored2.getLocation(), expectedLocations.get(1));
         Assertions.assertArrayEquals(actualImageStored2.getContent(), expectedImage2.getContent());
 
     }
@@ -101,7 +96,6 @@ class DefaultProductImageGatewayTest {
         final var actualImage = this.productImageGateway.getImage(expectedStore, expectedProductId, expectedImageWithLocation).get();
 
         // then
-        Assertions.assertEquals(actualImage.getName(), expectedLocation);
         Assertions.assertArrayEquals(actualImage.getContent(), expectedImageWithLocation.getContent());
         Assertions.assertEquals(actualImage.getLocation(), expectedLocation);
     }

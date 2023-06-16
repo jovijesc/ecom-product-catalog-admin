@@ -4,10 +4,12 @@ import com.ecom.catalog.admin.infrastructure.configuration.properties.aws.AwsS3P
 import com.ecom.catalog.admin.infrastructure.configuration.properties.storage.StorageProperties;
 import com.ecom.catalog.admin.infrastructure.services.StorageService;
 import com.ecom.catalog.admin.infrastructure.services.impl.AwsS3Service;
+import com.ecom.catalog.admin.infrastructure.services.local.InMemoryStorageService;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import software.amazon.awssdk.services.s3.S3Client;
 
 @Configuration
@@ -17,6 +19,12 @@ public class StorageConfig {
     @ConfigurationProperties(value = "storage.product-catalog")
     public StorageProperties storageProperties() {
         return new StorageProperties();
+    }
+
+    @Bean( name = "storageService")
+    @Profile({"development", "test-integration", "test-e2e"})
+    public StorageService localStorageAPI() {
+        return new InMemoryStorageService();
     }
 
     @Bean( name = "storageService")
