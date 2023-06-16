@@ -48,4 +48,12 @@ public class InMemoryStorageService implements StorageService {
     public void deleteAll(Collection<String> names) {
         names.forEach(this.storage::remove);
     }
+
+    public void reset() {
+        this.storage.clear();
+    }
+
+    public Map<String, ProductImage> storage() {
+        return storage;
+    }
 }

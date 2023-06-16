@@ -7,7 +7,6 @@ import com.ecom.catalog.admin.domain.product.ProductImage;
 import com.ecom.catalog.admin.domain.product.ProductImageGateway;
 import com.ecom.catalog.admin.domain.product.Store;
 import com.ecom.catalog.admin.infrastructure.services.StorageService;
-import com.ecom.catalog.admin.infrastructure.services.impl.AwsS3Service;
 import com.ecom.catalog.admin.infrastructure.services.local.InMemoryStorageService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
