@@ -3,6 +3,7 @@ package com.ecom.catalog.admin.infrastructure.services.impl;
 import com.ecom.catalog.admin.domain.product.ProductImage;
 import com.ecom.catalog.admin.infrastructure.services.StorageService;
 import com.ecom.catalog.admin.infrastructure.utils.HashingUtils;
+import io.vavr.control.Try;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.*;
@@ -11,6 +12,7 @@ import java.io.ByteArrayInputStream;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
+
 
 public class AwsS3Service implements StorageService {
 
@@ -24,17 +26,21 @@ public class AwsS3Service implements StorageService {
 
     @Override
     public Optional<ProductImage> get(final String name) {
-        final var request = GetObjectRequest.builder()
-                .bucket(this.bucket)
-                .key(name)
-                .build();
-        return Optional.ofNullable(this.client.getObjectAsBytes(request))
+        return Try.of(() -> {
+                    final var request = GetObjectRequest.builder()
+                            .bucket(this.bucket)
+                            .key(name)
+                            .build();
+                    return this.client.getObjectAsBytes(request);
+                })
                 .map(file -> ProductImage.with(
                         HashingUtils.checksum(file.asByteArray()),
                         file.asByteArray(),
                         name,
                         name,
-                        true));
+                        true))
+                .recoverWith(NoSuchKeyException.class, Try.failure(NoSuchKeyException.builder().build()) )
+                .toJavaOptional();
     }
 
     @Override

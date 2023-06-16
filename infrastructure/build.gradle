@@ -38,8 +38,7 @@ dependencies {
 
     implementation(platform("software.amazon.awssdk:bom:2.20.56"))
     implementation("software.amazon.awssdk:s3")
-    implementation("software.amazon.awssdk:s3-transfer-manager")
-    implementation('software.amazon.awssdk.crt:aws-crt:0.21.15')
+    implementation('io.vavr:vavr:0.10.4')
 
 
     implementation("org.springdoc:springdoc-openapi-webmvc-core:1.7.0")
